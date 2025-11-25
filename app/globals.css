@@ -1,0 +1,257 @@
+@import "tailwindcss";
+
+:root {
+  /* Material 3 Design Tokens - Dark Theme (Default - Anti-Gravity Black) */
+  --md-sys-color-primary: #3b82f6;
+  /* Electric Blue */
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #172554;
+  /* Blue 950 */
+  --md-sys-color-on-primary-container: #dbeafe;
+  /* Blue 100 */
+
+  --md-sys-color-secondary: #ffffff;
+  /* White Accent */
+  --md-sys-color-on-secondary: #000000;
+  --md-sys-color-secondary-container: #262626;
+  /* Neutral 900 */
+  --md-sys-color-on-secondary-container: #e5e5e5;
+  /* Neutral 200 */
+
+  --md-sys-color-tertiary: #22d3ee;
+  /* Cyan Pop */
+  --md-sys-color-on-tertiary: #000000;
+  --md-sys-color-tertiary-container: #083344;
+  --md-sys-color-on-tertiary-container: #cffafe;
+
+  --md-sys-color-error: #f87171;
+  --md-sys-color-on-error: #450a0a;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Pure Black Backgrounds */
+  --md-sys-color-background: #000000;
+  /* Pure Black */
+  --md-sys-color-on-background: #ffffff;
+  /* Pure White */
+
+  --md-sys-color-surface: #000000;
+  /* Pure Black */
+  --md-sys-color-on-surface: #ffffff;
+  --md-sys-color-surface-variant: #171717;
+  /* Neutral 900 */
+  --md-sys-color-on-surface-variant: #a3a3a3;
+  /* Neutral 400 */
+
+  /* Surface Containers for depth */
+  --md-sys-color-surface-container-lowest: #000000;
+  --md-sys-color-surface-container-low: #0a0a0a;
+  /* Neutral 950 */
+  --md-sys-color-surface-container: #171717;
+  /* Neutral 900 */
+  --md-sys-color-surface-container-high: #262626;
+  /* Neutral 800 */
+  --md-sys-color-surface-container-highest: #404040;
+  /* Neutral 700 */
+
+  --md-sys-color-outline: #525252;
+  /* Neutral 600 */
+  --md-sys-color-outline-variant: #262626;
+  /* Neutral 800 */
+
+  /* Legacy mappings */
+  --brand-azure: var(--md-sys-color-primary);
+  --brand-cyan: var(--md-sys-color-tertiary);
+  --bg-base: var(--md-sys-color-background);
+  --text-primary: var(--md-sys-color-on-surface);
+  --text-secondary: var(--md-sys-color-on-surface-variant);
+  --surface-card: var(--md-sys-color-surface-container);
+  --surface-elevated: var(--md-sys-color-surface-container-high);
+  --border-hairline: var(--md-sys-color-outline-variant);
+  --border-subtle: var(--md-sys-color-outline);
+
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Elevations - Sharper shadows for high contrast */
+  --elevation-1: 0px 1px 2px 0px rgba(255, 255, 255, 0.05);
+  --elevation-2: 0px 4px 8px 3px rgba(255, 255, 255, 0.05);
+  --elevation-3: 0px 8px 16px 4px rgba(255, 255, 255, 0.05);
+
+  --brand-gradient: linear-gradient(135deg, #ffffff, var(--md-sys-color-primary));
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --md-sys-color-primary: #2563eb;
+  /* Blue 600 */
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #dbeafe;
+  --md-sys-color-on-primary-container: #1e40af;
+
+  --md-sys-color-secondary: #000000;
+  /* Black Accent */
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #f1f5f9;
+  --md-sys-color-on-secondary-container: #0f172a;
+
+  --md-sys-color-tertiary: #0891b2;
+  /* Cyan 600 */
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #cffafe;
+  --md-sys-color-on-tertiary-container: #0e7490;
+
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Pure White Backgrounds */
+  --md-sys-color-background: #ffffff;
+  /* Pure White */
+  --md-sys-color-on-background: #000000;
+  /* Pure Black */
+
+  --md-sys-color-surface: #ffffff;
+  --md-sys-color-on-surface: #000000;
+  --md-sys-color-surface-variant: #f5f5f5;
+  /* Neutral 100 */
+  --md-sys-color-on-surface-variant: #525252;
+  /* Neutral 600 */
+
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #fafafa;
+  /* Neutral 50 */
+  --md-sys-color-surface-container: #f5f5f5;
+  /* Neutral 100 */
+  --md-sys-color-surface-container-high: #e5e5e5;
+  /* Neutral 200 */
+  --md-sys-color-surface-container-highest: #d4d4d4;
+  /* Neutral 300 */
+
+  --md-sys-color-outline: #a3a3a3;
+  /* Neutral 400 */
+  --md-sys-color-outline-variant: #e5e5e5;
+  /* Neutral 200 */
+
+  /* Elevations - Subtle dark shadows */
+  --elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.1), 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0px 4px 8px 3px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0px 8px 16px 4px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.05);
+
+  --brand-gradient: linear-gradient(135deg, #000000, var(--md-sys-color-primary));
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--md-sys-color-background);
+  --color-foreground: var(--md-sys-color-on-background);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  font-family: var(--font-geist-sans), "Roboto", "Inter", system-ui, sans-serif;
+  /* Added Roboto for Material feel */
+  min-height: 100vh;
+  letter-spacing: 0.01em;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll from animations */
+}
+
+/* ... existing font classes ... */
+.font-vazirmatn {
+  font-family: var(--font-vazirmatn), "Vazirmatn", system-ui, sans-serif;
+}
+
+.font-orbitron {
+  font-family: var(--font-orbitron), "Orbitron", system-ui, sans-serif;
+}
+
+html[lang='fa'] body {
+  font-family: var(--font-vazirmatn), "Vazirmatn", system-ui, sans-serif;
+}
+
+.font-vazirmatn *,
+html.font-vazirmatn body,
+html.font-vazirmatn body * {
+  font-family: var(--font-vazirmatn), "Vazirmatn", system-ui, sans-serif !important;
+}
+
+.font-orbitron *,
+html.font-orbitron body,
+html.font-orbitron body * {
+  font-family: var(--font-orbitron), "Orbitron", system-ui, sans-serif !important;
+}
+
+.bg-brand-gradient {
+  background-image: var(--brand-gradient);
+}
+
+.text-brand-gradient {
+  background-image: var(--brand-gradient);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Anti-Gravity Animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 7s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Material 3 Utilities */
+.surface-container {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+}
+
+.elevation-1 {
+  box-shadow: var(--elevation-1);
+}
+
+.elevation-2 {
+  box-shadow: var(--elevation-2);
+}
+
+.elevation-3 {
+  box-shadow: var(--elevation-3);
+}
+
+.shape-large {
+  border-radius: var(--radius-xl);
+}
+
+.shape-full {
+  border-radius: var(--radius-full);
+}

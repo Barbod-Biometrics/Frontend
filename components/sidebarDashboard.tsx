@@ -34,15 +34,7 @@ const BadgeIcon = ({ className }: IconProps) => (
     className={clsx("h-10 w-10 text-[color:var(--md-sys-color-primary)]", className)}
     fill="none"
   >
-    <rect
-      x="4"
-      y="4"
-      width="24"
-      height="24"
-      rx="8"
-      fill="currentColor"
-      opacity="0.12"
-    />
+    <rect x="4" y="4" width="24" height="24" rx="8" fill="currentColor" opacity="0.12" />
     <rect
       x="9.5"
       y="10.5"
@@ -200,10 +192,7 @@ const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boo
 export function SidebarDashboard() {
   const [collapsed, setCollapsed] = useState(false);
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
-  // active item (can be a parent id or a child id)
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
-
-  const primaryColor = "text-[color:var(--md-sys-color-primary)]";
 
   const sections = useMemo<NavSection[]>(
     () => [
@@ -268,13 +257,13 @@ export function SidebarDashboard() {
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-4 top-24 z-30 h-[80vh] overflow-hidden border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300",
+        "absolute right-4 top-24 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col",
         "border-[color:var(--md-sys-color-outline-variant)]",
         collapsed ? "w-[96px]" : "w-[300px]",
-        
       )}
     >
-      <div className="relative h-full">
+      <div className="relative flex flex-col h-full">
+        {/* Collapse button */}
         <button
           onClick={() => setCollapsed((prev) => !prev)}
           className={clsx(
@@ -286,25 +275,28 @@ export function SidebarDashboard() {
           {collapsed ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </button>
 
+        {/* Header row */}
         <div
           className={clsx(
-            "flex items-center gap-3 border-b px-5 pb-4 pt-5",
+            "flex items-center gap-3 border-b px-5 pb-4 pt-5 justify-start flex-shrink-0",
             "border-[color:var(--md-sys-color-outline-variant)]",
-            collapsed ? "justify-center" : "justify-start",
           )}
         >
           <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
           <div
             className={clsx(
               "min-w-0 transition-all duration-200",
-              collapsed ? "pointer-events-none opacity-0" : "opacity-100",
+              collapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
             )}
           >
-            <p className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">کسب و کار</p>
+            <p className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+              کسب و کار
+            </p>
           </div>
         </div>
 
-        <div className="flex h-[calc(80vh-92px)] flex-col overflow-y-auto px-3 py-4">
+        {/* Items – no scrollbar, page scrolls the sidebar */}
+        <div className="flex flex-col flex-1 px-3 py-4">
           {sections.map((section) => (
             <div key={section.id} className="mb-6 last:mb-0">
               {!collapsed && (
@@ -323,31 +315,31 @@ export function SidebarDashboard() {
 
                   return (
                     <div key={item.id}>
+                      {/* Main item row */}
                       <button
                         onClick={() => {
                           if (hasChildren) {
                             toggleGroup(item.id);
-                            // make parent active when header clicked
                             setActiveItemId(item.id);
                           } else {
                             setActiveItemId(item.id);
                           }
                         }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-2 py-2.5 text-sm transition-colors duration-200",
-                          collapsed ? "justify-center" : "justify-between gap-3",
+                          "group flex w-full items-center rounded-[10px] px-2 py-2.5 text-sm transition-colors duration-200 justify-between gap-3",
                           isItemActive
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
-                          !collapsed && "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
+                          !collapsed &&
+                            "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
-                        <div className={clsx("flex items-center", collapsed ? "justify-center" : "gap-3")}>
+                        <div className="flex items-center gap-3">
                           <ItemIconFrame active={isItemActive}>{item.icon}</ItemIconFrame>
                           <div
                             className={clsx(
                               "min-w-0 truncate text-right font-medium transition-all duration-150",
-                              collapsed ? "pointer-events-none opacity-0" : "opacity-100",
+                              collapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
                             )}
                           >
                             {item.label}
@@ -364,6 +356,7 @@ export function SidebarDashboard() {
                         )}
                       </button>
 
+                      {/* Sub-items */}
                       {hasChildren && !collapsed && (
                         <div
                           className={clsx(

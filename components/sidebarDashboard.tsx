@@ -7,7 +7,6 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 type NavSubItem = {
   id: string;
   label: string;
-  active?: boolean;
   muted?: boolean;
 };
 
@@ -15,7 +14,6 @@ type NavItem = {
   id: string;
   label: string;
   icon: ReactElement;
-  active?: boolean;
   children?: NavSubItem[];
 };
 
@@ -121,8 +119,18 @@ const TransferIcon = ({ className }: IconProps) => (
     stroke="currentColor"
     strokeWidth="1.6"
   >
-    <path d="M7 8L10 5V11L7 8Z" fill="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M17 16L14 19V13L17 16Z" fill="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M7 8L10 5V11L7 8Z"
+      fill="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M17 16L14 19V13L17 16Z"
+      fill="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
     <path d="M10 8H17" strokeLinecap="round" />
     <path d="M7 16H14" strokeLinecap="round" />
   </svg>
@@ -153,7 +161,10 @@ const BiometricIcon = ({ className }: IconProps) => (
   >
     <rect x="5" y="5" width="14" height="14" rx="4" />
     <path d="M9.5 10C9.5 8.61929 10.6193 7.5 12 7.5C13.3807 7.5 14.5 8.61929 14.5 10" />
-    <path d="M8.5 16.5C9.5 15.1 10.8 14.25 12 14.25C13.2 14.25 14.5 15.1 15.5 16.5" strokeLinecap="round" />
+    <path
+      d="M8.5 16.5C9.5 15.1 10.8 14.25 12 14.25C13.2 14.25 14.5 15.1 15.5 16.5"
+      strokeLinecap="round"
+    />
     <path d="M12 12.25V13" strokeLinecap="round" />
   </svg>
 );
@@ -189,6 +200,8 @@ const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boo
 export function SidebarDashboard() {
   const [collapsed, setCollapsed] = useState(false);
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
+  // active item (can be a parent id or a child id)
+  const [activeItemId, setActiveItemId] = useState<string>("requests-business");
 
   const primaryColor = "text-[color:var(--md-sys-color-primary)]";
 
@@ -210,7 +223,7 @@ export function SidebarDashboard() {
             icon: <RequestsIcon />,
             children: [
               { id: "requests-sales", label: "تماس با تیم فروش", muted: true },
-              { id: "requests-business", label: "کسب و کار", active: true },
+              { id: "requests-business", label: "کسب و کار" },
             ],
           },
           {
@@ -245,11 +258,8 @@ export function SidebarDashboard() {
   const toggleGroup = (id: string) => {
     setOpenGroups((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -261,7 +271,7 @@ export function SidebarDashboard() {
         "fixed right-4 top-24 z-30 h-[80vh] overflow-hidden border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300",
         "border-[color:var(--md-sys-color-outline-variant)]",
         collapsed ? "w-[96px]" : "w-[300px]",
-        "rounded-[var(--radius-xl)]",
+        
       )}
     >
       <div className="relative h-full">
@@ -291,9 +301,6 @@ export function SidebarDashboard() {
             )}
           >
             <p className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">کسب و کار</p>
-            <p className="text-xs text-[color:var(--md-sys-color-on-surface-variant)]">
-              داشبورد نمونه برای تست UI
-            </p>
           </div>
         </div>
 
@@ -308,89 +315,105 @@ export function SidebarDashboard() {
 
               <div className="space-y-1.5">
                 {section.items.map((item) => {
-                  const isOpen = item.children ? openGroups.has(item.id) : false;
-                  const isActive = item.active || item.children?.some((sub) => sub.active);
+                  const hasChildren = !!item.children?.length;
+                  const isGroupOpen = hasChildren ? openGroups.has(item.id) : false;
+                  const isItemActive =
+                    activeItemId === item.id ||
+                    (hasChildren && item.children!.some((sub) => sub.id === activeItemId));
 
                   return (
-                    <div key={item.id} className="overflow-hidden rounded-[14px]">
+                    <div key={item.id}>
                       <button
-                        onClick={() => item.children && toggleGroup(item.id)}
+                        onClick={() => {
+                          if (hasChildren) {
+                            toggleGroup(item.id);
+                            // make parent active when header clicked
+                            setActiveItemId(item.id);
+                          } else {
+                            setActiveItemId(item.id);
+                          }
+                        }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[14px] border px-2 py-2.5 transition-all duration-200",
-                          "border-[color:var(--md-sys-color-outline-variant)]",
-                          isActive
-                            ? "bg-[color:var(--md-sys-color-primary)]/10 text-[color:var(--md-sys-color-primary)]"
-                            : "bg-[color:var(--md-sys-color-surface-container-lowest)]/60 text-[color:var(--md-sys-color-on-surface)] hover:border-[color:var(--md-sys-color-primary)]/60",
+                          "group flex w-full items-center rounded-[10px] px-2 py-2.5 text-sm transition-colors duration-200",
                           collapsed ? "justify-center" : "justify-between gap-3",
+                          isItemActive
+                            ? "text-[color:var(--md-sys-color-primary)]"
+                            : "text-[color:var(--md-sys-color-on-surface)]",
+                          !collapsed && "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
                         <div className={clsx("flex items-center", collapsed ? "justify-center" : "gap-3")}>
-                          <ItemIconFrame active={isActive}>{item.icon}</ItemIconFrame>
+                          <ItemIconFrame active={isItemActive}>{item.icon}</ItemIconFrame>
                           <div
                             className={clsx(
-                              "min-w-0 text-right text-sm font-medium transition-all duration-150",
+                              "min-w-0 truncate text-right font-medium transition-all duration-150",
                               collapsed ? "pointer-events-none opacity-0" : "opacity-100",
-                              isActive ? primaryColor : "text-[color:var(--md-sys-color-on-surface)]",
                             )}
                           >
                             {item.label}
                           </div>
                         </div>
 
-                        {item.children && !collapsed && (
+                        {hasChildren && !collapsed && (
                           <ChevronDown
                             className={clsx(
                               "h-4 w-4 text-[color:var(--md-sys-color-on-surface-variant)] transition-transform duration-200",
-                              isOpen && "rotate-180",
+                              isGroupOpen && "rotate-180",
                             )}
                           />
                         )}
                       </button>
 
-                      {item.children && (
+                      {hasChildren && !collapsed && (
                         <div
                           className={clsx(
                             "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
-                            isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-                            collapsed && "hidden",
+                            isGroupOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                           )}
                         >
                           <div className="min-h-0 overflow-hidden pr-4">
-                            {item.children.map((child) => (
-                              <div
-                                key={child.id}
-                                className="flex items-center gap-2 py-2 pr-3 text-sm text-[color:var(--md-sys-color-on-surface-variant)]"
-                              >
-                                <span
-                                  className={clsx(
-                                    "flex h-5 w-5 items-center justify-center rounded-full border",
-                                    child.active
-                                      ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/20"
-                                      : "border-[color:var(--md-sys-color-outline-variant)]",
-                                  )}
+                            {item.children!.map((child) => {
+                              const isChildActive = activeItemId === child.id;
+                              return (
+                                <button
+                                  key={child.id}
+                                  onClick={() => setActiveItemId(child.id)}
+                                  className="flex w-full items-center gap-2 py-2 pr-3 text-right text-sm"
                                 >
                                   <span
                                     className={clsx(
-                                      "h-2 w-2 rounded-full",
-                                      child.active
-                                        ? "bg-[color:var(--md-sys-color-primary)]"
-                                        : child.muted
-                                          ? "bg-[color:var(--md-sys-color-on-surface-variant)]/70"
-                                          : "bg-[color:var(--md-sys-color-outline-variant)]",
+                                      "flex h-5 w-5 items-center justify-center rounded-full border",
+                                      isChildActive
+                                        ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/20"
+                                        : "border-[color:var(--md-sys-color-outline-variant)]",
                                     )}
-                                  />
-                                </span>
-                                <span
-                                  className={clsx(
-                                    "transition-colors",
-                                    child.active && "text-[color:var(--md-sys-color-primary)] font-semibold",
-                                    child.muted && !child.active && "text-[color:var(--md-sys-color-on-surface-variant)]/80",
-                                  )}
-                                >
-                                  {child.label}
-                                </span>
-                              </div>
-                            ))}
+                                  >
+                                    <span
+                                      className={clsx(
+                                        "h-2 w-2 rounded-full",
+                                        isChildActive
+                                          ? "bg-[color:var(--md-sys-color-primary)]"
+                                          : child.muted
+                                            ? "bg-[color:var(--md-sys-color-on-surface-variant)]/70"
+                                            : "bg-[color:var(--md-sys-color-outline-variant)]",
+                                      )}
+                                    />
+                                  </span>
+                                  <span
+                                    className={clsx(
+                                      "transition-colors",
+                                      isChildActive &&
+                                        "font-semibold text-[color:var(--md-sys-color-primary)]",
+                                      child.muted &&
+                                        !isChildActive &&
+                                        "text-[color:var(--md-sys-color-on-surface-variant)]/80",
+                                    )}
+                                  >
+                                    {child.label}
+                                  </span>
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}

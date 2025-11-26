@@ -257,7 +257,7 @@ export function SidebarDashboard() {
     <aside
       dir="rtl"
       className={clsx(
-        "absolute right-4 top-24 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col",
+        "fixed right-0 top-17 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
         "border-[color:var(--md-sys-color-outline-variant)]",
         collapsed ? "w-[96px]" : "w-[300px]",
       )}
@@ -295,8 +295,19 @@ export function SidebarDashboard() {
           </div>
         </div>
 
-        {/* Items – no scrollbar, page scrolls the sidebar */}
-        <div className="flex flex-col flex-1 px-3 py-4">
+        {/* Items – scrollable with rounded scrollbar */}
+        <div
+          className={clsx(
+            "flex flex-col flex-1 overflow-y-auto px-3 py-4",
+            // Rounded scrollbar styling (7px radius)
+            "[&::-webkit-scrollbar]:w-3.5",
+            "[&::-webkit-scrollbar-track]:bg-transparent",
+            "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
+            "[&::-webkit-scrollbar-thumb]:rounded-[7px]",
+            "[&::-webkit-scrollbar-thumb]:border-2",
+            "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface-container)]",
+          )}
+        >
           {sections.map((section) => (
             <div key={section.id} className="mb-6 last:mb-0">
               {!collapsed && (

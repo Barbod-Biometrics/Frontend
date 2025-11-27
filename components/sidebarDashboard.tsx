@@ -178,7 +178,7 @@ const SupportIcon = ({ className }: IconProps) => (
 const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boolean }) => (
   <span
     className={clsx(
-      "flex h-11 w-11 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
+      "flex h-9 w-9 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
       "border-[color:var(--md-sys-color-outline-variant)]",
       active
         ? "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)]"
@@ -250,9 +250,9 @@ export function SidebarDashboard() {
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-17 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
+        "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        collapsed ? "w-[96px]" : "w-[300px]",
+        collapsed ? "w-[96px]" : "w-[257px]",
       )}
     >
       <div className="relative flex flex-col h-full">
@@ -271,7 +271,7 @@ export function SidebarDashboard() {
         {/* Header row */}
         <div
           className={clsx(
-            "flex items-center gap-3 border-b px-5 pb-4 pt-5 justify-start flex-shrink-0",
+            "flex items-center gap-3 border-b px-4 pb-4 pt-5 justify-start flex-shrink-0",
             "border-[color:var(--md-sys-color-outline-variant)]",
           )}
         >
@@ -282,7 +282,7 @@ export function SidebarDashboard() {
               collapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
             )}
           >
-            <p className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+            <p className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]">
               کسب و کار
             </p>
           </div>
@@ -291,9 +291,9 @@ export function SidebarDashboard() {
         {/* Items – scrollable with rounded scrollbar */}
         <div
           className={clsx(
-            "flex flex-col flex-1 overflow-y-auto px-3 py-4",
+            "flex flex-col flex-1 overflow-y-auto px-2 py-4",
             // Rounded scrollbar styling (7px radius)
-            "[&::-webkit-scrollbar]:w-3.5",
+            "[&::-webkit-scrollbar]:w-3",
             "[&::-webkit-scrollbar-track]:bg-transparent",
             "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
             "[&::-webkit-scrollbar-thumb]:rounded-[7px]",
@@ -304,7 +304,7 @@ export function SidebarDashboard() {
           {sections.map((section) => (
             <div key={section.id} className="mb-6 last:mb-0">
               {!collapsed && (
-                <p className="mb-3 px-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+                <p className="mb-2 px-2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]">
                   {section.title}
                 </p>
               )}
@@ -330,7 +330,7 @@ export function SidebarDashboard() {
                           }
                         }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-2 py-2.5 text-sm transition-colors duration-200 justify-between gap-3",
+                          "group flex w-full items-center rounded-[10px] px-2 py-2 text-xs transition-colors duration-200 justify-between gap-2",
                           isItemActive
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
@@ -338,7 +338,7 @@ export function SidebarDashboard() {
                             "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <ItemIconFrame active={isItemActive}>{item.icon}</ItemIconFrame>
                           <div
                             className={clsx(
@@ -375,11 +375,11 @@ export function SidebarDashboard() {
                                 <button
                                   key={child.id}
                                   onClick={() => setActiveItemId(child.id)}
-                                  className="flex w-full items-center gap-2 py-2 pr-3 text-right text-sm"
+                                  className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-xs"
                                 >
                                   <span
                                     className={clsx(
-                                      "flex h-5 w-5 items-center justify-center rounded-full border",
+                                      "flex h-4 w-4 items-center justify-center rounded-full border",
                                       isChildActive
                                         ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/20"
                                         : "border-[color:var(--md-sys-color-outline-variant)]",
@@ -387,7 +387,7 @@ export function SidebarDashboard() {
                                   >
                                     <span
                                       className={clsx(
-                                        "h-2 w-2 rounded-full",
+                                        "h-1.5 w-1.5 rounded-full",
                                         isChildActive
                                           ? "bg-[color:var(--md-sys-color-primary)]"
                                           : child.muted

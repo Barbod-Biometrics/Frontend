@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode, type ReactElement } from "react";
 import clsx from "clsx";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ScanFace, Fingerprint, FileText } from "lucide-react";
 
 type NavSubItem = {
   id: string;
@@ -206,37 +206,30 @@ export function SidebarDashboard() {
             label: "اطلاعات کسب و کار",
             icon: <HomeIcon />,
           },
-          {
-            id: "requests",
-            label: "مدیریت درخواست ها",
-            icon: <RequestsIcon />,
-            children: [
-              { id: "requests-sales", label: "تماس با تیم فروش", muted: true },
-              { id: "requests-business", label: "کسب و کار" },
-            ],
-          },
-          {
-            id: "accounts",
-            label: "حساب ها",
-            icon: <CardsIcon />,
-          },
+          
+          
           {
             id: "transactions",
-            label: "تراکنش ها",
+            label: "کیف پول",
             icon: <TransferIcon />,
           },
-          {
-            id: "invoices",
-            label: "صورت حساب ها",
-            icon: <InvoiceIcon />,
-          },
+          
         ],
       },
       {
         id: "services",
         title: "سرویس ها",
         items: [
-          { id: "biometric", label: "بیومتریک", icon: <BiometricIcon /> },
+          { id: "face", label: "احراز هویت چهره", icon: <ScanFace className="h-5 w-5" /> },
+          { id: "liveness", label: "تشخیص زنده بودن", icon: <Fingerprint className="h-5 w-5" /> },
+          { id: "ocr", label: "OCR مدارک", icon: <FileText className="h-5 w-5" /> },
+          
+        ],
+      },
+      {
+        id: "support",
+        title: "ارتباط با پشتیبانی",
+        items: [
           { id: "support", label: "پشتیبانی", icon: <SupportIcon /> },
         ],
       },

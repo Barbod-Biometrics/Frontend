@@ -189,8 +189,15 @@ const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boo
   </span>
 );
 
-export function SidebarDashboard() {
-  const [collapsed, setCollapsed] = useState(false);
+export function SidebarDashboard({
+  collapsed: collapsedProp,
+  onToggleAction,
+}: {
+  collapsed?: boolean;
+  onToggleAction?: (next: boolean) => void;
+}) {
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
 
@@ -252,21 +259,12 @@ export function SidebarDashboard() {
       className={clsx(
         "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        collapsed ? "w-[96px]" : "w-[257px]",
+        isCollapsed ? "w-[70px]" : "w-[237px]",
       )}
     >
       <div className="relative flex flex-col h-full">
         {/* Collapse button */}
-        <button
-          onClick={() => setCollapsed((prev) => !prev)}
-          className={clsx(
-            "absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border text-[color:var(--md-sys-color-on-surface-variant)] transition-colors",
-            "border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-highest)] hover:bg-[color:var(--md-sys-color-surface-container-high)]",
-          )}
-          aria-label={collapsed ? "باز کردن سایدبار" : "بستن سایدبار"}
-        >
-          {collapsed ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </button>
+        
 
         {/* Header row */}
         <div
@@ -279,7 +277,7 @@ export function SidebarDashboard() {
           <div
             className={clsx(
               "min-w-0 transition-all duration-200",
-              collapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+              isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
             )}
           >
             <p className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]">
@@ -303,7 +301,7 @@ export function SidebarDashboard() {
         >
           {sections.map((section) => (
             <div key={section.id} className="mb-6 last:mb-0">
-              {!collapsed && (
+              {!isCollapsed && (
                 <p className="mb-2 px-2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]">
                   {section.title}
                 </p>
@@ -334,7 +332,7 @@ export function SidebarDashboard() {
                           isItemActive
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
-                          !collapsed &&
+                          !isCollapsed &&
                             "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
@@ -343,14 +341,14 @@ export function SidebarDashboard() {
                           <div
                             className={clsx(
                               "min-w-0 truncate text-right font-medium transition-all duration-150",
-                              collapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                              isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
                             )}
                           >
                             {item.label}
                           </div>
                         </div>
 
-                        {hasChildren && !collapsed && (
+                        {hasChildren && !isCollapsed && (
                           <ChevronDown
                             className={clsx(
                               "h-4 w-4 text-[color:var(--md-sys-color-on-surface-variant)] transition-transform duration-200",
@@ -361,7 +359,7 @@ export function SidebarDashboard() {
                       </button>
 
                       {/* Sub-items */}
-                      {hasChildren && !collapsed && (
+                      {hasChildren && !isCollapsed && (
                         <div
                           className={clsx(
                             "grid transition-[grid-template-rows,opacity] duration-300 ease-out",

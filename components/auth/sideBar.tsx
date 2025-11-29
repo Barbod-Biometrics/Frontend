@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import { Typography } from "../ui/Typography";
@@ -25,42 +25,56 @@ const steps: Step[] = [
     title: "اطلاعات حساب",
     items: [
       { id: "account-type", label: "نوع حساب", highlight: true },
-      { id: "personal-info", label: "اطلاعات شخصی" },
-      { id: "business-info", label: "اطلاعات کسب و کار" },
-      { id: "location", label: "موقعیت مکانی" },
-      { id: "sign-owners", label: "دارندگان امضا" },
+      { id: "personal-info", label: "اطلاعات فردی" },
+      { id: "business-info", label: "اطلاعات کسب‌وکار" },
+      { id: "location", label: "اطلاعات مکانی" },
+      { id: "sign-owners", label: "امضاداران" },
     ],
   },
   {
     id: "documents",
     index: 2,
-    title: "تکمیل مدارک",
-    items: [{ id: "docs-complete", label: "تکمیل مدارک", highlight: true }],
+    title: "مدارک موردنیاز",
+    items: [{ id: "docs-complete", label: "فهرست مدارک", highlight: true }],
   },
   {
     id: "services-request",
     index: 3,
-    title: "درخواست سرویس",
+    title: "درخواست سرویس‌ها",
     items: [
-      { id: "services-intro", label: "معرفی سرویس ها", highlight: true },
+      { id: "services-intro", label: "انتخاب سرویس موردنیاز", highlight: true },
       { id: "face", label: "تشخیص چهره" },
-      { id: "liveness", label: "تشخیص چهره زنده" },
-      { id: "smart-doc", label: "تشخیص هوشمند مدارک" },
+      { id: "liveness", label: "سنجش زنده بودن" },
+      { id: "smart-doc", label: "مدارک هوشمند" },
     ],
   },
   {
     id: "review",
     index: 4,
-    title: "بررسی اطلاعات",
-    items: [{ id: "review-info", label: "بررسی اطلاعات", highlight: true }],
+    title: "بازبینی نهایی",
+    items: [{ id: "review-info", label: "تأیید و ارسال", highlight: true }],
   },
 ];
 
-export function AuthSidebar() {
+interface AuthSidebarProps {
+  activeItemId?: string;
+  onItemSelect?: (itemId: string) => void;
+}
+
+export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: AuthSidebarProps) {
   const [openSteps, setOpenSteps] = useState<Set<string>>(
-    () => new Set(steps.map((s) => s.id)),
+    () => new Set(steps.map((step) => step.id)),
   );
-  const [activeItemId, setActiveItemId] = useState<string>(steps[0].items[0].id);
+  const [internalActiveId, setInternalActiveId] = useState<string>(steps[0].items[0].id);
+
+  const activeItemId = controlledActiveId ?? internalActiveId;
+
+  const activeStepId = useMemo(() => {
+    const match = steps.find(
+      (step) => step.id === activeItemId || step.items.some((item) => item.id === activeItemId),
+    );
+    return match?.id ?? steps[0].id;
+  }, [activeItemId]);
 
   const toggleStep = (id: string) => {
     setOpenSteps((prev) => {
@@ -71,12 +85,17 @@ export function AuthSidebar() {
     });
   };
 
+  const handleSelect = (id: string) => {
+    if (!controlledActiveId) setInternalActiveId(id);
+    onItemSelect?.(id);
+  };
+
   return (
     <aside
       dir="rtl"
       className={clsx(
         "font-vazirmatn",
-        "ml-auto w-full max-w-[320px] rounded-[28px] border bg-[color:var(--md-sys-color-surface)]",
+        "w-full max-w-[320px] rounded-[28px] border bg-[color:var(--md-sys-color-surface)]",
         "border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-2)] px-6 py-8",
         "text-[color:var(--md-sys-color-on-surface)]",
         "overflow-hidden",
@@ -88,8 +107,7 @@ export function AuthSidebar() {
 
           <div className="relative flex flex-col items-center gap-5 py-1">
             {steps.map((step) => {
-              const isStepActive =
-                activeItemId === step.id || step.items.some((item) => item.id === activeItemId);
+              const isStepActive = step.id === activeStepId;
 
               return (
                 <div key={step.id} className="flex flex-col items-center gap-3">
@@ -97,7 +115,7 @@ export function AuthSidebar() {
                     type="button"
                     onClick={() => {
                       toggleStep(step.id);
-                      setActiveItemId(step.id);
+                      handleSelect(step.id);
                     }}
                     className={clsx(
                       "flex h-10 w-10 items-center justify-center rounded-full text-base font-extrabold text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] ring-4 ring-white/60 ring-offset-0 bg-[radial-gradient(circle_at_30%_30%,#5561e9,#2747d7_45%,#0f62d8)] dark:ring-[color:var(--md-sys-color-surface-container)] transition-opacity",
@@ -139,12 +157,12 @@ export function AuthSidebar() {
             })}
           </div>
         </div>
-        {/* Text column */}
+
         <div className="flex flex-1 flex-col gap-7">
           {steps.map((step) => {
             const isOpen = openSteps.has(step.id);
             const isStepActive =
-              activeItemId === step.id || step.items.some((item) => item.id === activeItemId);
+              step.id === activeStepId || step.items.some((item) => item.id === activeItemId);
 
             return (
               <div key={step.id} className="space-y-2">
@@ -152,7 +170,7 @@ export function AuthSidebar() {
                   type="button"
                   onClick={() => {
                     toggleStep(step.id);
-                    setActiveItemId(step.id);
+                    handleSelect(step.id);
                   }}
                   className="flex w-full items-center justify-between text-right"
                   aria-expanded={isOpen}
@@ -188,7 +206,7 @@ export function AuthSidebar() {
                         <button
                           key={item.id}
                           type="button"
-                          onClick={() => setActiveItemId(item.id)}
+                          onClick={() => handleSelect(item.id)}
                           className="block w-full text-right"
                         >
                           <Typography
@@ -212,9 +230,6 @@ export function AuthSidebar() {
             );
           })}
         </div>
-
-        {/* Rail column on the right */}
-        
       </div>
     </aside>
   );

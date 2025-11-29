@@ -88,7 +88,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
         </Typography>
       </div>
 
-      <div className="mt-6 grid gap-4 text-right">
+      <div className="mt-6 grid gap-5 text-right">
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
@@ -119,6 +119,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
             کد ملی
           </label>
           <input
+            dir="ltr"
             type="text"
             value={form.nationalId}
             onChange={(e) => handleChange("nationalId", e.target.value)}
@@ -136,10 +137,10 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
               value={form.birthDate}
               onChange={(e) => handleChange("birthDate", e.target.value)}
               placeholder="مثلاً ۱۳۷۵/۰۲/۱۵"
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 pr-12 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 pr-5 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
             <Calendar
-              className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[color:var(--md-sys-color-primary)]"
+              className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[color:var(--md-sys-color-primary)]"
               aria-hidden
             />
           </div>

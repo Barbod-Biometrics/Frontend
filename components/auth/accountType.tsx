@@ -119,7 +119,7 @@ export function AccountType({ onContinue }: AccountTypeProps) {
         })}
       </div>
 
-      <div className="mt-10 space-y-2 text-right">
+      <div className="mt-10 space-y-0.5 text-right">
         <label
           htmlFor="account-name"
           className="block text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"

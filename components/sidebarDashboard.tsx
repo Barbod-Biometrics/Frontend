@@ -2,7 +2,9 @@
 
 import { useMemo, useState, type ReactNode, type ReactElement } from "react";
 import clsx from "clsx";
-import { ChevronDown, ChevronLeft, ChevronRight, ScanFace, Fingerprint, FileText } from "lucide-react";
+import { Typography } from "./ui/Typography";
+import { Button } from "./ui/Button";
+import { ChevronDown, ScanFace, Fingerprint, FileText } from "lucide-react";
 
 type NavSubItem = {
   id: string;
@@ -71,38 +73,6 @@ const HomeIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-const RequestsIcon = ({ className }: IconProps) => (
-  <svg
-    viewBox="0 0 24 24"
-    className={clsx("h-5 w-5", className)}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-  >
-    <rect x="4" y="7" width="16" height="12" rx="3" />
-    <path d="M8 10.5H16" strokeLinecap="round" />
-    <path d="M8 14H12.5" strokeLinecap="round" />
-    <path
-      d="M9 5.5L10.8 4.5C11.5455 4.09091 12.4545 4.09091 13.2 4.5L15 5.5"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const CardsIcon = ({ className }: IconProps) => (
-  <svg
-    viewBox="0 0 24 24"
-    className={clsx("h-5 w-5", className)}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-  >
-    <rect x="4" y="6" width="15" height="12" rx="2.5" />
-    <path d="M7 10.5H17" strokeLinecap="round" />
-    <path d="M8.5 14.5H12" strokeLinecap="round" />
-  </svg>
-);
-
 const TransferIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
@@ -125,21 +95,6 @@ const TransferIcon = ({ className }: IconProps) => (
     />
     <path d="M10 8H17" strokeLinecap="round" />
     <path d="M7 16H14" strokeLinecap="round" />
-  </svg>
-);
-
-const InvoiceIcon = ({ className }: IconProps) => (
-  <svg
-    viewBox="0 0 24 24"
-    className={clsx("h-5 w-5", className)}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.6"
-  >
-    <rect x="6.5" y="4.5" width="11" height="15" rx="2" />
-    <path d="M9.5 9H14.5" strokeLinecap="round" />
-    <path d="M9.5 12H14.5" strokeLinecap="round" />
-    <path d="M9.5 15H12.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -213,14 +168,11 @@ export function SidebarDashboard({
             label: "اطلاعات کسب و کار",
             icon: <HomeIcon />,
           },
-          
-          
           {
             id: "transactions",
             label: "کیف پول",
             icon: <TransferIcon />,
           },
-          
         ],
       },
       {
@@ -230,15 +182,12 @@ export function SidebarDashboard({
           { id: "face", label: "احراز هویت چهره", icon: <ScanFace className="h-5 w-5" /> },
           { id: "liveness", label: "تشخیص زنده بودن", icon: <Fingerprint className="h-5 w-5" /> },
           { id: "ocr", label: "OCR مدارک", icon: <FileText className="h-5 w-5" /> },
-          
         ],
       },
       {
         id: "support",
         title: "ارتباط با پشتیبانی",
-        items: [
-          { id: "support", label: "پشتیبانی", icon: <SupportIcon /> },
-        ],
+        items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon /> }],
       },
     ],
     [],
@@ -259,13 +208,10 @@ export function SidebarDashboard({
       className={clsx(
         "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[70px]" : "w-[237px]",
+        isCollapsed ? "w-[70px]" : "w-[230px]",
       )}
     >
       <div className="relative flex flex-col h-full">
-        {/* Collapse button */}
-        
-
         {/* Header row */}
         <div
           className={clsx(
@@ -280,17 +226,19 @@ export function SidebarDashboard({
               isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
             )}
           >
-            <p className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]">
+            <Typography
+              variant="caption"
+              className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
+            >
               کسب و کار
-            </p>
+            </Typography>
           </div>
         </div>
 
         {/* Items – scrollable with rounded scrollbar */}
         <div
           className={clsx(
-            "flex flex-col flex-1 overflow-y-auto px-2 py-4",
-            // Rounded scrollbar styling (7px radius)
+            "flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2 py-4", // 👈 no horizontal scroll ever
             "[&::-webkit-scrollbar]:w-3",
             "[&::-webkit-scrollbar-track]:bg-transparent",
             "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
@@ -302,9 +250,12 @@ export function SidebarDashboard({
           {sections.map((section) => (
             <div key={section.id} className="mb-6 last:mb-0">
               {!isCollapsed && (
-                <p className="mb-2 px-2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]">
+                <Typography
+                  variant="caption"
+                  className="mb-2 px-2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                >
                   {section.title}
-                </p>
+                </Typography>
               )}
 
               <div className="space-y-1.5">
@@ -318,7 +269,8 @@ export function SidebarDashboard({
                   return (
                     <div key={item.id}>
                       {/* Main item row */}
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => {
                           if (hasChildren) {
                             toggleGroup(item.id);
@@ -341,7 +293,9 @@ export function SidebarDashboard({
                           <div
                             className={clsx(
                               "min-w-0 truncate text-right font-medium transition-all duration-150",
-                              isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                              isCollapsed
+                                ? "opacity-0 w-0 pointer-events-none"
+                                : "opacity-100 w-auto",
                             )}
                           >
                             {item.label}
@@ -356,22 +310,25 @@ export function SidebarDashboard({
                             )}
                           />
                         )}
-                      </button>
+                      </Button>
 
                       {/* Sub-items */}
                       {hasChildren && !isCollapsed && (
                         <div
                           className={clsx(
                             "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
-                            isGroupOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
+                            isGroupOpen
+                              ? "grid-rows-[1fr] opacity-100"
+                              : "grid-rows-[0fr] opacity-0",
                           )}
                         >
                           <div className="min-h-0 overflow-hidden pr-4">
                             {item.children!.map((child) => {
                               const isChildActive = activeItemId === child.id;
                               return (
-                                <button
+                                <Button
                                   key={child.id}
+                                  variant="ghost"
                                   onClick={() => setActiveItemId(child.id)}
                                   className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-xs"
                                 >
@@ -406,7 +363,7 @@ export function SidebarDashboard({
                                   >
                                     {child.label}
                                   </span>
-                                </button>
+                                </Button>
                               );
                             })}
                           </div>

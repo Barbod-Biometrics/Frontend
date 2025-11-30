@@ -97,7 +97,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
         "overflow-hidden",
       )}
     >
-      <div className="right-0 relative grid grid-cols-[64px_1fr] items-start gap-x-1 gap-y-4">
+      <div className="relative grid grid-cols-[64px_1fr] items-start gap-x-1 gap-y-4">
         {steps.map((step) => {
           const isOpen = openSteps.has(step.id);
           const isStepActive =
@@ -118,7 +118,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
                   )}
                   aria-label={step.title}
                 >
-                  {step.index}
+                  
                 </button>
               </div>
 
@@ -149,7 +149,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
                   const isActive = activeItemId === item.id;
                   return (
                     <Fragment key={item.id}>
-                      <div className="relative z-10 flex items-center justify-center">
+                      <div className="relative top-1 z-10 flex items-center justify-end pr-1">
                         <span
                           className={clsx(
                             "flex h-4 w-4 items-center justify-center rounded-full border bg-[color:var(--md-sys-color-surface-container-high)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-200",
@@ -173,7 +173,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
                         <button
                           type="button"
                           onClick={() => handleSelect(item.id)}
-                          className="block w-full pr-4 text-right"
+                          className="block w-full pr-3 text-right"
                         >
                           <Typography
                             variant="body-sm"

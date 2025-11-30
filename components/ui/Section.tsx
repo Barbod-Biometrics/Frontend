@@ -10,10 +10,10 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 export function Section({ className, spacing = 'lg', ...props }: SectionProps) {
     const spacings = {
         none: 'py-0',
-        sm: 'py-12 md:py-16',
-        md: 'py-20 md:py-24',
-        lg: 'py-32', // Standard section spacing
-        xl: 'py-32 lg:py-48', // Hero spacing
+        sm: 'py-6 md:py-10 lg:py-12',
+        md: 'py-10 md:py-12 lg:py-16',
+        lg: 'py-12 md:py-16 lg:py-20', // Aggressively reduced
+        xl: 'py-16 md:py-20 lg:py-32', // Hero spacing reduced
     };
 
     return (

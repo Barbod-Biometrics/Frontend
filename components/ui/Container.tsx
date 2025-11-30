@@ -11,8 +11,8 @@ export function Container({ className, size = 'xl', ...props }: ContainerProps) 
     const sizes = {
         sm: 'max-w-3xl',
         md: 'max-w-5xl',
-        lg: 'max-w-7xl',
-        xl: 'max-w-[1536px]', // Matches the navbar max-width
+        lg: 'max-w-6xl',
+        xl: 'max-w-7xl', // Reduced from 1536px to 1280px for more compact layout
         full: 'max-w-full',
     };
 

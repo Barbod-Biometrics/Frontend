@@ -95,6 +95,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
       dir="rtl"
       className={clsx(
         "font-vazirmatn",
+        "right-0",
         "w-full max-w-[320px] rounded-[28px] border bg-[color:var(--md-sys-color-surface)]",
         "border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-2)] px-6 py-8",
         "text-[color:var(--md-sys-color-on-surface)]",

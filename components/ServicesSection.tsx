@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -153,21 +154,21 @@ export function ServicesSection() {
   return (
     <Section dir={dir}>
       <Container>
-        <div className="text-center md:text-start mb-16" style={{ textAlign: dir === "rtl" ? "right" : "left" }}>
+        <div className="text-center md:text-start mb-12" style={{ textAlign: dir === "rtl" ? "right" : "left" }}>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <Typography variant="h2" className="mb-6">
+            <Typography variant="h2" className="mb-4">
               {copy.heading}
             </Typography>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.08 }}
           >
             <Typography variant="body-lg" className="max-w-3xl text-[color:var(--md-sys-color-on-surface-variant)]">
               {copy.sub}
@@ -175,25 +176,25 @@ export function ServicesSection() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:justify-center md:items-stretch gap-6 mb-16">
-          {services.map((service, idx) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:justify-center md:items-stretch gap-6 mb-12">
+          {services.map((service) => {
             const isActive = activeId === service.id;
             return (
               <button
                 key={service.id}
                 onClick={() => handleTabClick(service.id)}
-                className={`relative group min-w-[240px] flex-1 px-10 py-7 rounded-[var(--radius-xl)] text-lg font-medium transition-all duration-300 overflow-hidden text-left
+                className={`relative group min-w-[220px] flex-1 px-8 py-6 rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left
                   ${isActive
-                    ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.05] z-10"
+                    ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
                     : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
                   }`}
               >
                 <div className="flex items-center gap-4 relative z-10" dir={dir}>
                   <span
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-1)] transition-all duration-300"
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-1)] transition-all duration-300"
                     style={{
                       color: iconColor(service, isActive),
-                      transform: isActive ? "scale(1.1)" : "scale(1)",
+                      transform: isActive ? "scale(1.08)" : "scale(1)",
                     }}
                   >
                     {React.isValidElement(service.icon) ? React.cloneElement(service.icon as React.ReactElement<any>, { className: "w-7 h-7" }) : service.icon}
@@ -222,30 +223,30 @@ export function ServicesSection() {
           })}
         </div>
 
-        <Card className="relative rounded-[40px] shadow-[var(--elevation-3)] overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/20 animate-float-delayed">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[600px]">
+        <Card className="relative rounded-[32px] shadow-[var(--elevation-2)] overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/20 animate-float-delayed">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[480px]">
             {/* Text content section - now first */}
-            <div className="flex flex-col justify-center p-10 lg:p-24 order-2 lg:order-1">
+            <div className="flex flex-col justify-center p-8 lg:p-16 order-2 lg:order-1">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentService.id}
-                  initial={{ opacity: 0, x: dir === "rtl" ? -30 : 30 }}
+                  initial={{ opacity: 0, x: dir === "rtl" ? -28 : 28 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: dir === "rtl" ? 30 : -30 }}
-                  transition={{ duration: 0.4 }}
-                  className="flex flex-col gap-8 items-start w-full"
+                  exit={{ opacity: 0, x: dir === "rtl" ? 28 : -28 }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
+                  className="flex flex-col gap-6 items-start w-full"
                 >
                   <Typography variant="h3" className="leading-tight">
                     {currentService.title}
                   </Typography>
 
-                  <Typography variant="body-lg" className="min-h-[100px] font-light text-[color:var(--md-sys-color-on-surface-variant)]">
+                  <Typography variant="body-lg" className="min-h-[84px] font-light text-[color:var(--md-sys-color-on-surface-variant)]">
                     {currentService.description}
                   </Typography>
 
                   <Button
                     variant="secondary"
-                    className="px-12 py-5 rounded-full text-base font-medium group h-14"
+                    className="px-10 py-4 rounded-full text-base font-medium group h-12"
                     iconTrailing={
                       <span
                         className={`transition-transform duration-200 ${dir === "rtl" ? "group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
@@ -268,13 +269,13 @@ export function ServicesSection() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="h-80 lg:h-full w-full relative overflow-hidden order-1 lg:order-2"
+                className="h-64 lg:h-full w-full relative overflow-hidden order-1 lg:order-2"
               >
                 <div className="absolute inset-0" style={{ background: currentService.imageGradient }} />
                 <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
                 {/* Minimal, professional service animations */}
-                <div className="absolute inset-0 flex items-center justify-center p-16">
+                <div className="absolute inset-0 flex items-center justify-center p-12 lg:p-16">
                   {/* Face Verification - Simple Biometric Scanner */}
                   {currentService.id === "face" && (
                     <div className="relative w-full max-w-md aspect-square">
@@ -291,11 +292,11 @@ export function ServicesSection() {
                           strokeWidth="2"
                           initial={{ pathLength: 0 }}
                           animate={{ pathLength: 1 }}
-                          transition={{ duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
+                          transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
                         />
 
                         {/* Corner brackets */}
-                        {[[75, 50], [225, 50], [75, 250], [225, 250]].map(([x, y], i) => (
+                        {[ [75, 50], [225, 50], [75, 250], [225, 250] ].map(([x, y], i) => (
                           <motion.g key={i}>
                             <line x1={x} y1={y} x2={x + (i % 2 === 0 ? 20 : -20)} y2={y} stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeLinecap="round" />
                             <line x1={x} y1={y} x2={x} y2={y + (i < 2 ? 20 : -20)} stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeLinecap="round" />
@@ -311,7 +312,7 @@ export function ServicesSection() {
                           fill="rgba(255,255,255,0.7)"
                           style={{ filter: "blur(1px)" }}
                           animate={{ y: [50, 250, 50] }}
-                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                         />
                       </svg>
                     </div>
@@ -329,18 +330,18 @@ export function ServicesSection() {
                             cy="100"
                             r="40"
                             fill="none"
-                            stroke="rgba(255,255,255,0.4)"
+                            stroke="rgba(255,255,255,0.35)"
                             strokeWidth="2"
                             initial={{ r: 40, opacity: 0 }}
                             animate={{
                               r: [40, 80],
-                              opacity: [0.6, 0]
+                              opacity: [0.55, 0],
                             }}
                             transition={{
-                              duration: 2,
+                              duration: 2.2,
                               repeat: Infinity,
-                              delay: i * 0.7,
-                              ease: "easeOut"
+                              delay: i * 0.65,
+                              ease: "easeOut",
                             }}
                           />
                         ))}
@@ -353,12 +354,12 @@ export function ServicesSection() {
                           fill="rgba(255,255,255,0.9)"
                           animate={{
                             scale: [1, 1.1, 1],
-                            opacity: [0.9, 1, 0.9]
+                            opacity: [0.9, 1, 0.9],
                           }}
                           transition={{
-                            duration: 1.5,
+                            duration: 1.6,
                             repeat: Infinity,
-                            ease: "easeInOut"
+                            ease: "easeInOut",
                           }}
                           style={{ transformOrigin: "100px 100px" }}
                         />
@@ -395,7 +396,7 @@ export function ServicesSection() {
                             strokeLinecap="round"
                             initial={{ pathLength: 0 }}
                             animate={{ pathLength: 1 }}
-                            transition={{ duration: 0.6, delay: i * 0.08 }}
+                            transition={{ duration: 0.55, delay: i * 0.06 }}
                           />
                         ))}
 
@@ -409,7 +410,7 @@ export function ServicesSection() {
                           strokeWidth="2"
                           style={{ filter: "blur(1px)" }}
                           animate={{ y1: [30, 230], y2: [30, 230] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
                         />
                       </svg>
                     </div>
@@ -432,7 +433,7 @@ export function ServicesSection() {
                               rx="6"
                               fill="rgba(255,255,255,0.6)"
                               animate={{
-                                scaleY: [1, 1.4 + Math.sin(i * 0.4) * 0.3, 1],
+                                scaleY: [1, 1.35 + Math.sin(i * 0.4) * 0.25, 1],
                               }}
                               transition={{
                                 duration: 1.2,

@@ -7,7 +7,6 @@ import { useLanguage } from "../lib/useLanguage";
 import { Language } from "../types";
 import { Section } from "./ui/Section";
 import { Container } from "./ui/Container";
-import { Typography } from "./ui/Typography";
 import { Card } from "./ui/Card";
 
 interface Stat {
@@ -25,67 +24,56 @@ const statsData: Record<Language, Stat[]> = {
     { value: "50+", label: "Countries", description: "Global compliance", icon: Globe },
   ],
   [Language.FA]: [
-    { value: "۹۹٫۹۹٪", label: "دقت", description: "دقت پیشرو در صنعت", icon: ShieldCheck },
-    { value: "<۱۰۰ms", label: "تأخیر", description: "احراز هویت آنی", icon: Zap },
-    { value: "۱۰M+", label: "هویت", description: "معماری مقیاس‌پذیر", icon: Users },
-    { value: "۵۰+", label: "کشور", description: "پشتیبانی جهانی", icon: Globe },
+    { value: "99.99%", label: "دقت", description: "بالاترین دقت در صنعت", icon: ShieldCheck },
+    { value: "<100ms", label: "تاخیر", description: "تایید آنی و بلادرنگ", icon: Zap },
+    { value: "10M+", label: "شناسه", description: "زیرساخت مقیاس‌پذیر", icon: Users },
+    { value: "50+", label: "کشور", description: "انطباق جهانی", icon: Globe },
   ],
 };
 
 export function StatsSection() {
   const { language, dir } = useLanguage();
   const stats = statsData[language];
+  const isFa = language === Language.FA;
 
   return (
-    <Section spacing="xl" dir={dir}>
-      <Container>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <Section spacing="md" dir={dir}>
+      <Container className="space-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  delay: index * 0.08,
-                  duration: 0.4,
-                  ease: [0.4, 0, 0.2, 1]
-                }}
-              >
-                <div className="group relative">
-                  {/* Clean elevated card */}
-                  <div className="bg-[color:var(--md-sys-color-surface-container-low)] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                    {/* Subtle state layer */}
-                    <div className="absolute inset-0 bg-[color:var(--md-sys-color-primary)] opacity-0 group-hover:opacity-[0.04] rounded-2xl transition-opacity duration-300" />
-
-                    <div className="relative space-y-3">
-                      {/* Icon */}
-                      <div className="w-10 h-10 rounded-lg bg-[color:var(--md-sys-color-primary-container)] flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-[color:var(--md-sys-color-on-primary-container)]" />
-                      </div>
-
-                      {/* Value - Large but not excessive */}
-                      <div dir="ltr">
-                        <span className="text-4xl font-bold text-[color:var(--md-sys-color-primary)] block leading-none">
-                          {stat.value}
-                        </span>
-                      </div>
-
-                      {/* Label */}
-                      <h3 className="text-lg font-semibold text-[color:var(--md-sys-color-on-surface)]">
-                        {stat.label}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed">
-                        {stat.description}
-                      </p>
+              <Card key={stat.label} variant="filled" className="h-full group cursor-pointer">
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05, duration: 0.4, ease: "easeOut" }}
+                  whileHover={{
+                    transition: { duration: 0.3, ease: "easeOut" }
+                  }}
+                  className="flex flex-col gap-4 p-7 h-full"
+                >
+                  <div className="flex items-center gap-3" dir={dir}>
+                    <motion.span
+                      className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-primary)] transition-all duration-300 group-hover:bg-[color:var(--md-sys-color-primary)] group-hover:text-[color:var(--md-sys-color-on-primary)] group-hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6, ease: "easeInOut" }}
+                    >
+                      <Icon className="h-8 w-8" />
+                    </motion.span>
+                    <div className="text-base font-semibold uppercase tracking-[0.08em] text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-[color:var(--md-sys-color-on-surface)]">
+                      {stat.label}
                     </div>
                   </div>
-                </div>
-              </motion.div>
+
+                  <div className={`text-5xl font-bold text-[color:var(--md-sys-color-on-surface)] transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-[color:var(--md-sys-color-primary)] group-hover:to-[color:var(--md-sys-color-tertiary)] group-hover:bg-clip-text group-hover:text-transparent ${isFa ? 'text-right' : ''}`}>
+                    {stat.value}
+                  </div>
+
+                  <p className={`text-base text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-[color:var(--md-sys-color-on-surface)] ${isFa ? 'text-right' : ''}`}>{stat.description}</p>
+                </motion.div>
+              </Card>
             );
           })}
         </div>

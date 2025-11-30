@@ -23,9 +23,9 @@ export function Typography({
         (variant.startsWith('h') ? (variant as React.ElementType) : 'p');
 
     const styles = {
-        h1: 'text-display-large text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05]',
-        h2: 'text-5xl md:text-6xl font-bold tracking-tight',
-        h3: 'text-4xl md:text-5xl font-bold tracking-tight',
+        h1: 'text-display-large text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]',
+        h2: 'text-4xl md:text-5xl font-bold tracking-tight',
+        h3: 'text-3xl md:text-4xl font-bold tracking-tight',
         h4: 'text-2xl md:text-3xl font-bold tracking-tight',
         h5: 'text-xl md:text-2xl font-semibold tracking-tight',
         h6: 'text-lg md:text-xl font-semibold tracking-tight',

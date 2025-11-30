@@ -70,6 +70,11 @@ export function BiometricSignature() {
                         transition={{
                             duration: 1.4,
                             ease: [0.16, 1, 0.3, 1],
+                            backgroundPosition: {
+                                duration: 8,
+                                repeat: Infinity,
+                                ease: "linear",
+                            },
                         }}
                         style={{
                             background: "linear-gradient(135deg, var(--md-sys-color-on-surface) 0%, var(--md-sys-color-primary) 50%, var(--md-sys-color-on-surface-variant) 100%)",
@@ -81,13 +86,6 @@ export function BiometricSignature() {
                         }}
                         animate={{
                             backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                        }}
-                        transition={{
-                            backgroundPosition: {
-                                duration: 8,
-                                repeat: Infinity,
-                                ease: "linear",
-                            },
                         }}
                         whileHover={{
                             opacity: 0.22,

@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/* 
+  Global Scaling Strategy 
+  - Default (Mobile/Tablet): 16px (100%)
+  - Laptop (1024px - 1536px): 12px (75%) - Aggressive reduction for "too big" feedback
+  - Desktop (1537px+): 14px (87.5%) - Compact desktop view
+*/
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 1024px) and (max-width: 1536px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1537px) {
+  html {
+    font-size: 14px;
+  }
+}
+
 :root {
   /* Material 3 Design Tokens - Dark Theme (Default - Anti-Gravity Black) */
   --md-sys-color-primary: #3b82f6;
@@ -30,34 +52,27 @@
   --md-sys-color-on-error-container: #ffdad6;
 
   /* Pure Black Backgrounds */
-  --md-sys-color-background: #000000;
-  /* Pure Black */
-  --md-sys-color-on-background: #ffffff;
-  /* Pure White */
+  --md-sys-color-background: #0c0f16;
+  /* Soft charcoal */
+  --md-sys-color-on-background: #f6f7fb;
+  /* Near-white */
 
-  --md-sys-color-surface: #000000;
-  /* Pure Black */
-  --md-sys-color-on-surface: #ffffff;
-  --md-sys-color-surface-variant: #171717;
-  /* Neutral 900 */
-  --md-sys-color-on-surface-variant: #a3a3a3;
-  /* Neutral 400 */
+  --md-sys-color-surface: #10141d;
+  --md-sys-color-on-surface: #f6f7fb;
+  --md-sys-color-surface-variant: #161d28;
+  /* Neutral navy */
+  --md-sys-color-on-surface-variant: #c8ceda;
+  /* Muted cool gray */
 
   /* Surface Containers for depth */
-  --md-sys-color-surface-container-lowest: #000000;
-  --md-sys-color-surface-container-low: #0a0a0a;
-  /* Neutral 950 */
-  --md-sys-color-surface-container: #171717;
-  /* Neutral 900 */
-  --md-sys-color-surface-container-high: #262626;
-  /* Neutral 800 */
-  --md-sys-color-surface-container-highest: #404040;
-  /* Neutral 700 */
+  --md-sys-color-surface-container-lowest: #0b0e15;
+  --md-sys-color-surface-container-low: #101621;
+  --md-sys-color-surface-container: #151c28;
+  --md-sys-color-surface-container-high: #1c2533;
+  --md-sys-color-surface-container-highest: #253242;
 
-  --md-sys-color-outline: #525252;
-  /* Neutral 600 */
-  --md-sys-color-outline-variant: #262626;
-  /* Neutral 800 */
+  --md-sys-color-outline: #354152;
+  --md-sys-color-outline-variant: #1e2733;
 
   /* Legacy mappings */
   --brand-azure: var(--md-sys-color-primary);

@@ -116,17 +116,15 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
         <div className="mt-8 flex items-center justify-between gap-4">
           <Button
             type="button"
-            size="lg"
-            variant="secondary"
+            variant="secondary" 
             onClick={onBack}
-            className="min-w-[140px] bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:bg-[color:var(--md-sys-color-surface-container-high)]"
+            className="min-w-[140px]"
           >
             مرحله قبل
           </Button>
           <Button
             type="submit"
-            size="lg"
-            className="min-w-[140px] shadow-[0_12px_30px_rgba(37,99,235,0.22)]"
+            className="min-w-[140px]"
           >
             ثبت و ادامه
           </Button>

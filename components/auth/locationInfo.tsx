@@ -64,17 +64,15 @@ export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
         <div className="flex flex-row-reverse items-center justify-between gap-4">
           <Button
             type="submit"
-            size="lg"
-            className="min-w-[140px] px-10 shadow-[0_12px_30px_rgba(37,99,235,0.22)]"
+            className="min-w-[140px]"
           >
             ادامه
           </Button>
           <Button
             type="button"
-            size="lg"
             variant="secondary"
             onClick={onBack}
-            className="min-w-[140px] bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:bg-[color:var(--md-sys-color-surface-container-high)]"
+            className="min-w-[140px]"
           >
             مرحله قبل
           </Button>

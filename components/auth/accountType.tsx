@@ -137,7 +137,7 @@ export function AccountType({ onContinue }: AccountTypeProps) {
       </div>
 
       <div className="mt-8 flex justify-end">
-        <Button onClick={handleContinue} className="px-10">
+        <Button onClick={handleContinue} className="min-w-[140px]">
           ادامه
         </Button>
       </div>

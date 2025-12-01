@@ -5,6 +5,7 @@ import { AccountType } from "../../components/auth/accountType";
 import { PersonalInfo } from "../../components/auth/personalInfo";
 import { BusinessInfo } from "../../components/auth/businessInfo";
 import { LocationInfo } from "../../components/auth/locationInfo";
+import { ServiceIntro } from "../../components/auth/serviceIntro";
 
 const DEFAULT_ITEM_ID = "account-type";
 
@@ -21,6 +22,18 @@ export default function Page() {
         return <BusinessInfo />;
       case "location":
         return <LocationInfo />;
+      case "services-intro":
+        return (
+          <ServiceIntro
+            onBack={() => setActiveItemId("docs-complete")}
+            onContinue={(serviceId) => {
+              if (serviceId === "face-recognition") return setActiveItemId("face");
+              if (serviceId === "liveness-detection") return setActiveItemId("liveness");
+              if (serviceId === "smart-ocr") return setActiveItemId("smart-doc");
+              return setActiveItemId("face");
+            }}
+          />
+        );
       default:
         return (
           <div

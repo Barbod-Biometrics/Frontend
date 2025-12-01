@@ -25,15 +25,14 @@ const steps: Step[] = [
     items: [
       { id: "account-type", label: "نوع حساب", highlight: true },
       { id: "personal-info", label: "اطلاعات فردی" },
-      { id: "business-info", label: "اطلاعات کسب‌وکار" },
+      { id: "business-info", label: "اطلاعات کسب‌ و کار" },
       { id: "location", label: "اطلاعات مکانی" },
-      { id: "sign-owners", label: "امضاداران" },
     ],
   },
   {
     id: "documents",
     index: 2,
-    title: "مدارک موردنیاز",
+    title: "مدارک مورد نیاز",
     items: [{ id: "docs-complete", label: "فهرست مدارک", highlight: true }],
   },
   {
@@ -41,10 +40,10 @@ const steps: Step[] = [
     index: 3,
     title: "درخواست سرویس‌ها",
     items: [
-      { id: "services-intro", label: "انتخاب سرویس موردنیاز", highlight: true },
+      { id: "services-intro", label: "معرفی سرویس‌ ها", highlight: true },
       { id: "face", label: "تشخیص چهره" },
-      { id: "liveness", label: "سنجش زنده بودن" },
-      { id: "smart-doc", label: "مدارک هوشمند" },
+      { id: "liveness", label: "تشخیص زنده بودن چهره" },
+      { id: "smart-doc", label: "OCR مدارک" },
     ],
   },
   {
@@ -90,7 +89,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
       dir="rtl"
       className={clsx(
         "font-vazirmatn",
-        "right-0",
+        "pr-0",
         "w-full max-w-[320px] rounded-[28px] border bg-[color:var(--md-sys-color-surface)]",
         "border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-2)] px-6 py-8",
         "text-[color:var(--md-sys-color-on-surface)]",

@@ -92,16 +92,13 @@ export function ServiceIntro({ onBack, onContinue }: ServiceIntroProps) {
               <div className="absolute inset-x-6 -top-10 h-20 rounded-full bg-[radial-gradient(circle_at_50%_100%,rgba(37,99,235,0.12),transparent)] blur-xl" />
 
               <div className="relative flex items-start gap-3">
-                <span className="flex items-center gap-2">
-                  {service.badge && (
-                    <span className="rounded-xl border border-[color:var(--md-sys-color-primary)]/60 bg-[color:var(--md-sys-color-primary)]/10 px-2 py-1 text-[10px] font-semibold text-[color:var(--md-sys-color-primary)] shadow-[0_6px_14px_rgba(37,99,235,0.12)]">
-                      {service.badge}
-                    </span>
-                  )}
+                {service.id === "smart-ocr" ? (
+                  <OcrBadge />
+                ) : (
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--md-sys-color-primary)]/10 text-[color:var(--md-sys-color-primary)] shadow-[0_8px_20px_rgba(37,99,235,0.16)]">
                     {service.icon}
                   </span>
-                </span>
+                )}
 
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
@@ -194,5 +191,32 @@ function OcrIcon() {
       <path d="M13.5 9.5H16c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5h-1" strokeLinecap="round" />
       <path d="M9 17h6" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function OcrBadge() {
+  return (
+    <button
+      type="button"
+      aria-label="OCR badge"
+      className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] shadow-[0_8px_20px_rgba(37,99,235,0.16)]"
+    >
+      <svg viewBox="0 0 24 32" className="h-8 w-7" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="2.5" y="2.5" width="19" height="27" rx="3" />
+        <path d="M7 9.5h10M7 13h10M7" strokeLinecap="round" />
+        <text
+          x="12.5"
+          y="24.2"
+          textAnchor="middle"
+          fontSize="9"
+          fontWeight="700"
+          fill="currentColor"
+          stroke="none"
+          fontFamily="Arial, sans-serif"
+        >
+          OCR
+        </text>
+      </svg>
+    </button>
   );
 }

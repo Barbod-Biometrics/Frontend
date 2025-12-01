@@ -208,7 +208,7 @@ function OcrBadge() {
           x="12.5"
           y="24.2"
           textAnchor="middle"
-          fontSize="9"
+          fontSize="8"
           fontWeight="700"
           fill="currentColor"
           stroke="none"

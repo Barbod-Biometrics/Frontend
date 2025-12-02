@@ -142,13 +142,13 @@ export function ServiceIntro({ onBack, onContinue }: ServiceIntroProps) {
       <div className="relative mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Button
           variant="secondary"
-          className="h-12 min-w-[140px] rounded-2xl bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)]"
+          className="min-w-[140px]"
           onClick={onBack}
         >
           مرحله قبل
         </Button>
         <Button
-          className="h-12 min-w-[140px] rounded-2xl bg-[color:var(--md-sys-color-primary)] text-[color:var(--md-sys-color-on-primary)] shadow-[0_10px_28px_rgba(37,99,235,0.35)] hover:shadow-[0_12px_32px_rgba(37,99,235,0.4)]"
+          className="min-w-[140px]"
           onClick={handleContinue}
         >
           ادامه

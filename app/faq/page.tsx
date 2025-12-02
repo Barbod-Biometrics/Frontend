@@ -131,13 +131,13 @@ export default function FAQPage() {
   return (
     <>
     <Navbar/>
-    <Section spacing="md" className="min-h-screen" dir={dir}>
-      <Container size="md" className="flex flex-col gap-8">
+    <Section spacing="lg" className="min-h-screen" dir={dir}>
+      <Container size="lg" className="flex flex-col gap-8">
         {/* Header */}
-        <Typography variant="h2" className="font-bold text-center text-[color:var(--brand-azure)]">
+        <Typography variant="h1" className="font-bold text-center text-[color:var(--brand-azure)]">
           {isFA ? "سوالات متداول" : "Frequently Asked Questions"}
         </Typography>
-        <Typography variant="body-md" className="text-center text-[color:var(--text-secondary)]">
+        <Typography variant="body-lg" className="text-center text-[color:var(--text-secondary)]">
           {isFA
            ? "در این بخش پاسخ دقیق و کامل به مهم‌ترین سوالات شما درباره سرویس‌های ما ارائه شده است."
             : "Find detailed and comprehensive answers to the most important questions about our services."}
@@ -153,7 +153,7 @@ export default function FAQPage() {
               onClick={() => toggleFAQ(i)}
             >
               <div className="flex justify-between items-center">
-                <Typography variant="body-md" className="font-semibold">
+                <Typography variant="body-lg" className="font-semibold">
                   {isFA ? item.questionFA : item.questionEN}
                 </Typography>
                 {openIndex === i ? (
@@ -163,7 +163,7 @@ export default function FAQPage() {
                 )}
               </div>
               {openIndex === i && (
-                <Typography variant="body-md" className="mt-2 text-[color:var(--text-secondary)]">
+                <Typography variant="body-lg" className="mt-2 text-[color:var(--text-secondary)]">
                   {isFA ? item.answerFA : item.answerEN}
                 </Typography>
               )}
@@ -173,15 +173,15 @@ export default function FAQPage() {
 
         {/* Contact CTA */}
         <Card variant="filled" className="mt-12 p-6 text-center ">
-        <Typography variant="h6" className="mb-3">
+        <Typography variant="h5" className="mb-3">
         {isFA ? "جواب سوال خود را پیدا نکردید؟" : "Can't find the answer to your question?"}
         </Typography>
-        <Typography variant="body-md" className="mb-4">
+        <Typography variant="body-lg" className="mb-4">
         {isFA
         ? "می‌توانید با تیم پشتیبانی ما تماس بگیرید و سوال خود را مطرح کنید."
         : "You can contact our support team for assistance."}
         </Typography>
-        <Button variant="primary" size="md" onClick={() => (window.location.href = '/contact')}>
+        <Button variant="primary" size="lg" onClick={() => (window.location.href = '/contact-us')}>
         {isFA ? "تماس با ما" : "Contact Us"}
         </Button>
         </Card>

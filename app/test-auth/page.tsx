@@ -9,6 +9,7 @@ import { ServiceIntro } from "../../components/auth/serviceIntro";
 import { FaceDetection } from "../../components/auth/faceDetection";
 import { LivenessDetection } from "../../components/auth/livenessDetection";
 import { OcrDetection } from "../../components/auth/OCR";
+import { InfoChecking } from "../../components/auth/infoChecking";
 
 const DEFAULT_ITEM_ID = "account-type";
 
@@ -79,6 +80,21 @@ export default function Page() {
             onBack={() => setActiveItemId("liveness")}
             onContinue={() => setActiveItemId("review-info")}
             onSkip={() => setActiveItemId("review-info")}
+          />
+        );
+      case "review-info":
+        return (
+          <InfoChecking
+            onBack={() => setActiveItemId("smart-doc")}
+            onSubmit={() => setActiveItemId("review-info")}
+            completedSections={{ personal: false, business: false, location: false, services: false }}
+            servicesRequestedCount={0}
+            onEditSection={(section) => {
+              if (section === "personal") return setActiveItemId("personal-info");
+              if (section === "business") return setActiveItemId("business-info");
+              if (section === "location") return setActiveItemId("location");
+              if (section === "services") return setActiveItemId("services-intro");
+            }}
           />
         );
       default:

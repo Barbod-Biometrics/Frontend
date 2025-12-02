@@ -67,6 +67,7 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
             type="text"
             value={form.brandName}
             onChange={(event) => handleChange("brandName", event.target.value)}
+            placeholder="مثلا: باربد"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
         </div>

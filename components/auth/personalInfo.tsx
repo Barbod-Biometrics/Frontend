@@ -137,6 +137,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
               type="text"
               value={form.firstName}
               onChange={(e) => handleChange("firstName", e.target.value)}
+              placeholder="امین"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           </div>
@@ -149,6 +150,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
               type="text"
               value={form.lastName}
               onChange={(e) => handleChange("lastName", e.target.value)}
+              placeholder="خلج"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           </div>
@@ -163,6 +165,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
             type="text"
             value={form.nationalId}
             onChange={(e) => handleChange("nationalId", e.target.value)}
+            placeholder="0982342316"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
         </div>
@@ -200,7 +203,8 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
             type="tel"
             value={form.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            placeholder="09904644661"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
         </div>
       </div>

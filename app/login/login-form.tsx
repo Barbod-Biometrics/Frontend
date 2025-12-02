@@ -3,40 +3,15 @@
 import { useState } from "react";
 import { Logo } from "../../components/Logo";
 import { Button } from "../../components/ui/Button";
+import { Container } from "../../components/ui/Container";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
-
-interface TextInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  dir: "rtl" | "ltr";
-  isFa: boolean;
-}
-
-function TextInput({ value, onChange, dir, isFa }: TextInputProps) {
-  return (
-    <div
-      className="w-full flex items-center rounded-md border-2 border-blue-500 bg-white p-[13px] transition-all duration-200 
-      focus-within:border-[#007fff] focus-within:shadow-[0_0_0_3px_rgba(0,127,255,0.1)] 
-      focus-within:ring-2 focus-within:ring-[#007fff]/20"
-    >
-      <input
-        type="tel"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        dir={dir}
-        className={`w-full bg-transparent text-[18px] outline-none ${
-          isFa ? "font-vazirmatn" : ""
-        }`}
-      />
-    </div>
-  );
-}
 
 interface LabeledInputProps {
   value: string;
   onChange: (value: string) => void;
   label: string;
+  placeholder: string;
   dir: "rtl" | "ltr";
   isFa: boolean;
 }
@@ -45,18 +20,29 @@ function LabeledInput({
   value,
   onChange,
   label,
+  placeholder,
   dir,
   isFa,
 }: LabeledInputProps) {
   return (
-    <div className="flex w-full flex-col gap-3 items-end">
-      <p
-        dir={dir}
-        className={`text-[20px] text-gray-700 ${isFa ? "font-vazirmatn" : ""}`}
+    <div className="space-y-2 w-full">
+      <label
+        className={`text-sm font-medium text-[color:var(--text-primary)] ${
+          isFa ? "font-vazirmatn" : ""
+        }`}
       >
         {label}
-      </p>
-      <TextInput value={value} onChange={onChange} dir={dir} isFa={isFa} />
+      </label>
+      <input
+        type="tel"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        dir={dir}
+        className={`h-11 w-full rounded-xl border border-[color:var(--border-subtle)] bg-[color:var(--surface-elevated)] px-3 text-sm text-[color:var(--text-primary)] placeholder:text-[color:var(--text-secondary)] focus:border-[color:var(--brand-azure)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]/50 ${
+          isFa ? "font-vazirmatn" : ""
+        }`}
+      />
     </div>
   );
 }
@@ -106,22 +92,26 @@ function LoginForm() {
   const copy = loginCopy[language];
 
   return (
-    <div
-      className="absolute top-1/2 left-1/2 w-full max-w-[480px] -translate-x-1/2 -translate-y-1/2
-      bg-white px-12 py-[100px] flex flex-col items-center gap-6 shadow-lg"
+    <Container
+      size="full"
+      className="absolute top-1/2 right-[5%] w-full max-w-[480px] -translate-y-1/2 rounded-3xl border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)] px-12 py-[100px] flex flex-col items-center gap-6 shadow-[var(--shadow-lg)]"
       dir={dir}
     >
       <Logo />
 
       <p
-        className={`text-2xl font-semibold text-gray-800 ${
+        className={`text-2xl font-semibold text-[color:var(--text-primary)] ${
           isFa ? "font-vazirmatn" : ""
         }`}
       >
         {copy.brandName}
       </p>
 
-      <p className={`text-3xl font-bold ${isFa ? "font-vazirmatn" : ""}`}>
+      <p
+        className={`text-3xl font-bold text-[color:var(--text-primary)] ${
+          isFa ? "font-vazirmatn" : ""
+        }`}
+      >
         {copy.title}
       </p>
 
@@ -129,15 +119,14 @@ function LoginForm() {
         value={phone}
         onChange={setPhone}
         label={copy.phoneLabel}
+        placeholder="09123456789"
         dir={dir}
         isFa={isFa}
       />
 
       <SubmitButton label={copy.submitButton} isFa={isFa} />
-    </div>
+    </Container>
   );
 }
 
-export default function LoginPage() {
-  return <LoginForm />;
-}
+export default LoginForm;

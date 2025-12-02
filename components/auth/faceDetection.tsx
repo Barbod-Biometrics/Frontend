@@ -88,7 +88,7 @@ export function FaceDetection({ onBack, onContinue, onSkip }: FaceDetectionProps
             value={rawIps}
             onChange={(event) => setRawIps(event.target.value)}
             placeholder={"مثال:\n192.168.1.12\n91.98.22.4"}
-            className="h-52 w-full resize-none rounded-[18px] border border-[color:var(--md-sys-color-outline-variant)] bg-[#f0f0f0] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            className="h-52 w-full resize-none rounded-[18px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
 
           <Typography variant="body-sm" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-6">

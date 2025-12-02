@@ -75,7 +75,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
   return (
     <section
       dir="rtl"
-      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
+      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
@@ -89,7 +89,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
         </Typography>
       </div>
 
-      <div className="mt-6 space-y-3 rounded-3xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container)] px-5 py-5 shadow-[var(--elevation-1)]">
+      <div className="mt-6 space-y-3 rounded-3xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface-container)] px-5 py-5 shadow-[var(--elevation-1)]">
         <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface)]">
           آیا صاحب کسب و کار هستید؟
         </Typography>
@@ -133,11 +133,11 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
               نام
             </label>
             <input
-              dir="ltr"
+              dir="rtl"
               type="text"
               value={form.firstName}
               onChange={(e) => handleChange("firstName", e.target.value)}
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           </div>
 
@@ -149,7 +149,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
               type="text"
               value={form.lastName}
               onChange={(e) => handleChange("lastName", e.target.value)}
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           </div>
         </div>
@@ -163,7 +163,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
             type="text"
             value={form.nationalId}
             onChange={(e) => handleChange("nationalId", e.target.value)}
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
         </div>
 
@@ -179,7 +179,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
               onChange={(e) => handleChange("birthDate", e.target.value)}
               inputMode="numeric"
               placeholder={BIRTHDATE_FORMAT}
-              className="pl-14 pt-4 w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+              className="pl-14 pt-4 w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
             <button
               type="button"
@@ -200,8 +200,8 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
             type="tel"
             value={form.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-          />
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            />
         </div>
       </div>
 
@@ -222,7 +222,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
           onClick={() => setIsDateDialogOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-[24px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] p-5 shadow-[var(--elevation-2)]"
+            className="w-full max-w-md rounded-[24px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] p-5 shadow-[var(--elevation-2)]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">

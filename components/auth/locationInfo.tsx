@@ -28,7 +28,7 @@ export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
   return (
     <section
       dir="rtl"
-      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
+      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
@@ -54,7 +54,7 @@ export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
             value={form.postalCode}
             onChange={(event) => handleChange(event.target.value)}
             placeholder="0133456789"
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
           <Typography variant="caption" className="text-[color:var(--md-sys-color-on-surface-variant)]">
             بدون فاصله وارد کنید؛ برای ارسال بسته‌ها و تایید آدرس استفاده می‌شود.

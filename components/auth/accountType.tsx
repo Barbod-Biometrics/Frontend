@@ -34,9 +34,10 @@ const accountTypeOptions: AccountTypeOption[] = [
 
 interface AccountTypeProps {
   onContinue?: (selectedType: AccountKind, accountName: string) => void;
+  onBack?: () => void;
 }
 
-export function AccountType({ onContinue }: AccountTypeProps) {
+export function AccountType({ onContinue, onBack }: AccountTypeProps) {
   const [selectedType, setSelectedType] = useState<AccountKind>("business");
   const [accountName, setAccountName] = useState("");
 
@@ -47,7 +48,7 @@ export function AccountType({ onContinue }: AccountTypeProps) {
   return (
     <section
       dir="rtl"
-      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
+      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
@@ -73,7 +74,7 @@ export function AccountType({ onContinue }: AccountTypeProps) {
                 "group flex h-full flex-col items-start gap-3 rounded-3xl border bg-[color:var(--md-sys-color-surface-container)] p-5 text-right text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] transition-all duration-200",
                 isSelected
                   ? "border-[color:var(--md-sys-color-primary)] shadow-[0_12px_30px_rgba(37,99,235,0.22)]"
-                  : "border-[color:var(--md-sys-color-outline-variant)] hover:-translate-y-1 hover:shadow-[var(--elevation-2)]",
+                  : "border-[color:var(--md-sys-color-outline)] hover:-translate-y-1 hover:shadow-[var(--elevation-2)]",
               )}
               aria-pressed={isSelected}
             >
@@ -91,7 +92,7 @@ export function AccountType({ onContinue }: AccountTypeProps) {
                     "h-5 w-5 rounded-full border-2 transition-colors",
                     isSelected
                       ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]"
-                      : "border-[color:var(--md-sys-color-outline-variant)] bg-transparent",
+                      : "border-[color:var(--md-sys-color-outline)] bg-transparent",
                   )}
                   aria-hidden
                 />
@@ -132,12 +133,24 @@ export function AccountType({ onContinue }: AccountTypeProps) {
           value={accountName}
           onChange={(event) => setAccountName(event.target.value)}
           placeholder="مثلاً حساب شخصی"
-          className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+          className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
         />
       </div>
 
-      <div className="mt-8 flex justify-end">
-        <Button onClick={handleContinue} className="min-w-[140px]">
+      <div className="mt-8 flex items-center justify-between gap-4">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onBack}
+          className="min-w-[140px]"
+        >
+          مرحله قبل
+        </Button>
+        <Button
+          type="button"
+          onClick={handleContinue}
+          className="min-w-[140px]"
+        >
           ادامه
         </Button>
       </div>

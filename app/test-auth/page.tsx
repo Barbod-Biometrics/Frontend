@@ -7,6 +7,8 @@ import { BusinessInfo } from "../../components/auth/businessInfo";
 import { LocationInfo } from "../../components/auth/locationInfo";
 import { ServiceIntro } from "../../components/auth/serviceIntro";
 import { FaceDetection } from "../../components/auth/faceDetection";
+import { LivenessDetection } from "../../components/auth/livenessDetection";
+import { OcrDetection } from "../../components/auth/OCR";
 
 const DEFAULT_ITEM_ID = "account-type";
 
@@ -16,17 +18,37 @@ export default function Page() {
   const content = useMemo(() => {
     switch (activeItemId) {
       case "account-type":
-        return <AccountType />;
+        return (
+          <AccountType
+            onContinue={() => setActiveItemId("personal-info")}
+            onBack={() => setActiveItemId("account-type")}
+          />
+        );
       case "personal-info":
-        return <PersonalInfo />;
+        return (
+          <PersonalInfo
+            onBack={() => setActiveItemId("account-type")}
+            onContinue={() => setActiveItemId("business-info")}
+          />
+        );
       case "business-info":
-        return <BusinessInfo />;
+        return (
+          <BusinessInfo
+            onBack={() => setActiveItemId("personal-info")}
+            onContinue={() => setActiveItemId("location")}
+          />
+        );
       case "location":
-        return <LocationInfo />;
+        return (
+          <LocationInfo
+            onBack={() => setActiveItemId("business-info")}
+            onContinue={() => setActiveItemId("services-intro")}
+          />
+        );
       case "services-intro":
         return (
           <ServiceIntro
-            onBack={() => setActiveItemId("docs-complete")}
+            onBack={() => setActiveItemId("location")}
             onContinue={(serviceId) => {
               if (serviceId === "face-recognition") return setActiveItemId("face");
               if (serviceId === "liveness-detection") return setActiveItemId("liveness");
@@ -41,6 +63,22 @@ export default function Page() {
             onBack={() => setActiveItemId("services-intro")}
             onContinue={() => setActiveItemId("liveness")}
             onSkip={() => setActiveItemId("liveness")}
+          />
+        );
+      case "liveness":
+        return (
+          <LivenessDetection
+            onBack={() => setActiveItemId("face")}
+            onContinue={() => setActiveItemId("smart-doc")}
+            onSkip={() => setActiveItemId("smart-doc")}
+          />
+        );
+      case "smart-doc":
+        return (
+          <OcrDetection
+            onBack={() => setActiveItemId("liveness")}
+            onContinue={() => setActiveItemId("review-info")}
+            onSkip={() => setActiveItemId("review-info")}
           />
         );
       default:

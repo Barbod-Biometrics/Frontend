@@ -44,7 +44,7 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
   return (
     <section
       dir="rtl"
-      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
+      className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
@@ -67,7 +67,7 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
             type="text"
             value={form.brandName}
             onChange={(event) => handleChange("brandName", event.target.value)}
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
         </div>
 
@@ -79,7 +79,7 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
             <select
               value={form.activity}
               onChange={(event) => handleChange("activity", event.target.value)}
-              className="w-full appearance-none rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 pr-4 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:ring-[color:var(--md-sys-color-primary)]/30"
+              className="w-full appearance-none rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:ring-[color:var(--md-sys-color-primary)]/30"
             >
               {activityOptions.map((option) => (
                 <option key={option.value} value={option.value} className="text-right">
@@ -99,7 +99,7 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
             آدرس وب سایت
           </label>
           <div className="relative">
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface-variant)]">
+            <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface-variant)]">
               مثلاً:
             </span>
             <input
@@ -108,7 +108,7 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
               value={form.website}
               onChange={(event) => handleChange("website", event.target.value)}
               placeholder="https://barbod.ir"
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 pr-16 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           </div>
         </div>

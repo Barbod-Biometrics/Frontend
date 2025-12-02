@@ -84,6 +84,8 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
     });
   };
 
+  const getFirstItemId = (step: Step) => step.items[0]?.id ?? step.id;
+
   const handleSelect = (id: string) => {
     if (!controlledActiveId) setInternalActiveId(id);
     onItemSelect?.(id);
@@ -114,7 +116,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
                   type="button"
                   onClick={() => {
                     toggleStep(step.id);
-                    handleSelect(step.id);
+                    handleSelect(getFirstItemId(step));
                   }}
                   className={clsx(
                     "flex h-5 w-5 items-center justify-center rounded-full text-base font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] ring-4 ring-white/60 ring-offset-0 bg-[radial-gradient(circle_at_30%_30%,#5561e9,#2747d7_45%,#0f62d8)] dark:ring-[color:var(--md-sys-color-surface-container)] transition-opacity",
@@ -131,7 +133,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
                   type="button"
                   onClick={() => {
                     toggleStep(step.id);
-                    handleSelect(step.id);
+                    handleSelect(getFirstItemId(step));
                   }}
                     className="flex w-full items-center justify-between gap-2 text-right"
                   aria-expanded={isOpen}

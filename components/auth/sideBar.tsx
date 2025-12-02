@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Typography } from "../ui/Typography";
 
@@ -71,6 +71,11 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
     );
     return match?.id ?? steps[0].id;
   }, [activeItemId]);
+
+  // Keep the open accordion section in sync with the current active item
+  useEffect(() => {
+    setOpenSteps(new Set([activeStepId]));
+  }, [activeStepId]);
 
   const toggleStep = (id: string) => {
     setOpenSteps((prev) => {

@@ -6,6 +6,7 @@ import { PersonalInfo } from "../../components/auth/personalInfo";
 import { BusinessInfo } from "../../components/auth/businessInfo";
 import { LocationInfo } from "../../components/auth/locationInfo";
 import { ServiceIntro } from "../../components/auth/serviceIntro";
+import { FaceDetection } from "../../components/auth/faceDetection";
 
 const DEFAULT_ITEM_ID = "account-type";
 
@@ -32,6 +33,14 @@ export default function Page() {
               if (serviceId === "smart-ocr") return setActiveItemId("smart-doc");
               return setActiveItemId("face");
             }}
+          />
+        );
+      case "face":
+        return (
+          <FaceDetection
+            onBack={() => setActiveItemId("services-intro")}
+            onContinue={() => setActiveItemId("liveness")}
+            onSkip={() => setActiveItemId("liveness")}
           />
         );
       default:

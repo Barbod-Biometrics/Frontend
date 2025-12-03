@@ -12,11 +12,11 @@ import {
   Users,
 } from "lucide-react";
 
-import { Footer } from "../../../components/Footer";
-import { Navbar } from "../../../components/Navbar";
-import { Button } from "../../../components/ui/Button";
-import { useLanguage } from "../../../lib/useLanguage";
-import { Language } from "../../../types";
+import { Footer } from "../../components/Footer";
+import { Navbar } from "../../components/Navbar";
+import { Button } from "../../components/ui/Button";
+import { useLanguage } from "../../lib/useLanguage";
+import { Language } from "../../types";
 
 const copy: Record<
   Language,

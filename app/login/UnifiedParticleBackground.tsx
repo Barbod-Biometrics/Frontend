@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { Theme } from "../../types";
 import { useLoginContext } from "./login-context";
 
 // Unified particle that can morph between states
@@ -23,6 +26,9 @@ interface MorphingParticle {
   wanderTargetX: number;
   wanderTargetY: number;
   wanderSpeed: number;
+  // Pulse animation
+  pulsePhase: number;
+  pulseSpeed: number;
   // Target position for face formation
   targetX: number;
   targetY: number;
@@ -31,17 +37,30 @@ interface MorphingParticle {
   opacity: number;
 }
 
+type Palette = {
+  BG: string;
+  COLOR: string;
+  GLOW_COLOR: string;
+  HIGHLIGHT: string;
+};
+
 const UnifiedParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { isHovered } = useLoginContext();
+  const theme = useSelector((state: RootState) => state.theme.theme);
   const particlesRef = useRef<MorphingParticle[]>([]);
   const imageLoadedRef = useRef(false);
   const hoverRef = useRef(false);
   const prevHoverRef = useRef(false);
+  const themeRef = useRef<Theme>(theme);
 
   useEffect(() => {
     hoverRef.current = isHovered;
   }, [isHovered]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,11 +70,9 @@ const UnifiedParticleBackground = () => {
     let animationFrameId: number;
     // Configuration
     const CONFIG = {
-      BG: "#000000",
-      COLOR: "#3B82F6",
-      GLOW_COLOR: "rgba(96,165,250,0.9)",
-      GLOW_BLUR: 15,
-      SIZE: 2,
+      // Color styling is theme-dependent (handled via palette)
+      GLOW_BLUR: 22, // softer, wider glow
+      SIZE: 1.65, // slightly larger base size
       OPACITY: 0.9,
       FLOAT_SPEED_MIN: 0.08,
       FLOAT_SPEED_MAX: 0.22,
@@ -66,6 +83,9 @@ const UnifiedParticleBackground = () => {
       SCATTER_WANDER_RADIUS: 46, // larger local movement radius
       SCATTER_WANDER_SPEED_MIN: 0.01,
       SCATTER_WANDER_SPEED_MAX: 0.022,
+      PULSE_AMPLITUDE: 0.35,
+      PULSE_SPEED_MIN: 0.015,
+      PULSE_SPEED_MAX: 0.045,
       IMAGE_SCALE: 1.5, // Smaller for full face visibility (was 2.5)
       IMAGE_SAMPLE_STEP: 3, // More particles for better detail
       IMAGE_DARKNESS_THRESHOLD: 200,
@@ -89,35 +109,53 @@ const UnifiedParticleBackground = () => {
       };
     };
 
+    const getPalette = (): Palette => {
+      const currentTheme = themeRef.current;
+      if (currentTheme === Theme.LIGHT) {
+        return {
+          BG: "#ffffff",
+          COLOR: "#0a0a0a",
+          GLOW_COLOR: "rgba(0,0,0,0.22)",
+          HIGHLIGHT: "rgba(255,255,255,0.9)",
+        };
+      }
+      return {
+        BG: "#000000",
+        COLOR: "#3B82F6",
+        GLOW_COLOR: "rgba(96,165,250,0.95)",
+        HIGHLIGHT: "rgba(255,255,255,0.92)",
+      };
+    };
+
     // Draw a single particle with glow and highlight
     const drawParticle = (
       x: number,
       y: number,
       size: number,
-      opacity: number
+      opacity: number,
+      palette: Palette
     ) => {
       // Glow effect
-      ctx.shadowColor = CONFIG.GLOW_COLOR;
+      ctx.shadowColor = palette.GLOW_COLOR;
       ctx.shadowBlur = CONFIG.GLOW_BLUR;
-      ctx.fillStyle = CONFIG.COLOR;
+      ctx.fillStyle = palette.COLOR;
       ctx.globalAlpha = opacity;
 
+      // main rectangle body
       ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.rect(x - size / 2, y - size / 2, size, size);
       ctx.fill();
 
       // Bright highlight (shininess)
       ctx.shadowBlur = 0;
-      const highlightRadius = Math.max(0.5, size / 3);
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-
+      const highlightSize = Math.max(0.4, size * 0.35);
+      ctx.fillStyle = palette.HIGHLIGHT;
       ctx.beginPath();
-      ctx.arc(
-        x - highlightRadius / 2,
-        y - highlightRadius / 2,
-        highlightRadius,
-        0,
-        Math.PI * 2
+      ctx.rect(
+        x - highlightSize * 0.6,
+        y - highlightSize * 0.6,
+        highlightSize,
+        highlightSize
       );
       ctx.fill();
     };
@@ -195,6 +233,11 @@ const UnifiedParticleBackground = () => {
               CONFIG.SCATTER_WANDER_SPEED_MIN,
               CONFIG.SCATTER_WANDER_SPEED_MAX
             ),
+            pulsePhase: Math.random() * Math.PI * 2,
+            pulseSpeed: randomRange(
+              CONFIG.PULSE_SPEED_MIN,
+              CONFIG.PULSE_SPEED_MAX
+            ),
             targetX: target.x,
             targetY: target.y,
             size: randomRange(CONFIG.SIZE - 0.5, CONFIG.SIZE + 0.5),
@@ -209,8 +252,9 @@ const UnifiedParticleBackground = () => {
 
     // Main animation loop
     const update = () => {
+      const palette = getPalette();
       // Clear canvas
-      ctx.fillStyle = CONFIG.BG;
+      ctx.fillStyle = palette.BG;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (!imageLoadedRef.current) {
@@ -293,7 +337,16 @@ const UnifiedParticleBackground = () => {
                     if (p.y > canvas.height) p.y = canvas.height;
                 }
 
-        drawParticle(p.x, p.y, p.size, p.opacity);
+        // Pulse size/brightness for a livelier look
+        p.pulsePhase += p.pulseSpeed;
+        if (p.pulsePhase > Math.PI * 2) p.pulsePhase -= Math.PI * 2;
+        const pulse = 1 + Math.sin(p.pulsePhase) * CONFIG.PULSE_AMPLITUDE;
+        const renderSize = p.size * pulse;
+        const renderOpacity =
+          p.opacity *
+          (0.82 + 0.18 * (0.5 + 0.5 * Math.cos(p.pulsePhase + 1.2)));
+
+        drawParticle(p.x, p.y, renderSize, renderOpacity, palette);
       }
 
       // Restore global state

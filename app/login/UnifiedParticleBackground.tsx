@@ -17,6 +17,12 @@ interface MorphingParticle {
   // Individual morph speeds (randomized)
   toFaceSpeed: number;
   toScatterSpeed: number;
+  // Local wander offsets in scatter mode
+  wanderOffsetX: number;
+  wanderOffsetY: number;
+  wanderTargetX: number;
+  wanderTargetY: number;
+  wanderSpeed: number;
   // Target position for face formation
   targetX: number;
   targetY: number;
@@ -57,6 +63,9 @@ const UnifiedParticleBackground = () => {
       MORPH_TO_FACE_MAX: 0.06,
       MORPH_TO_SCATTER_MIN: 0.03,
       MORPH_TO_SCATTER_MAX: 0.065,
+      SCATTER_WANDER_RADIUS: 46, // larger local movement radius
+      SCATTER_WANDER_SPEED_MIN: 0.01,
+      SCATTER_WANDER_SPEED_MAX: 0.022,
       IMAGE_SCALE: 1.5, // Smaller for full face visibility (was 2.5)
       IMAGE_SAMPLE_STEP: 3, // More particles for better detail
       IMAGE_DARKNESS_THRESHOLD: 200,
@@ -70,6 +79,15 @@ const UnifiedParticleBackground = () => {
 
     const randomRange = (min: number, max: number) =>
       Math.random() * (max - min) + min;
+
+    const randomOffsetInCircle = (radius: number) => {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.random() * radius;
+      return {
+        x: Math.cos(angle) * r,
+        y: Math.sin(angle) * r,
+      };
+    };
 
     // Draw a single particle with glow and highlight
     const drawParticle = (
@@ -150,6 +168,9 @@ const UnifiedParticleBackground = () => {
           const angle = Math.random() * Math.PI * 2;
           const homeX = Math.random() * canvas.width;
           const homeY = Math.random() * canvas.height;
+          const wanderStart = randomOffsetInCircle(
+            CONFIG.SCATTER_WANDER_RADIUS
+          );
 
           particles.push({
             x: homeX,
@@ -165,6 +186,14 @@ const UnifiedParticleBackground = () => {
             toScatterSpeed: randomRange(
               CONFIG.MORPH_TO_SCATTER_MIN,
               CONFIG.MORPH_TO_SCATTER_MAX
+            ),
+            wanderOffsetX: wanderStart.x,
+            wanderOffsetY: wanderStart.y,
+            wanderTargetX: wanderStart.x,
+            wanderTargetY: wanderStart.y,
+            wanderSpeed: randomRange(
+              CONFIG.SCATTER_WANDER_SPEED_MIN,
+              CONFIG.SCATTER_WANDER_SPEED_MAX
             ),
             targetX: target.x,
             targetY: target.y,
@@ -198,6 +227,17 @@ const UnifiedParticleBackground = () => {
           particles.forEach((p) => {
             p.homeX = p.x;
             p.homeY = p.y;
+            const start = randomOffsetInCircle(
+              CONFIG.SCATTER_WANDER_RADIUS
+            );
+            p.wanderOffsetX = 0;
+            p.wanderOffsetY = 0;
+            p.wanderTargetX = start.x;
+            p.wanderTargetY = start.y;
+            p.wanderSpeed = randomRange(
+              CONFIG.SCATTER_WANDER_SPEED_MIN,
+              CONFIG.SCATTER_WANDER_SPEED_MAX
+            );
             p.toFaceSpeed = randomRange(
               CONFIG.MORPH_TO_FACE_MIN,
               CONFIG.MORPH_TO_FACE_MAX
@@ -223,26 +263,35 @@ const UnifiedParticleBackground = () => {
           p.x += dx * p.toFaceSpeed;
           p.y += dy * p.toFaceSpeed;
         } else {
-          // Morph back toward original scatter home from current spot
-          const dx = p.homeX - p.x;
-          const dy = p.homeY - p.y;
-          const distSq = dx * dx + dy * dy;
+          // Smooth wander within a larger local radius
+          const tdx = p.wanderTargetX - p.wanderOffsetX;
+          const tdy = p.wanderTargetY - p.wanderOffsetY;
+          const tDist = Math.hypot(tdx, tdy);
+          if (tDist < 1) {
+            const next = randomOffsetInCircle(
+              CONFIG.SCATTER_WANDER_RADIUS
+            );
+            p.wanderTargetX = next.x;
+            p.wanderTargetY = next.y;
+          }
+          p.wanderOffsetX += tdx * p.wanderSpeed;
+          p.wanderOffsetY += tdy * p.wanderSpeed;
+
+          // Morph back toward home plus wander offset
+          const destX = p.homeX + p.wanderOffsetX;
+          const destY = p.homeY + p.wanderOffsetY;
+          const dx = destX - p.x;
+          const dy = destY - p.y;
 
           p.x += dx * p.toScatterSpeed;
           p.y += dy * p.toScatterSpeed;
 
-          // Once near scatter home, keep particles moving for a lively cloud
-          if (distSq < 36) {
-            p.x += p.vx;
-            p.y += p.vy;
-          }
-
-          // Wrap around screen edges
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
-        }
+          // Ensure particles stay inside canvas bounds
+          if (p.x < 0) p.x = 0;
+          if (p.x > canvas.width) p.x = canvas.width;
+          if (p.y < 0) p.y = 0;
+                    if (p.y > canvas.height) p.y = canvas.height;
+                }
 
         drawParticle(p.x, p.y, p.size, p.opacity);
       }

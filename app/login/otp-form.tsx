@@ -7,6 +7,8 @@ import { Container } from "../../components/ui/Container";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
 
+import { useLoginContext } from "./login-context";
+
 export default function OTPForm({
   masked = "۰۹۱۲۳۴۵۶۷۸۹",
 }: {
@@ -15,6 +17,7 @@ export default function OTPForm({
   const { language, dir } = useLanguage();
   const isFa = language === Language.FA;
   const [otp, setOtp] = useState("");
+  const { setIsHovered } = useLoginContext();
 
   const messageFa = `کد ارسال شده به شماره تلفن همراه ${masked} وارد کنید:`;
   const messageEn = `Enter the code sent to ${masked}:`;
@@ -22,8 +25,12 @@ export default function OTPForm({
   return (
     <Container
       size="full"
-      className="absolute top-1/2 right-[5%] w-full max-w-[480px] -translate-y-1/2 rounded-3xl border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)] px-12 py-[100px] flex flex-col items-center gap-6 shadow-[var(--shadow-lg)]"
+      className="absolute top-1/2 right-[5%] w-full max-w-[480px] -translate-y-1/2 rounded-3xl border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)] px-12 py-[100px] flex flex-col items-center gap-6 shadow-[var(--shadow-lg)] transition-colors duration-300"
       dir={dir}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onMouseDown={() => setIsHovered(true)}
+      onMouseUp={() => setIsHovered(false)}
     >
       <Logo />
 

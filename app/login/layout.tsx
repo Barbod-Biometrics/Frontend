@@ -1,4 +1,6 @@
 import ParticleBackground from "./background";
+import { LoginProvider } from "./login-context";
+import UnifiedParticleBackground from "./UnifiedParticleBackground";
 
 export default function LoginLayout({
   children,
@@ -6,12 +8,9 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <ParticleBackground />
+    <LoginProvider>
+      <UnifiedParticleBackground />
       {children}
-    </>
+    </LoginProvider>
   );
 }
-
-
-

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Button } from "./ui/Button";
 import { Section } from "./ui/Section";
 import { Container } from "./ui/Container";
@@ -57,6 +58,7 @@ interface HeroProps {
 }
 
 export function Hero({ language, theme, dir }: HeroProps) {
+  const router = useRouter();
   const contentDir = dir ?? (language === Language.FA ? "rtl" : "ltr");
   const copy = heroCopy[language];
   const isFa = language === Language.FA;
@@ -95,7 +97,11 @@ export function Hero({ language, theme, dir }: HeroProps) {
           {/* Bottom Content: Buttons & Stats */}
           <div className="mt-auto flex flex-col items-center w-full pt-12 lg:pt-20">
             <div className="flex flex-col sm:flex-row sm:justify-center gap-6 pb-12 lg:pb-16">
-              <Button size="lg" className="h-14 lg:h-16 px-12 lg:px-16 text-lg rounded-full shadow-[var(--elevation-2)] hover:shadow-[var(--elevation-3)] transition-all hover:-translate-y-1 min-w-[180px]">
+              <Button
+                size="lg"
+                className="h-14 lg:h-16 px-12 lg:px-16 text-lg rounded-full shadow-[var(--elevation-2)] hover:shadow-[var(--elevation-3)] transition-all hover:-translate-y-1 min-w-[180px]"
+                onClick={() => router.push("/login")}
+              >
                 {copy.primaryCta}
               </Button>
               <Button variant="secondary" size="lg" className="h-14 lg:h-16 px-12 lg:px-16 text-lg rounded-full transition-all min-w-[180px]">

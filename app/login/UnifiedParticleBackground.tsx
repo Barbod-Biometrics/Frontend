@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Theme } from "../../types";
@@ -44,6 +44,8 @@ type Palette = {
   HIGHLIGHT: string;
 };
 
+const MOBILE_BREAKPOINT = 768;
+
 const UnifiedParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { isHovered } = useLoginContext();
@@ -53,6 +55,21 @@ const UnifiedParticleBackground = () => {
   const hoverRef = useRef(false);
   const prevHoverRef = useRef(false);
   const themeRef = useRef<Theme>(theme);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+
+    // Check on mount
+    checkMobile();
+
+    // Listen for resize
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     hoverRef.current = isHovered;
@@ -63,6 +80,9 @@ const UnifiedParticleBackground = () => {
   }, [theme]);
 
   useEffect(() => {
+    // Skip particle animation entirely on mobile
+    if (isMobile) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -334,8 +354,8 @@ const UnifiedParticleBackground = () => {
           if (p.x < 0) p.x = 0;
           if (p.x > canvas.width) p.x = canvas.width;
           if (p.y < 0) p.y = 0;
-                    if (p.y > canvas.height) p.y = canvas.height;
-                }
+          if (p.y > canvas.height) p.y = canvas.height;
+        }
 
         // Pulse size/brightness for a livelier look
         p.pulsePhase += p.pulseSpeed;
@@ -396,14 +416,34 @@ const UnifiedParticleBackground = () => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isMobile]);
+
+  // Render static gradient background on mobile for performance
+  if (isMobile) {
+    return (
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background: themeRef.current === Theme.LIGHT
+            ? "linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #e0e8ff 100%)"
+            : "linear-gradient(135deg, #000000 0%, #0a0a1a 50%, #101030 100%)",
+          width: "100%",
+          height: "100%",
+        }}
+      />
+    );
+  }
 
   return (
     <canvas
       ref={canvasRef}
       id="scene"
-      className="fixed top-0 left-0 w-screen h-screen -z-10 pointer-events-none"
-      style={{ background: "#000000" }}
+      className="fixed inset-0 -z-10 pointer-events-none"
+      style={{
+        background: themeRef.current === Theme.LIGHT ? "#ffffff" : "#000000",
+        width: "100%",
+        height: "100%",
+      }}
     />
   );
 };

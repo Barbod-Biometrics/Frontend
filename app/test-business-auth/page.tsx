@@ -1,15 +1,16 @@
 "use client";
+
 import { useMemo, useState } from "react";
-import { AuthSidebar } from "../../components/auth/sideBar";
-import { AccountType } from "../../components/auth/accountType";
-import { PersonalInfo } from "../../components/auth/personalInfo";
-import { BusinessInfo } from "../../components/auth/businessInfo";
-import { LocationInfo } from "../../components/auth/locationInfo";
-import { ServiceIntro } from "../../components/auth/serviceIntro";
-import { FaceDetection } from "../../components/auth/faceDetection";
-import { LivenessDetection } from "../../components/auth/livenessDetection";
-import { OcrDetection } from "../../components/auth/OCR";
-import { InfoChecking } from "../../components/auth/infoChecking";
+import { AuthSidebar } from "../../components/business-auth/sideBar";
+import { AccountType } from "../../components/business-auth/accountType";
+import { PersonalInfo } from "../../components/business-auth/personalInfo";
+import { BusinessInfo } from "../../components/business-auth/businessInfo";
+import { LocationInfo } from "../../components/business-auth/locationInfo";
+import { ServiceIntro } from "../../components/business-auth/serviceIntro";
+import { FaceDetection } from "../../components/business-auth/faceDetection";
+import { LivenessDetection } from "../../components/business-auth/livenessDetection";
+import { OcrDetection } from "../../components/business-auth/OCR";
+import { InfoChecking } from "../../components/business-auth/infoChecking";
 
 const DEFAULT_ITEM_ID = "account-type";
 

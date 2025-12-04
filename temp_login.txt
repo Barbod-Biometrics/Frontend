@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -42,6 +42,15 @@ function LabeledInput({
         {label}
       </label>
       <div className="relative">
+        {/* +98 Prefix */}
+        <span
+          className={`absolute left-4 top-1/2 -translate-y-1/2 text-base sm:text-lg font-semibold ${
+            isLight ? "text-gray-600" : "text-white/70"
+          } pointer-events-none`}
+          dir="ltr"
+        >
+          +98
+        </span>
         <input
           type="tel"
           value={value}
@@ -52,7 +61,7 @@ function LabeledInput({
           }}
           placeholder={placeholder}
           dir="ltr"
-          className={`h-12 sm:h-14 w-full rounded-md sm:rounded-xl px-4 text-base sm:text-lg transition-all duration-300 ${
+          className={`h-12 sm:h-14 w-full rounded-md sm:rounded-xl pl-16 pr-4 text-base sm:text-lg transition-all duration-300 ${
             error
               ? "border-2 border-red-500 focus:ring-red-500/30"
               : isLight
@@ -124,20 +133,20 @@ const loginCopy: Record<
     errorRequired: "Phone number is required",
   },
   [Language.FA]: {
-    title: "ورود",
-    phoneLabel: "شماره موبایل",
-    submitButton: "ارسال کد",
+    title: "ÙˆØ±ÙˆØ¯",
+    phoneLabel: "Ø´Ù…Ø§Ø±Ù‡ Ù…ÙˆØ¨Ø§ÛŒÙ„",
+    submitButton: "Ø§Ø±Ø³Ø§Ù„ Ú©Ø¯",
     brandName: "Barbod",
     phonePlaceholder: "09123456789",
-    errorInvalid: "لطفا شماره موبایل معتبر وارد کنید (۱۱ رقم و شروع با ۰۹)",
-    errorRequired: "شماره موبایل الزامی است",
+    errorInvalid: "Ù„Ø·ÙØ§ Ø´Ù…Ø§Ø±Ù‡ Ù…ÙˆØ¨Ø§ÛŒÙ„ Ù…Ø¹ØªØ¨Ø± ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯ (Û±Û± Ø±Ù‚Ù… Ùˆ Ø´Ø±ÙˆØ¹ Ø¨Ø§ Û°Û¹)",
+    errorRequired: "Ø´Ù…Ø§Ø±Ù‡ Ù…ÙˆØ¨Ø§ÛŒÙ„ Ø§Ù„Ø²Ø§Ù…ÛŒ Ø§Ø³Øª",
   },
 };
 
 // Phone validation functions
 const normalizePhone = (input: string): string => {
   // Keep only digits and cap at 11 (to allow 09xxxxxxxxx)
-  return input.replace(/\D/g, "").slice(0, 11);
+  return input.replace(/\D/g, "").slice(0, 12);
 };
 
 const validateIranianPhone = (phone: string): boolean => {
@@ -275,3 +284,4 @@ function LoginForm({ onSubmit }: LoginFormProps) {
 }
 
 export default LoginForm;
+

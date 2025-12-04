@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { Theme } from "../../types";
 import { Logo } from "../../components/Logo";
 import { Button } from "../../components/ui/Button";
 import { Container } from "../../components/ui/Container";
@@ -19,46 +22,75 @@ export default function OTPForm({
   const [digits, setDigits] = useState(Array(6).fill(""));
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const { setIsHovered } = useLoginContext();
-
-  const messageFa = `کد ارسال شده به شماره تلفن همراه ${masked} وارد کنید:`;
-  const messageEn = `Enter the code sent to ${masked}:`;
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  const isLight = theme === Theme.LIGHT;
 
   return (
     <Container
       size="full"
-      className="absolute top-1/2 right-[5%] w-full max-w-[480px] -translate-y-1/2 rounded-3xl border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)] px-12 py-[100px] flex flex-col items-center gap-6 shadow-[var(--shadow-lg)] transition-colors duration-300"
+      className={`absolute top-1/2 left-1/2 sm:left-auto sm:right-[8%] -translate-x-1/2 sm:translate-x-0 -translate-y-1/2 w-[calc(100%-2rem)] max-w-[560px] sm:w-full rounded-[2rem] sm:rounded-[2.5rem] transition-all duration-500 ${isLight
+        ? "border-2 border-gray-300 bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-xl shadow-2xl hover:border-gray-400 hover:shadow-[0_0_40px_rgba(37,99,235,0.2)]"
+        : "border-2 border-white/10 bg-gradient-to-br from-white/[0.12] to-white/[0.04] backdrop-blur-xl shadow-2xl hover:border-white/20 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)]"
+        } px-6 py-12 sm:px-12 sm:py-20 flex flex-col items-center gap-6 sm:gap-8`}
       dir={dir}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={isLight ? {
+        background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.95) 100%)",
+        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0 rgba(255,255,255,0.5)",
+      } : {
+        background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
+        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255,255,255,0.1)",
+      }}
     >
-      <Logo />
+      {/* Logo with subtle animation */}
+      <div className="transform transition-transform duration-300 hover:scale-110">
+        <Logo />
+      </div>
 
+      {/* Brand name with gradient */}
       <p
-        className={`text-2xl font-semibold text-[color:var(--text-primary)] ${
-          isFa ? "font-vazirmatn" : ""
-        }`}
+        className={`text-3xl sm:text-4xl font-bold ${isLight
+          ? "bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 bg-clip-text text-transparent"
+          : "bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent"
+          } ${isFa ? "font-vazirmatn" : ""
+          }`}
       >
         Barbod
       </p>
 
+      {/* Title with emphasis */}
       <p
-        className={`text-3xl font-bold text-[color:var(--text-primary)] ${
-          isFa ? "font-vazirmatn" : ""
-        }`}
+        className={`text-4xl sm:text-5xl font-extrabold drop-shadow-lg ${isLight ? "text-gray-900" : "text-white"
+          } ${isFa ? "font-vazirmatn" : ""
+          }`}
       >
         {isFa ? "کد عبور" : "Verify"}
       </p>
 
+      {/* Message with better readability */}
       <p
-        className={`text-sm text-[color:var(--text-primary)] ${
-          isFa ? "font-vazirmatn" : ""
-        } text-center`}
+        className={`text-base sm:text-lg ${isLight ? "text-gray-700" : "text-white/90"
+          } ${isFa ? "font-vazirmatn" : ""
+          } text-center max-w-md leading-relaxed`}
       >
-        {isFa ? messageFa : messageEn}
+        {isFa ? (
+          <>
+            کد ارسال شده به شماره تلفن همراه{" "}
+            <span dir="ltr" className="inline-block">{masked}</span>{" "}
+            وارد کنید:
+          </>
+        ) : (
+          <>
+            Enter the code sent to{" "}
+            <span dir="ltr" className="inline-block">{masked}</span>:
+          </>
+        )}
       </p>
 
-      <div className="flex w-full max-w-md flex-col items-center justify-center gap-4">
-        <div className="flex items-center justify-center gap-3">
+      {/* Input section with enhanced styling - Force LTR for consistent left-to-right progression */}
+      <div className="flex w-full max-w-md flex-col items-center justify-center gap-5 sm:gap-6 mt-2">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap" dir="ltr">
           {digits.map((digit, idx) => (
             <input
               key={idx}
@@ -99,14 +131,28 @@ export default function OTPForm({
                 const lastFilled = Math.min(pasted.length, 5);
                 inputsRef.current[lastFilled]?.focus();
               }}
-              className={`h-12 w-12 rounded-lg border border-[color:var(--border-subtle)] bg-[color:var(--surface-elevated)] text-center text-lg font-semibold text-[color:var(--text-primary)] focus:border-[color:var(--brand-azure)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]/50 ${
-                isFa ? "font-vazirmatn" : ""
-              }`}
+              className={`h-16 w-12 sm:h-20 sm:w-14 bg-transparent border-0 border-b-2 text-center text-2xl sm:text-3xl font-medium transition-all duration-300 outline-none ${isLight
+                ? `${digit
+                  ? "border-blue-600 text-gray-900"
+                  : "border-gray-300 text-gray-900"
+                } focus:border-blue-600 focus:scale-110`
+                : `${digit
+                  ? "border-blue-400 text-white"
+                  : "border-white/30 text-white"
+                } focus:border-blue-400 focus:scale-110`
+                } ${isFa ? "font-vazirmatn" : ""
+                }`}
+              style={{
+                caretColor: isLight ? "#2563eb" : "#60a5fa",
+              }}
             />
           ))}
         </div>
 
-        <Button size="lg" className="h-11 min-w-[160px] rounded-xl px-6">
+        <Button
+          size="lg"
+          className="h-12 sm:h-14 w-full max-w-[200px] rounded-xl sm:rounded-2xl px-8 text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+        >
           {isFa ? "ارسال" : "Submit"}
         </Button>
       </div>

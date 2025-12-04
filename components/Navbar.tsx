@@ -207,7 +207,11 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
               </Button>
 
               <div className="hidden items-center gap-2 md:flex">
-                <Button size="lg" className="h-12 rounded-full px-9 text-base">
+                <Button
+                  size="lg"
+                  className="h-12 rounded-full px-9 text-base"
+                  onClick={() => handleNavClick('/login')}
+                >
                   {copy.signup}
                 </Button>
               </div>
@@ -260,7 +264,11 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                 </div>
               ))}
               <div className="grid gap-2 pt-2">
-                <Button size="lg" className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14">
+                <Button
+                  size="lg"
+                  className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
+                  onClick={() => handleNavClick('/login')}
+                >
                   {copy.signup}
                 </Button>
               </div>

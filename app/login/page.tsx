@@ -1,24 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import LoginForm from "./login-form";
 import OTPForm from "./otp-form";
+import { useLoginContext } from "./login-context";
 
 export default function LoginPage() {
-  const [step, setStep] = useState<"login" | "otp">("login");
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  const handlePhoneSubmit = (formattedPhone: string) => {
-    setPhoneNumber(formattedPhone);
-    setStep("otp");
-  };
+  const { step, maskedPhone } = useLoginContext();
 
   return (
     <>
       {step === "login" ? (
-        <LoginForm onSubmit={handlePhoneSubmit} />
+        <LoginForm />
       ) : (
-        <OTPForm masked={phoneNumber} />
+        <OTPForm masked={maskedPhone} />
       )}
     </>
   );

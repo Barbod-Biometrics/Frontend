@@ -1,39 +1,40 @@
-﻿"use client";
+"use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import provincesAndCities from "../../data/iran-provinces-cities.json";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
+import { LocationPayload } from "../../types/businessProfile";
 
 interface LocationInfoProps {
   onContinue?: (data: LocationForm) => void;
   onBack?: () => void;
+  initialData?: LocationPayload;
+  isLoading?: boolean;
 }
 
-type LocationForm = {
-  address: string;
-  province: string;
-  city: string;
-  fixedNumber: string;
-  postalCode: string;
-  plateNumber: string;
-  unit: string;
-};
+type LocationForm = LocationPayload;
 
 const provinceCityMap = provincesAndCities as Record<string, string[]>;
 const provinceOptions = Object.keys(provinceCityMap);
 
-export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
+export function LocationInfo({ onContinue, onBack, initialData, isLoading }: LocationInfoProps) {
   const [form, setForm] = useState<LocationForm>({
     address: "",
     province: "",
     city: "",
-    fixedNumber: "",
+    fixedPhone: "",
     postalCode: "",
     plateNumber: "",
     unit: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setForm(initialData);
+    }
+  }, [initialData]);
 
   const cityOptions = form.province ? provinceCityMap[form.province] ?? [] : [];
 
@@ -139,17 +140,17 @@ export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2 text-right">
-            <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-              شماره ثابت
-            </label>
-            <input
-              dir="ltr"
-              type="tel"
-              value={form.fixedNumber}
-              onChange={(event) => handleChange("fixedNumber", event.target.value)}
-              placeholder="01312345678"
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-            />
+          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+            شماره ثابت
+          </label>
+          <input
+            dir="ltr"
+            type="tel"
+            value={form.fixedPhone}
+            onChange={(event) => handleChange("fixedPhone", event.target.value)}
+            placeholder="01312345678"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+          />
           </div>
 
           <div className="space-y-2 text-right">
@@ -205,6 +206,7 @@ export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
           <Button
             type="submit"
             className="min-w-[140px]"
+            disabled={isLoading}
           >
             ادامه
           </Button>
@@ -213,6 +215,7 @@ export function LocationInfo({ onContinue, onBack }: LocationInfoProps) {
             variant="secondary"
             onClick={onBack}
             className="min-w-[140px]"
+            disabled={isLoading}
           >
             بازگشت
           </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import clsx from "clsx";
 import { ChevronLeft } from "lucide-react";
 
@@ -44,10 +44,18 @@ const services: ServiceCard[] = [
 interface ServiceIntroProps {
   onBack?: () => void;
   onContinue?: (serviceId: string) => void;
+  initialServiceId?: string;
+  isLoading?: boolean;
 }
 
-export function ServiceIntro({ onBack, onContinue }: ServiceIntroProps) {
-  const [activeId, setActiveId] = useState<string>(services[0]?.id ?? "");
+export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }: ServiceIntroProps) {
+  const [activeId, setActiveId] = useState<string>(initialServiceId ?? services[0]?.id ?? "");
+
+  useEffect(() => {
+    if (initialServiceId) {
+      setActiveId(initialServiceId);
+    }
+  }, [initialServiceId]);
 
   const handleContinue = () => {
     onContinue?.(activeId);
@@ -144,12 +152,14 @@ export function ServiceIntro({ onBack, onContinue }: ServiceIntroProps) {
           variant="secondary"
           className="min-w-[140px]"
           onClick={onBack}
+          disabled={isLoading}
         >
           مرحله قبل
         </Button>
         <Button
           className="min-w-[140px]"
           onClick={handleContinue}
+          disabled={isLoading}
         >
           ادامه
         </Button>

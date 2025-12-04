@@ -1,12 +1,11 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import clsx from "clsx";
 import { Building2, IdCard } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
-
-type AccountKind = "business" | "personal";
+import { AccountKind } from "../../types/businessProfile";
 
 type AccountTypeOption = {
   id: AccountKind;
@@ -17,14 +16,14 @@ type AccountTypeOption = {
 
 const accountTypeOptions: AccountTypeOption[] = [
   {
-    id: "business",
+    id: "legal",
     title: "شخص حقوقی",
     description:
       "منظور از شخص حقوقی مؤسساتی هستند که به ثبت حقوقی رسیده و دارای مشخصاتی مانند تاریخ ثبت، شماره ثبت، کد اقتصادی و ... باشند.",
     icon: <Building2 className="h-10 w-10 text-[color:var(--md-sys-color-primary)]" aria-hidden />,
   },
   {
-    id: "personal",
+    id: "real",
     title: "شخص حقیقی",
     description:
       "منظور از شخص حقیقی فردی است که دارای خصوصیات مختص به خود مانند نام، نام خانوادگی، شماره شناسنامه، کد ملی و ... می‌باشد.",
@@ -35,14 +34,31 @@ const accountTypeOptions: AccountTypeOption[] = [
 interface AccountTypeProps {
   onContinue?: (selectedType: AccountKind, accountName: string) => void;
   onBack?: () => void;
+  initialType?: AccountKind;
+  initialName?: string;
+  isLoading?: boolean;
 }
 
-export function AccountType({ onContinue, onBack }: AccountTypeProps) {
-  const [selectedType, setSelectedType] = useState<AccountKind>("business");
-  const [accountName, setAccountName] = useState("");
+export function AccountType({ onContinue, onBack, initialType, initialName, isLoading }: AccountTypeProps) {
+  const [selectedType, setSelectedType] = useState<AccountKind>(initialType ?? "legal");
+  const [accountName, setAccountName] = useState(initialName ?? "");
+
+  useEffect(() => {
+    if (initialType) {
+      setSelectedType(initialType);
+    }
+  }, [initialType]);
+
+  useEffect(() => {
+    if (typeof initialName === "string") {
+      setAccountName(initialName);
+    }
+  }, [initialName]);
 
   const handleContinue = () => {
-    onContinue?.(selectedType, accountName.trim());
+    const trimmedName = accountName.trim();
+    if (!trimmedName) return;
+    onContinue?.(selectedType, trimmedName);
   };
 
   return (
@@ -143,6 +159,7 @@ export function AccountType({ onContinue, onBack }: AccountTypeProps) {
           variant="secondary"
           onClick={onBack}
           className="min-w-[140px]"
+          disabled={isLoading}
         >
           مرحله قبل
         </Button>
@@ -150,6 +167,7 @@ export function AccountType({ onContinue, onBack }: AccountTypeProps) {
           type="button"
           onClick={handleContinue}
           className="min-w-[140px]"
+          disabled={isLoading || !accountName.trim()}
         >
           ادامه
         </Button>

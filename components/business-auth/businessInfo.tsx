@@ -1,20 +1,19 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
+import { BusinessInfoPayload } from "../../types/businessProfile";
 
 interface BusinessInfoProps {
   onContinue?: (data: BusinessInfoForm) => void;
   onBack?: () => void;
+  initialData?: BusinessInfoPayload;
+  isLoading?: boolean;
 }
 
-type BusinessInfoForm = {
-  brandName: string;
-  activity: string;
-  website: string;
-};
+type BusinessInfoForm = BusinessInfoPayload;
 
 const activityOptions: { value: string; label: string }[] = [
   { value: "", label: "انتخاب کنید" },
@@ -25,12 +24,19 @@ const activityOptions: { value: string; label: string }[] = [
   { value: "other", label: "سایر" },
 ];
 
-export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
+export function BusinessInfo({ onContinue, onBack, initialData, isLoading }: BusinessInfoProps) {
   const [form, setForm] = useState<BusinessInfoForm>({
     brandName: "",
-    activity: "",
-    website: "",
+    fieldOfWork: "",
+    websiteUrl: "",
+    businessNationalId: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setForm(initialData);
+    }
+  }, [initialData]);
 
   const handleChange = (key: keyof BusinessInfoForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -74,12 +80,25 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
 
         <div className="space-y-2 text-right">
           <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+            کد/شناسه ملی شرکت
+          </label>
+          <input
+            type="text"
+            value={form.businessNationalId ?? ""}
+            onChange={(event) => handleChange("businessNationalId", event.target.value)}
+            placeholder="10345678901"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+          />
+        </div>
+
+        <div className="space-y-2 text-right">
+          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
             زمینه فعالیت
           </label>
           <div className="relative">
             <select
-              value={form.activity}
-              onChange={(event) => handleChange("activity", event.target.value)}
+              value={form.fieldOfWork}
+              onChange={(event) => handleChange("fieldOfWork", event.target.value)}
               className="w-full appearance-none rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:ring-[color:var(--md-sys-color-primary)]/30"
             >
               {activityOptions.map((option) => (
@@ -106,8 +125,8 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
             <input
               dir="ltr"
               type="url"
-              value={form.website}
-              onChange={(event) => handleChange("website", event.target.value)}
+              value={form.websiteUrl}
+              onChange={(event) => handleChange("websiteUrl", event.target.value)}
               placeholder="https://barbod.ir"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -120,12 +139,14 @@ export function BusinessInfo({ onContinue, onBack }: BusinessInfoProps) {
             variant="secondary" 
             onClick={onBack}
             className="min-w-[140px]"
+            disabled={isLoading}
           >
             مرحله قبل
           </Button>
           <Button
             type="submit"
             className="min-w-[140px]"
+            disabled={isLoading}
           >
             ثبت و ادامه
           </Button>

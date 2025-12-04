@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calendar as CalendarIcon, X } from "lucide-react";
 import { Calendar as DatePickerCalendar, DateObject } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
@@ -8,25 +8,21 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
+import { PersonalInfoPayload } from "../../types/businessProfile";
 
 interface PersonalInfoProps {
-  onContinue?: (data: PersonalInfoForm) => void;
+  onContinue?: (data: PersonalInfoPayload) => void;
   onBack?: () => void;
+  initialData?: PersonalInfoPayload;
+  isLoading?: boolean;
 }
 
 const BIRTHDATE_FORMAT = "YYYY/MM/DD";
 const LATIN_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-type PersonalInfoForm = {
-  isBusinessOwner: boolean;
-  firstName: string;
-  lastName: string;
-  nationalId: string;
-  birthDate: string;
-  phone: string;
-};
+type PersonalInfoForm = PersonalInfoPayload;
 
-export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
+export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: PersonalInfoProps) {
   const [form, setForm] = useState<PersonalInfoForm>({
     isBusinessOwner: true,
     firstName: "",
@@ -37,6 +33,12 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
   });
 
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setForm(initialData);
+    }
+  }, [initialData]);
 
   const parsedBirthDate = useMemo(() => {
     if (!form.birthDate) return null;
@@ -213,7 +215,7 @@ export function PersonalInfo({ onContinue, onBack }: PersonalInfoProps) {
         <Button variant="secondary" className="min-w-[140px]" onClick={onBack}>
           مرحله قبل
         </Button>
-        <Button className="min-w-[140px]" onClick={handleSubmit}>
+        <Button className="min-w-[140px]" onClick={handleSubmit} disabled={isLoading}>
           ثبت و ادامه
         </Button>
       </div>

@@ -30,20 +30,11 @@ const steps: Step[] = [
     ],
   },
   {
-    id: "documents",
-    index: 2,
-    title: "مدارک مورد نیاز",
-    items: [{ id: "docs-complete", label: "فهرست مدارک", highlight: true }],
-  },
-  {
     id: "services-request",
-    index: 3,
+    index: 2,
     title: "درخواست سرویس‌ها",
     items: [
       { id: "services-intro", label: "معرفی سرویس‌ ها", highlight: true },
-      { id: "face", label: "تشخیص چهره" },
-      { id: "liveness", label: "تشخیص زنده بودن چهره" },
-      { id: "smart-doc", label: "OCR مدارک" },
     ],
   },
   {

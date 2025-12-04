@@ -12,6 +12,7 @@ interface InfoCheckingProps {
   onEditSection?: (section: SectionId) => void;
   onBack?: () => void;
   onSubmit?: () => void;
+  isSubmitting?: boolean;
 }
 
 const SECTION_COPY: Record<SectionId, string> = {
@@ -117,6 +118,7 @@ export function InfoChecking({
   onEditSection,
   onBack,
   onSubmit,
+  isSubmitting,
 }: InfoCheckingProps) {
   const sections: SectionId[] = ["personal", "business", "location", "services"];
 
@@ -151,17 +153,6 @@ export function InfoChecking({
           ))}
         </div>
 
-        <Typography
-          variant="body-sm"
-          className="text-right text-[color:var(--md-sys-color-on-surface-variant)] leading-6"
-        >
-          با تایید این فرم، موافقت خود با{" "}
-          <a className="text-[color:var(--md-sys-color-primary)] underline decoration-dashed" href="#">
-            قوانین و مقررات
-          </a>{" "}
-          را اعلام می‌کنم.
-        </Typography>
-
         <div className="flex flex-col-reverse items-center justify-between gap-3 sm:flex-row">
           <Button
             type="button"
@@ -175,6 +166,7 @@ export function InfoChecking({
             type="button"
             className="min-w-[140px]"
             onClick={onSubmit}
+            disabled={isSubmitting}
           >
             ثبت نهایی
           </Button>

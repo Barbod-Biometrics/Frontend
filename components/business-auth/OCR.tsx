@@ -1,22 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Info, ShieldCheck } from "lucide-react";
 
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
-
-type OcrForm = {
-  requestActivation: boolean;
-  allowedIps: string[];
-  rawIps: string;
-};
+import { OcrPayload } from "../../types/businessProfile";
 
 interface OcrDetectionProps {
   onBack?: () => void;
   onContinue?: (data: OcrForm) => void;
   onSkip?: () => void;
+  initialData?: OcrPayload;
+  isLoading?: boolean;
 }
+
+type OcrForm = OcrPayload;
 
 const parseIpList = (value: string) =>
   value
@@ -24,11 +23,18 @@ const parseIpList = (value: string) =>
     .map((ip) => ip.trim())
     .filter(Boolean);
 
-export function OcrDetection({ onBack, onContinue, onSkip }: OcrDetectionProps) {
-  const [requestActivation, setRequestActivation] = useState(false);
-  const [rawIps, setRawIps] = useState("");
+export function OcrDetection({ onBack, onContinue, onSkip, initialData, isLoading }: OcrDetectionProps) {
+  const [requestActivation, setRequestActivation] = useState(initialData?.requestActivation ?? false);
+  const [rawIps, setRawIps] = useState(initialData?.rawIps ?? "");
 
   const allowedIps = useMemo(() => parseIpList(rawIps), [rawIps]);
+
+  useEffect(() => {
+    if (initialData) {
+      setRequestActivation(initialData.requestActivation);
+      setRawIps(initialData.rawIps);
+    }
+  }, [initialData]);
 
   const handleContinue = () => {
     onContinue?.({ requestActivation, allowedIps, rawIps });
@@ -102,6 +108,7 @@ export function OcrDetection({ onBack, onContinue, onSkip }: OcrDetectionProps) 
             variant="secondary"
             onClick={onBack}
             className="min-w-[140px]"
+            disabled={isLoading}
           >
             مرحله قبل
           </Button>
@@ -109,6 +116,7 @@ export function OcrDetection({ onBack, onContinue, onSkip }: OcrDetectionProps) 
             type="button"
             onClick={handleContinue}
             className="min-w-[140px]"
+            disabled={isLoading}
           >
             ادامه
           </Button>
@@ -118,6 +126,7 @@ export function OcrDetection({ onBack, onContinue, onSkip }: OcrDetectionProps) 
           <button
             type="button"
             onClick={onSkip}
+            disabled={isLoading}
             className="text-sm font-semibold text-[#1378f2] transition hover:text-[#0f62c9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1378f2]/40"
           >
             سرویس را بعدا ثبت نام می کنم

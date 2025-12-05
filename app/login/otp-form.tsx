@@ -1,30 +1,35 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { RootState, AppDispatch } from "../../store/store";
 import { Theme } from "../../types";
 import { Logo } from "../../components/Logo";
 import { Button } from "../../components/ui/Button";
 import { Container } from "../../components/ui/Container";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
-import { useLoginContext } from "./login-context";
+import {
+  resendOtpThunk,
+  selectMaskedPhone,
+  setIsHovered,
+  verifyOtpThunk,
+} from "../../store/loginSlice";
+import { saveAuth } from "../../lib/auth-storage";
 
 export default function OTPForm({ masked }: { masked?: string }) {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const { language, dir } = useLanguage();
   const isFa = language === Language.FA;
   const [digits, setDigits] = useState(Array(6).fill(""));
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [localError, setLocalError] = useState<string | null>(null);
-  const {
-    setIsHovered,
-    verifyOtp,
-    resendOtp,
-    authError,
-    isSubmitting,
-    maskedPhone,
-  } = useLoginContext();
+  const { authError, isSubmitting } = useSelector(
+    (state: RootState) => state.login
+  );
+  const maskedPhone = useSelector(selectMaskedPhone);
   const theme = useSelector((state: RootState) => state.theme.theme);
   const isLight = theme === Theme.LIGHT;
 
@@ -44,7 +49,9 @@ export default function OTPForm({ masked }: { masked?: string }) {
 
     setLocalError(null);
     try {
-      await verifyOtp(code);
+      const tokens = await dispatch(verifyOtpThunk(code)).unwrap();
+      saveAuth(tokens);
+      router.push("/");
     } catch {
       // handled by authError
     }
@@ -53,7 +60,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
   const handleResend = async () => {
     setLocalError(null);
     try {
-      await resendOtp();
+      await dispatch(resendOtpThunk()).unwrap();
     } catch {
       // handled by authError
     }
@@ -68,8 +75,8 @@ export default function OTPForm({ masked }: { masked?: string }) {
           : "border-2 border-white/10 bg-gradient-to-br from-white/[0.12] to-white/[0.04] backdrop-blur-xl shadow-2xl hover:border-white/20 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)]"
       } px-6 py-12 sm:px-12 sm:py-20 flex flex-col items-center gap-6 sm:gap-8`}
       dir={dir}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => dispatch(setIsHovered(true))}
+      onMouseLeave={() => dispatch(setIsHovered(false))}
       style={
         isLight
           ? {

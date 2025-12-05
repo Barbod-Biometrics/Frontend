@@ -18,10 +18,10 @@ interface InfoCheckingProps {
 }
 
 const getSectionCopy = (accountType: AccountKind): Record<SectionId, string> => ({
-  personal: accountType === "legal" ? "اطلاعات نماینده" : "اطلاعات شخصی",
-  business: 'OOúU,OO1OO¦ UcO3O" U^ UcOOñ"',
-  location: "U.U^U,O1UOO¦ U.UcOU+UO",
-  services: "O3OñU^UOO3 UØO",
+  personal: accountType === "legal" ? "اطلاعات نماینده شرکت" : "اطلاعات شخصی",
+  business: "اطلاعات کسب‌وکار",
+  location: "آدرس و محل فعالیت",
+  services: "خدمات درخواستی",
 });
 
 function StatusBadge({
@@ -53,8 +53,8 @@ function StatusBadge({
         )}
         <span>
           {hasService
-            ? 'O_OñOrU^OO3O¦ UOUc UOO U+U+O_ O3OñU^UOO3 O®O"O¦ O\'O_UØ OO3O¦.'
-            : "UØUOU+ O3OñU^UOO3UO O_OñOrU^OO3O¦ U+O'O_UØ OO3O¦."}
+            ? `تا اینجا ${servicesRequestedCount} خدمت انتخاب شده است. در صورت نیاز می‌توانید ویرایش کنید.`
+            : "هنوز خدمتی انتخاب نشده است. لطفا یکی از خدمات را انتخاب و ثبت کنید."}
         </span>
       </div>
     );
@@ -75,8 +75,8 @@ function StatusBadge({
       )}
       <span>
         {isComplete
-          ? 'OOúU,OO1OO¦ OUOU+ O"OrO\' O¦OUOUOO_ O\'O_.'
-          : 'OOúU,OO1OO¦ OUOU+ O"OrO\' OU,OýOU.UO OO3O¦.'}
+          ? "این بخش کامل است و می‌توانید ادامه دهید."
+          : "این بخش کامل نشده است. لطفا ویرایش کنید و اطلاعات را تکمیل کنید."}
       </span>
     </div>
   );
@@ -105,7 +105,7 @@ function SectionCard({
           type="button"
           onClick={() => onEdit?.(id)}
           className="flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--md-sys-color-on-surface-variant)] transition hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/40"
-          aria-label={`U^UOOñOUOO' ${copy[id]}`}
+          aria-label={`ویرایش ${copy[id]}`}
         >
           <Pencil className="h-4 w-4" aria-hidden />
         </button>
@@ -143,13 +143,13 @@ export function InfoChecking({
       <div className="relative space-y-6">
         <div className="text-right space-y-3">
           <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
-            O"OñOñO3UO OOúU,OO1OO¦
+            بررسی و تایید اطلاعات
           </Typography>
           <Typography
             variant="body-md"
             className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7"
           >
-            O"OñOUO O_OñUOOU?O¦ O3OñU^UOO3 U.U^OñO_ U+O,OñOO U?OñU. OýUOOñ OñO O¦UcU.UOU, U^ O¦OUOUOO_ UcU+UOO_.
+            لطفا پیش از ارسال، همه بخش‌ها را مرور کنید و در صورت نیاز ویرایش نمایید. پس از تایید، درخواست شما ثبت می‌شود.
           </Typography>
         </div>
 
@@ -173,7 +173,7 @@ export function InfoChecking({
             className="min-w-[140px]"
             onClick={onBack}
           >
-            U.OñO-U,UØ U,O"U,
+            بازگشت
           </Button>
           <Button
             type="button"
@@ -181,7 +181,7 @@ export function InfoChecking({
             onClick={onSubmit}
             disabled={isSubmitting}
           >
-            O®O"O¦ U+UØOUOUO
+            تایید و ارسال
           </Button>
         </div>
       </div>

@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
 import { Theme } from "../../types";
 import { Logo } from "../../components/Logo";
 import { Button } from "../../components/ui/Button";
 import { Container } from "../../components/ui/Container";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
-import { useLoginContext } from "./login-context";
+import { requestOtpThunk } from "../../store/loginSlice";
 
 interface LabeledInputProps {
   value: string;
@@ -155,6 +155,7 @@ interface LoginFormProps {
 }
 
 function LoginForm({ onSubmit }: LoginFormProps) {
+  const dispatch = useDispatch<AppDispatch>();
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const { language, dir } = useLanguage();
@@ -162,7 +163,9 @@ function LoginForm({ onSubmit }: LoginFormProps) {
   const copy = loginCopy[language];
   const theme = useSelector((state: RootState) => state.theme.theme);
   const isLight = theme === Theme.LIGHT;
-  const { requestOtp, authError, isSubmitting } = useLoginContext();
+  const { authError, isSubmitting } = useSelector(
+    (state: RootState) => state.login
+  );
 
   const handleSubmit = async () => {
     // Clear previous error
@@ -186,10 +189,10 @@ function LoginForm({ onSubmit }: LoginFormProps) {
       if (onSubmit) {
         onSubmit(formattedPhone);
       } else {
-        await requestOtp(formattedPhone);
+        await dispatch(requestOtpThunk(formattedPhone)).unwrap();
       }
     } catch {
-      // errors handled via context authError
+      // errors handled via slice authError
     }
   };
 

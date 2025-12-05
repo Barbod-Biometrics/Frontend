@@ -3,10 +3,12 @@
 import { CheckCircle2, Info, Pencil, AlertTriangle } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
+import { AccountKind } from "../../types/businessProfile";
 
 type SectionId = "personal" | "business" | "location" | "services";
 
 interface InfoCheckingProps {
+  accountType?: AccountKind;
   completedSections?: Partial<Record<SectionId, boolean>>;
   servicesRequestedCount?: number;
   onEditSection?: (section: SectionId) => void;
@@ -15,12 +17,12 @@ interface InfoCheckingProps {
   isSubmitting?: boolean;
 }
 
-const SECTION_COPY: Record<SectionId, string> = {
-  personal: "اطلاعات شخصی",
-  business: "اطلاعات کسب و کار",
-  location: "موقعیت مکانی",
-  services: "سرویس ها",
-};
+const getSectionCopy = (accountType: AccountKind): Record<SectionId, string> => ({
+  personal: accountType === "legal" ? "اطلاعات نماینده" : "اطلاعات شخصی",
+  business: 'OOúU,OO1OO¦ UcO3O" U^ UcOOñ"',
+  location: "U.U^U,O1UOO¦ U.UcOU+UO",
+  services: "O3OñU^UOO3 UØO",
+});
 
 function StatusBadge({
   section,
@@ -50,7 +52,9 @@ function StatusBadge({
           <Info className="h-4 w-4" />
         )}
         <span>
-          {hasService ? "درخواست یک یا چند سرویس ثبت شده است." : "هیچ سرویسی درخواست نشده است."}
+          {hasService
+            ? 'O_OñOrU^OO3O¦ UOUc UOO U+U+O_ O3OñU^UOO3 O®O"O¦ O\'O_UØ OO3O¦.'
+            : "UØUOU+ O3OñU^UOO3UO O_OñOrU^OO3O¦ U+O'O_UØ OO3O¦."}
         </span>
       </div>
     );
@@ -69,18 +73,24 @@ function StatusBadge({
       ) : (
         <AlertTriangle className="h-4 w-4" />
       )}
-      <span>{isComplete ? "اطلاعات این بخش تایید شد." : "اطلاعات این بخش الزامی است."}</span>
+      <span>
+        {isComplete
+          ? 'OOúU,OO1OO¦ OUOU+ O"OrO\' O¦OUOUOO_ O\'O_.'
+          : 'OOúU,OO1OO¦ OUOU+ O"OrO\' OU,OýOU.UO OO3O¦.'}
+      </span>
     </div>
   );
 }
 
 function SectionCard({
   id,
+  copy,
   isComplete,
   servicesRequestedCount,
   onEdit,
 }: {
   id: SectionId;
+  copy: Record<SectionId, string>;
   isComplete: boolean;
   servicesRequestedCount?: number;
   onEdit?: (section: SectionId) => void;
@@ -89,13 +99,13 @@ function SectionCard({
     <article className="rounded-[22px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface-container)] px-4 py-4 shadow-[var(--elevation-1)] transition hover:-translate-y-0.5 hover:shadow-[var(--elevation-2)]">
       <div className="flex items-center justify-between">
         <Typography variant="body-lg" className="font-semibold text-[color:var(--md-sys-color-on-surface)]">
-          {SECTION_COPY[id]}
+          {copy[id]}
         </Typography>
         <button
           type="button"
           onClick={() => onEdit?.(id)}
           className="flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--md-sys-color-on-surface-variant)] transition hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/40"
-          aria-label={`ویرایش ${SECTION_COPY[id]}`}
+          aria-label={`U^UOOñOUOO' ${copy[id]}`}
         >
           <Pencil className="h-4 w-4" aria-hidden />
         </button>
@@ -113,6 +123,7 @@ function SectionCard({
 }
 
 export function InfoChecking({
+  accountType = "legal",
   completedSections,
   servicesRequestedCount = 0,
   onEditSection,
@@ -121,6 +132,7 @@ export function InfoChecking({
   isSubmitting,
 }: InfoCheckingProps) {
   const sections: SectionId[] = ["personal", "business", "location", "services"];
+  const sectionCopy = getSectionCopy(accountType);
 
   return (
     <section
@@ -131,13 +143,13 @@ export function InfoChecking({
       <div className="relative space-y-6">
         <div className="text-right space-y-3">
           <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
-            بررسی اطلاعات
+            O"OñOñO3UO OOúU,OO1OO¦
           </Typography>
           <Typography
             variant="body-md"
             className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7"
           >
-            برای دریافت سرویس مورد نظر، فرم زیر را تکمیل و تایید کنید.
+            O"OñOUO O_OñUOOU?O¦ O3OñU^UOO3 U.U^OñO_ U+O,OñOO U?OñU. OýUOOñ OñO O¦UcU.UOU, U^ O¦OUOUOO_ UcU+UOO_.
           </Typography>
         </div>
 
@@ -146,6 +158,7 @@ export function InfoChecking({
             <SectionCard
               key={section}
               id={section}
+              copy={sectionCopy}
               isComplete={Boolean(completedSections?.[section])}
               servicesRequestedCount={servicesRequestedCount}
               onEdit={onEditSection}
@@ -160,7 +173,7 @@ export function InfoChecking({
             className="min-w-[140px]"
             onClick={onBack}
           >
-            مرحله قبل
+            U.OñO-U,UØ U,O"U,
           </Button>
           <Button
             type="button"
@@ -168,7 +181,7 @@ export function InfoChecking({
             onClick={onSubmit}
             disabled={isSubmitting}
           >
-            ثبت نهایی
+            O®O"O¦ U+UØOUOUO
           </Button>
         </div>
       </div>

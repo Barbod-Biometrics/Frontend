@@ -8,6 +8,25 @@ import {
 } from "../../types/businessProfile";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.example.com";
+const USE_MOCK_API =
+  process.env.NEXT_PUBLIC_BUSINESS_AUTH_USE_MOCK === "true" ||
+  API_BASE_URL.includes("api.example.com");
+
+const mockDelay = async <T>(result: T, ms = 200): Promise<T> =>
+  new Promise((resolve) => setTimeout(() => resolve(result), ms));
+
+const createMockProfile = (overrides?: Partial<BusinessProfile>): BusinessProfile => ({
+  id: overrides?.id ?? `mock-profile-${Date.now()}`,
+  name: overrides?.name ?? "حساب نمایشی",
+  type: overrides?.type ?? "legal",
+  verificationStatus: overrides?.verificationStatus,
+  isActive: overrides?.isActive ?? true,
+  createdAt: overrides?.createdAt ?? new Date().toISOString(),
+  balance: overrides?.balance ?? 0,
+  personalInfo: overrides?.personalInfo,
+  businessInfo: overrides?.businessInfo,
+  locationInfo: overrides?.locationInfo,
+});
 
 type BackendProfile = {
   id: string;
@@ -22,6 +41,7 @@ type BackendProfile = {
       brand_name?: string;
       field_of_work?: string;
       website_url?: string;
+      legal_name?: string;
     };
     business_national_id?: string;
     location_info?: {
@@ -44,6 +64,7 @@ type BackendProfile = {
       brand_name?: string;
       field_of_work?: string;
       website_url?: string;
+      legal_name?: string;
     };
     dob?: string;
     first_name?: string;
@@ -100,6 +121,16 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
   const businessInfoSource = isLegal ? rep?.business_info : person?.business_info;
   const locationSource = isLegal ? rep?.location_info : person?.location_info;
 
+  const businessInfo = businessInfoSource
+    ? {
+        brandName: businessInfoSource.brand_name ?? "",
+        legalName: isLegal ? businessInfoSource.legal_name ?? "" : undefined,
+        fieldOfWork: businessInfoSource.field_of_work ?? "",
+        websiteUrl: businessInfoSource.website_url ?? "",
+        businessNationalId: isLegal ? data.business_details?.business_national_id ?? "" : undefined,
+      }
+    : undefined;
+
   return {
     id: data.id,
     name: data.name,
@@ -127,23 +158,17 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
             phone: person.mobile_number ?? "",
           }
         : undefined,
-    businessInfo: businessInfoSource
-      ? {
-          brandName: businessInfoSource.brand_name ?? "",
-          fieldOfWork: businessInfoSource.field_of_work ?? "",
-          websiteUrl: businessInfoSource.website_url ?? "",
-          businessNationalId: isLegal
-            ? data.business_details?.business_national_id ?? ""
-            : undefined,
-        }
-      : isLegal && data.business_details?.business_national_id
+    businessInfo:
+      businessInfo ||
+      (isLegal && data.business_details?.business_national_id
         ? {
             brandName: "",
+            legalName: "",
             fieldOfWork: "",
             websiteUrl: "",
             businessNationalId: data.business_details?.business_national_id ?? "",
           }
-        : undefined,
+        : undefined),
     locationInfo:
       isLegal && locationSource
         ? {
@@ -186,6 +211,7 @@ const toBackendPersonal = (accountType: AccountKind, payload: PersonalInfoPayloa
 const toBackendBusinessInfo = (accountType: AccountKind, payload: BusinessInfoPayload) => {
   const info = {
     brand_name: payload.brandName,
+    legal_name: accountType === "legal" ? payload.legalName : undefined,
     field_of_work: payload.fieldOfWork,
     website_url: payload.websiteUrl,
   };
@@ -227,11 +253,34 @@ const toBackendLocation = (accountType: AccountKind, payload: LocationPayload) =
 };
 
 export async function fetchBusinessProfile(profileId: string): Promise<BusinessProfile> {
+  if (USE_MOCK_API) {
+    return mockDelay(
+      createMockProfile({
+        id: profileId,
+        name: "پروفایل آزمایشی",
+        type: "legal",
+        personalInfo: undefined,
+        businessInfo: undefined,
+        locationInfo: undefined,
+      }),
+    );
+  }
+
   const data = await request<BackendProfile>(`/profiles/${profileId}`);
   return toUiProfile(data);
 }
 
 export async function createBusinessProfile(payload: AccountTypePayload): Promise<BusinessProfile> {
+  if (USE_MOCK_API) {
+    return mockDelay(
+      createMockProfile({
+        id: `mock-${payload.type}-${Date.now()}`,
+        name: payload.name,
+        type: payload.type,
+      }),
+    );
+  }
+
   const data = await request<BackendProfile>("/profiles", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -244,6 +293,10 @@ export async function savePersonalInfo(
   accountType: AccountKind,
   payload: PersonalInfoPayload,
 ): Promise<PersonalInfoPayload> {
+  if (USE_MOCK_API) {
+    return mockDelay(payload);
+  }
+
   await request(`/profiles/${profileId}`, {
     method: "PUT",
     body: JSON.stringify(toBackendPersonal(accountType, payload)),
@@ -256,6 +309,10 @@ export async function saveBusinessInfo(
   accountType: AccountKind,
   payload: BusinessInfoPayload,
 ): Promise<BusinessInfoPayload> {
+  if (USE_MOCK_API) {
+    return mockDelay(payload);
+  }
+
   await request(`/profiles/${profileId}`, {
     method: "PUT",
     body: JSON.stringify(toBackendBusinessInfo(accountType, payload)),
@@ -268,6 +325,10 @@ export async function saveLocationInfo(
   accountType: AccountKind,
   payload: LocationPayload,
 ): Promise<LocationPayload> {
+  if (USE_MOCK_API) {
+    return mockDelay(payload);
+  }
+
   await request(`/profiles/${profileId}`, {
     method: "PUT",
     body: JSON.stringify(toBackendLocation(accountType, payload)),
@@ -276,5 +337,9 @@ export async function saveLocationInfo(
 }
 
 export async function submitBusinessProfile(profileId: string): Promise<void> {
+  if (USE_MOCK_API) {
+    return mockDelay(undefined);
+  }
+
   await request<void>(`/profiles/${profileId}/submit`, { method: "POST" });
 }

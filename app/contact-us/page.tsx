@@ -11,24 +11,24 @@ import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
 
 const heroCopy: Record<Language, { badge: string; title: string; subtitle: string; mapCta: string; salesCta: string }> =
-  {
-    [Language.EN]: {
-      badge: "We are here to help",
-      title: "Contact Barbod",
-      subtitle:
-        "Find us at Iran University of Science and Technology, School of Computer Engineering. Reach out for tailored packages, onboarding, or quick support.",
-      mapCta: "See location",
-      salesCta: "Talk to sales",
-    },
-    [Language.FA]: {
-      badge: "در کنار شما هستیم",
-      title: "تماس با باربد",
-      subtitle:
-        "ما در دانشگاه علم و صنعت ایران، دانشکده مهندسی کامپیوتر مستقر هستیم. برای بسته اختصاصی، راه‌اندازی یا پشتیبانی سریع با ما در تماس باشید.",
-      mapCta: "مشاهده روی نقشه",
-      salesCta: "گفت‌وگو با فروش",
-    },
-  };
+{
+  [Language.EN]: {
+    badge: "We are here to help",
+    title: "Contact Barbod",
+    subtitle:
+      "Find us at Iran University of Science and Technology, School of Computer Engineering. Reach out for tailored packages, onboarding, or quick support.",
+    mapCta: "See location",
+    salesCta: "Talk to sales",
+  },
+  [Language.FA]: {
+    badge: "در کنار شما هستیم",
+    title: "تماس با باربد",
+    subtitle:
+      "ما در دانشگاه علم و صنعت ایران، دانشکده مهندسی کامپیوتر مستقر هستیم. برای بسته اختصاصی، راه‌اندازی یا پشتیبانی سریع با ما در تماس باشید.",
+    mapCta: "مشاهده روی نقشه",
+    salesCta: "گفت‌وگو با فروش",
+  },
+};
 
 const highlightCopy: Record<
   Language,
@@ -64,15 +64,14 @@ export default function ContactUsPage() {
               {copy.badge}
             </div>
             <div
-              className={`grid gap-8 rounded-[28px] border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)]/80 p-6 shadow-[var(--shadow-lg)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr] ${
-                isFa ? "text-right" : "text-left"
-              }`}
+              className={`grid gap-8 rounded-[28px] border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)]/80 p-6 shadow-[var(--shadow-lg)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr] ${isFa ? "text-right" : "text-left"
+                }`}
             >
               <div className="space-y-4">
                 <h1 className="text-3xl font-bold leading-tight sm:text-4xl">{copy.title}</h1>
                 <p className="max-w-3xl text-lg leading-relaxed text-[color:var(--text-secondary)]">{copy.subtitle}</p>
                 <div className="flex flex-wrap gap-3">
-                  <Link href="#contact-map">
+                  <Link href="/contact-us">
                     <Button
                       size="lg"
                       className="rounded-xl bg-gradient-to-r from-[color:var(--brand-azure)] to-[color:var(--brand-cyan)] px-6 text-white shadow-[var(--shadow-sm)] hover:brightness-110"
@@ -81,7 +80,7 @@ export default function ContactUsPage() {
                       {copy.mapCta}
                     </Button>
                   </Link>
-                  <Link href="/contact/sales">
+                  <Link href="/contact-sales">
                     <Button
                       size="lg"
                       variant="ghost"

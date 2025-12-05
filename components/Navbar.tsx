@@ -14,6 +14,8 @@ import { Theme, Language } from '../types';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useLanguage } from '../lib/useLanguage';
 
+import Image from 'next/image';
+
 interface NavbarProps {
   onNavigate?: (section: string) => void;
 }
@@ -21,7 +23,7 @@ interface NavbarProps {
 type NavItem = {
   label: string;
   href: string;
-  children?: { label: string; href: string }[];
+  children?: { label: string; href: string; icon?: string }[];
 };
 
 const navCopy: Record<
@@ -83,7 +85,7 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
       ],
     },
     { label: copy.docs, href: 'docs' },
-    { label: language === Language.FA ? 'تماس با تیم فروش' : 'Contact sales', href: '/contact/sales' },
+    { label: language === Language.FA ? 'تماس با تیم فروش' : 'Contact sales', href: '/contact-sales' },
   ];
 
   const handleNavClick = (href: string) => {
@@ -158,17 +160,27 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 min-w-[220px] rounded-[var(--radius-lg)] bg-[color:var(--md-sys-color-surface-container)]/95 backdrop-blur-xl border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-3)] overflow-hidden"
+                            className="absolute top-full mt-2 min-w-[280px] rounded-[var(--radius-lg)] bg-[color:var(--md-sys-color-surface-container)]/95 backdrop-blur-xl border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-3)] overflow-hidden"
                             style={{ [dir === 'rtl' ? 'right' : 'left']: 0 }}
                           >
-                            <div className="py-2">
+                            <div className="p-2">
                               {item.children.map((child) => (
                                 <button
                                   key={child.label}
                                   onClick={() => handleNavClick(child.href)}
-                                  className="w-full px-4 py-3 text-sm font-medium text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] transition-colors text-start"
+                                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-sm font-medium text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] transition-all group text-start"
                                 >
-                                  {child.label}
+                                  {child.icon && (
+                                    <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-black/20 border border-white/10 shadow-inner">
+                                      <Image
+                                        src={child.icon}
+                                        alt=""
+                                        fill
+                                        className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                      />
+                                    </div>
+                                  )}
+                                  <span>{child.label}</span>
                                 </button>
                               ))}
                             </div>
@@ -195,7 +207,11 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
               </Button>
 
               <div className="hidden items-center gap-2 md:flex">
-                <Button size="lg" className="h-12 rounded-full px-9 text-base">
+                <Button
+                  size="lg"
+                  className="h-12 rounded-full px-9 text-base"
+                  onClick={() => handleNavClick('/login')}
+                >
                   {copy.signup}
                 </Button>
               </div>
@@ -248,7 +264,11 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                 </div>
               ))}
               <div className="grid gap-2 pt-2">
-                <Button size="lg" className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14">
+                <Button
+                  size="lg"
+                  className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
+                  onClick={() => handleNavClick('/login')}
+                >
                   {copy.signup}
                 </Button>
               </div>

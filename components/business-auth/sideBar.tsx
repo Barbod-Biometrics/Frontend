@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Typography } from "../ui/Typography";
+import { AccountKind } from "../../types/businessProfile";
 
 type StepItem = {
   id: string;
@@ -17,40 +18,53 @@ type Step = {
   items: StepItem[];
 };
 
-const steps: Step[] = [
-  {
-    id: "account-info",
-    index: 1,
-    title: "اطلاعات حساب",
-    items: [
-      { id: "account-type", label: "نوع حساب", highlight: true },
-      { id: "personal-info", label: "اطلاعات فردی" },
-      { id: "business-info", label: "اطلاعات کسب‌ و کار" },
-      { id: "location", label: "اطلاعات مکانی" },
-    ],
-  },
-  {
-    id: "services-request",
-    index: 2,
-    title: "درخواست سرویس‌ها",
-    items: [
-      { id: "services-intro", label: "معرفی سرویس‌ ها", highlight: true },
-    ],
-  },
-  {
-    id: "review",
-    index: 4,
-    title: "بازبینی نهایی",
-    items: [{ id: "review-info", label: "تأیید و ارسال", highlight: true }],
-  },
-];
+const buildSteps = (accountType: AccountKind): Step[] => {
+  const personalLabel =
+    accountType === "legal"
+      ? "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0646\u0645\u0627\u06cc\u0646\u062f\u0647"
+      : "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0634\u062e\u0635\u06cc";
+
+  return [
+    {
+      id: "account-info",
+      index: 1,
+      title: "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u062d\u0633\u0627\u0628",
+      items: [
+        { id: "account-type", label: "\u0646\u0648\u0639 \u062d\u0633\u0627\u0628", highlight: true },
+        { id: "personal-info", label: personalLabel },
+        { id: "business-info", label: "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u06a9\u0633\u0628 \u0648\u06a9\u0627\u0631" },
+        { id: "location", label: "\u0645\u0634\u062e\u0635\u0627\u062a \u0645\u06a9\u0627\u0646" },
+      ],
+    },
+    {
+      id: "services-request",
+      index: 2,
+      title: "\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062e\u062f\u0645\u0627\u062a",
+      items: [
+        { id: "services-intro", label: "\u0645\u0639\u0631\u0641\u06cc \u062e\u062f\u0645\u0627\u062a", highlight: true },
+      ],
+    },
+    {
+      id: "review",
+      index: 4,
+      title: "\u0645\u0631\u0648\u0631 \u0648 \u062a\u0623\u06cc\u06cc\u062f",
+      items: [{ id: "review-info", label: "\u0628\u0631\u0631\u0633\u06cc \u0646\u0647\u0627\u06cc\u06cc", highlight: true }],
+    },
+  ];
+};
 
 interface AuthSidebarProps {
   activeItemId?: string;
   onItemSelect?: (itemId: string) => void;
+  accountType?: AccountKind;
 }
 
-export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: AuthSidebarProps) {
+export function AuthSidebar({
+  activeItemId: controlledActiveId,
+  onItemSelect,
+  accountType = "legal",
+}: AuthSidebarProps) {
+  const steps = useMemo(() => buildSteps(accountType), [accountType]);
   const [openSteps, setOpenSteps] = useState<Set<string>>(() => new Set([steps[0].id]));
   const [internalActiveId, setInternalActiveId] = useState<string>(steps[0].items[0].id);
 
@@ -61,7 +75,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
       (step) => step.id === activeItemId || step.items.some((item) => item.id === activeItemId),
     );
     return match?.id ?? steps[0].id;
-  }, [activeItemId]);
+  }, [activeItemId, steps]);
 
   // Keep the open accordion section in sync with the current active item
   useEffect(() => {
@@ -126,7 +140,7 @@ export function AuthSidebar({ activeItemId: controlledActiveId, onItemSelect }: 
                     toggleStep(step.id);
                     handleSelect(getFirstItemId(step));
                   }}
-                    className="flex w-full items-center justify-between gap-2 text-right"
+                  className="flex w-full items-center justify-between gap-2 text-right"
                   aria-expanded={isOpen}
                 >
                   <Typography

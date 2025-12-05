@@ -12,11 +12,11 @@ import {
   Users,
 } from "lucide-react";
 
-import { Footer } from "../../../components/Footer";
-import { Navbar } from "../../../components/Navbar";
-import { Button } from "../../../components/ui/Button";
-import { useLanguage } from "../../../lib/useLanguage";
-import { Language } from "../../../types";
+import { Footer } from "../../components/Footer";
+import { Navbar } from "../../components/Navbar";
+import { Button } from "../../components/ui/Button";
+import { useLanguage } from "../../lib/useLanguage";
+import { Language } from "../../types";
 
 const copy: Record<
   Language,
@@ -162,7 +162,7 @@ export default function SalesContactPage() {
                   </div>
                   <Button
                     size="lg"
-                    className="rounded-xl px-6"
+                    className="rounded-xl px-6 bg-black text-white hover:bg-black hover:brightness-110"
                     iconLeading={<Send className="h-4 w-4" />}
                   >
                     {c.submit}

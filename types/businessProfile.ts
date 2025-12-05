@@ -16,6 +16,7 @@ export type PersonalInfoPayload = {
 
 export type BusinessInfoPayload = {
   brandName: string;
+  legalName?: string;
   fieldOfWork: string;
   websiteUrl: string;
   businessNationalId?: string;

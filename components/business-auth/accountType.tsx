@@ -37,9 +37,17 @@ interface AccountTypeProps {
   initialType?: AccountKind;
   initialName?: string;
   isLoading?: boolean;
+  onTypeChange?: (type: AccountKind) => void;
 }
 
-export function AccountType({ onContinue, onBack, initialType, initialName, isLoading }: AccountTypeProps) {
+export function AccountType({
+  onContinue,
+  onBack,
+  initialType,
+  initialName,
+  isLoading,
+  onTypeChange,
+}: AccountTypeProps) {
   const [selectedType, setSelectedType] = useState<AccountKind>(initialType ?? "legal");
   const [accountName, setAccountName] = useState(initialName ?? "");
 
@@ -55,10 +63,19 @@ export function AccountType({ onContinue, onBack, initialType, initialName, isLo
     }
   }, [initialName]);
 
+  useEffect(() => {
+    onTypeChange?.(selectedType);
+  }, [selectedType, onTypeChange]);
+
   const handleContinue = () => {
     const trimmedName = accountName.trim();
     if (!trimmedName) return;
     onContinue?.(selectedType, trimmedName);
+  };
+
+  const handleSelectType = (type: AccountKind) => {
+    setSelectedType(type);
+    onTypeChange?.(type);
   };
 
   return (
@@ -85,7 +102,7 @@ export function AccountType({ onContinue, onBack, initialType, initialName, isLo
             <button
               key={option.id}
               type="button"
-              onClick={() => setSelectedType(option.id)}
+              onClick={() => handleSelectType(option.id)}
               className={clsx(
                 "group flex h-full flex-col items-start gap-3 rounded-3xl border bg-[color:var(--md-sys-color-surface-container)] p-5 text-right text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] transition-all duration-200",
                 isSelected

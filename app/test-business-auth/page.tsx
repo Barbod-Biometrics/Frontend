@@ -37,6 +37,7 @@ export default function Page() {
   const statuses = useAppSelector(selectBusinessProfileStatuses);
   const completedSections = useAppSelector(selectCompletedSections);
   const profileId = profile?.id;
+  const [currentAccountType, setCurrentAccountType] = useState<AccountKind>("legal");
   const accountType = profile?.type;
 
   useEffect(() => {
@@ -54,12 +55,19 @@ export default function Page() {
   }, [profileId]);
 
   useEffect(() => {
-    if (accountType === "real" && activeItemId === "location") {
+    if (accountType) {
+      setCurrentAccountType(accountType);
+    }
+  }, [accountType]);
+
+  useEffect(() => {
+    if (currentAccountType === "real" && activeItemId === "location") {
       setActiveItemId("services-intro");
     }
-  }, [accountType, activeItemId]);
+  }, [currentAccountType, activeItemId]);
 
   const handleAccountContinue = async (selectedType: AccountKind, accountName: string) => {
+    setCurrentAccountType(selectedType);
     try {
       await dispatch(createBusinessProfile({ accountType: selectedType, accountName })).unwrap();
       setActiveItemId("personal-info");
@@ -80,7 +88,7 @@ export default function Page() {
   const handleBusinessContinue = async (data: BusinessInfoPayload) => {
     try {
       await dispatch(saveBusinessInfo(data)).unwrap();
-      setActiveItemId(accountType === "real" ? "services-intro" : "location");
+      setActiveItemId(currentAccountType === "real" ? "services-intro" : "location");
     } catch (error) {
       console.error(error);
     }
@@ -115,6 +123,7 @@ export default function Page() {
           initialName={profile?.name}
           isLoading={statuses.accountType === "loading"}
           onContinue={handleAccountContinue}
+          onTypeChange={setCurrentAccountType}
           onBack={() => setActiveItemId("account-type")}
         />
       );
@@ -132,6 +141,7 @@ export default function Page() {
     case "business-info":
       content = (
         <BusinessInfo
+          accountType={currentAccountType}
           initialData={profile?.businessInfo}
           isLoading={statuses.businessInfo === "loading"}
           onBack={() => setActiveItemId("personal-info")}
@@ -153,7 +163,9 @@ export default function Page() {
       content = (
         <ServiceIntro
           isLoading={false}
-          onBack={() => setActiveItemId(accountType === "real" ? "business-info" : "location")}
+          onBack={() =>
+            setActiveItemId(currentAccountType === "real" ? "business-info" : "location")
+          }
           onContinue={handleServiceContinue}
         />
       );
@@ -161,6 +173,7 @@ export default function Page() {
     case "review-info":
       content = (
         <InfoChecking
+          accountType={currentAccountType}
           onBack={() => setActiveItemId("services-intro")}
           onSubmit={handleSubmitProfile}
           completedSections={completedSections}
@@ -170,7 +183,7 @@ export default function Page() {
             if (section === "personal") return setActiveItemId("personal-info");
             if (section === "business") return setActiveItemId("business-info");
             if (section === "location") {
-              return setActiveItemId(accountType === "real" ? "business-info" : "location");
+              return setActiveItemId(currentAccountType === "real" ? "business-info" : "location");
             }
             if (section === "services") return setActiveItemId("services-intro");
           }}
@@ -195,7 +208,11 @@ export default function Page() {
         className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-stretch gap-6 px-6 py-10 md:ml-auto md:mr-0 md:flex-row md:items-start md:justify-end"
       >
         <div className="md:sticky md:top-6 md:self-start">
-          <AuthSidebar activeItemId={activeItemId} onItemSelect={setActiveItemId} />
+          <AuthSidebar
+            activeItemId={activeItemId}
+            onItemSelect={setActiveItemId}
+            accountType={currentAccountType}
+          />
         </div>
 
         <div className="flex-1">{content}</div>

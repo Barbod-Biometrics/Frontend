@@ -274,9 +274,15 @@ export async function createBusinessProfile(payload: AccountTypePayload): Promis
     );
   }
 
-  const data = await request<BackendProfile>("/profiles", {
+  // Backend expects specific string literals for profile_type
+  const backendProfileType = payload.type === "real" ? "personal" : "legal";
+
+  const data = await request<BackendProfile>("/profiles/", {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      profile_name: payload.name,
+      profile_type: backendProfileType,
+    }),
   });
   return toUiProfile(data);
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
 import { PersonalInfo } from "../../components/business-auth/personalInfo";
@@ -8,6 +9,8 @@ import { BusinessInfo } from "../../components/business-auth/businessInfo";
 import { LocationInfo } from "../../components/business-auth/locationInfo";
 import { ServiceIntro } from "../../components/business-auth/serviceIntro";
 import { InfoChecking } from "../../components/business-auth/infoChecking";
+import { Button } from "../../components/ui/Button";
+import { Typography } from "../../components/ui/Typography";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   bootstrapBusinessProfile,
@@ -29,6 +32,7 @@ import {
 
 const DEFAULT_ITEM_ID = "account-type";
 const PROFILE_STORAGE_KEY = "business-profile-id";
+const CONNECTION_ERROR_TEXT = "در برقراری ارتباط با سرور مشکلی پیش آمد. لطفاً بعداً دوباره تلاش کنید.";
 
 export default function Page() {
   const [activeItemId, setActiveItemId] = useState<string>(DEFAULT_ITEM_ID);
@@ -39,14 +43,18 @@ export default function Page() {
   const profileId = profile?.id;
   const [currentAccountType, setCurrentAccountType] = useState<AccountKind>("legal");
   const accountType = profile?.type;
+  const searchParams = useSearchParams();
+  const urlProfileId = searchParams?.get("profileId") ?? searchParams?.get("id");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const storedId =
       typeof window !== "undefined" ? window.localStorage.getItem(PROFILE_STORAGE_KEY) : null;
-    if (storedId && !profileId && statuses.bootstrap === "idle") {
-      dispatch(bootstrapBusinessProfile({ profileId: storedId }));
+    const bootstrapId = urlProfileId ?? storedId;
+    if (bootstrapId && !profileId && statuses.bootstrap === "idle") {
+      dispatch(bootstrapBusinessProfile({ profileId: bootstrapId }));
     }
-  }, [dispatch, profileId, statuses.bootstrap]);
+  }, [dispatch, profileId, statuses.bootstrap, urlProfileId]);
 
   useEffect(() => {
     if (profileId && typeof window !== "undefined") {
@@ -67,12 +75,26 @@ export default function Page() {
   }, [currentAccountType, activeItemId]);
 
   const handleAccountContinue = async (selectedType: AccountKind, accountName: string) => {
+    const trimmedName = accountName.trim();
+    if (!trimmedName) return;
+    const hasExistingDraft =
+      Boolean(profile?.id) && Boolean(profile?.type) && Boolean(profile?.name?.trim());
     setCurrentAccountType(selectedType);
+    setErrorMessage(null);
+
+    if (hasExistingDraft) {
+      setActiveItemId("personal-info");
+      return;
+    }
+
     try {
-      await dispatch(createBusinessProfile({ accountType: selectedType, accountName })).unwrap();
+      await dispatch(
+        createBusinessProfile({ accountType: selectedType, accountName: trimmedName }),
+      ).unwrap();
       setActiveItemId("personal-info");
     } catch (error) {
       console.error(error);
+      setErrorMessage(CONNECTION_ERROR_TEXT);
     }
   };
 
@@ -82,6 +104,7 @@ export default function Page() {
       setActiveItemId("business-info");
     } catch (error) {
       console.error(error);
+      setErrorMessage(CONNECTION_ERROR_TEXT);
     }
   };
 
@@ -91,6 +114,7 @@ export default function Page() {
       setActiveItemId(currentAccountType === "real" ? "services-intro" : "location");
     } catch (error) {
       console.error(error);
+      setErrorMessage(CONNECTION_ERROR_TEXT);
     }
   };
 
@@ -100,6 +124,7 @@ export default function Page() {
       setActiveItemId("services-intro");
     } catch (error) {
       console.error(error);
+      setErrorMessage(CONNECTION_ERROR_TEXT);
     }
   };
 
@@ -110,6 +135,7 @@ export default function Page() {
       await dispatch(submitBusinessProfile()).unwrap();
     } catch (error) {
       console.error(error);
+      setErrorMessage(CONNECTION_ERROR_TEXT);
     }
   };
 
@@ -202,21 +228,72 @@ export default function Page() {
   }
 
   return (
-    <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <div
-        dir="rtl"
-        className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-stretch gap-6 px-6 py-10 md:ml-auto md:mr-0 md:flex-row md:items-start md:justify-end"
-      >
-        <div className="md:sticky md:top-6 md:self-start">
-          <AuthSidebar
-            activeItemId={activeItemId}
-            onItemSelect={setActiveItemId}
-            accountType={currentAccountType}
-          />
-        </div>
+    <>
+      <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
+        <div
+          dir="rtl"
+          className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-stretch gap-6 px-6 py-10 md:ml-auto md:mr-0 md:flex-row md:items-start md:justify-end"
+        >
+          <div className="md:sticky md:top-6 md:self-start">
+            <AuthSidebar
+              activeItemId={activeItemId}
+              onItemSelect={setActiveItemId}
+              accountType={currentAccountType}
+            />
+          </div>
 
-        <div className="flex-1">{content}</div>
-      </div>
-    </main>
+          <div className="flex-1">{content}</div>
+        </div>
+      </main>
+
+      {errorMessage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          role="alertdialog"
+          aria-modal="true"
+          onClick={() => setErrorMessage(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-[24px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] p-6 shadow-[var(--elevation-3)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <Typography
+                  variant="body-lg"
+                  className="font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                >
+                  بروز خطا در ایجاد پروفایل
+                </Typography>
+                <Typography
+                  variant="body-sm"
+                  className="text-[color:var(--md-sys-color-on-surface-variant)] leading-6"
+                >
+                  {errorMessage}
+                </Typography>
+              </div>
+              <button
+                type="button"
+                onClick={() => setErrorMessage(null)}
+                className="rounded-full p-2 text-[color:var(--md-sys-color-on-surface-variant)] transition hover:bg-[color:var(--md-sys-color-primary)]/10 hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50"
+                aria-label="بستن"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-5 flex justify-end">
+              <Button
+                type="button"
+                onClick={() => setErrorMessage(null)}
+                className="min-w-[120px]"
+              >
+                باشه
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

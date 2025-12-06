@@ -50,6 +50,7 @@ export function AccountType({
 }: AccountTypeProps) {
   const [selectedType, setSelectedType] = useState<AccountKind>(initialType ?? "legal");
   const [accountName, setAccountName] = useState(initialName ?? "");
+  const [nameError, setNameError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialType) {
@@ -69,7 +70,11 @@ export function AccountType({
 
   const handleContinue = () => {
     const trimmedName = accountName.trim();
-    if (!trimmedName) return;
+    if (!trimmedName) {
+      setNameError("وارد کردن نام کسب‌وکار الزامی است.");
+      return;
+    }
+    setNameError(null);
     onContinue?.(selectedType, trimmedName);
   };
 
@@ -164,10 +169,19 @@ export function AccountType({
           id="account-name"
           type="text"
           value={accountName}
-          onChange={(event) => setAccountName(event.target.value)}
+          onChange={(event) => {
+            const value = event.target.value;
+            setAccountName(value);
+            if (nameError && value.trim()) {
+              setNameError(null);
+            }
+          }}
           placeholder="مثلاً حساب شخصی"
           className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
         />
+        {nameError && (
+          <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">{nameError}</p>
+        )}
       </div>
 
       <div className="mt-8 flex items-center justify-between gap-4">
@@ -184,7 +198,7 @@ export function AccountType({
           type="button"
           onClick={handleContinue}
           className="min-w-[140px]"
-          disabled={isLoading || !accountName.trim()}
+          disabled={isLoading}
         >
           ادامه
         </Button>

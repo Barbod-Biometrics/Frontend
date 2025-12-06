@@ -21,34 +21,34 @@ type Step = {
 const buildSteps = (accountType: AccountKind): Step[] => {
   const personalLabel =
     accountType === "legal"
-      ? "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0646\u0645\u0627\u06cc\u0646\u062f\u0647"
-      : "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0634\u062e\u0635\u06cc";
+      ? "اطلاعات نماینده"
+      : "اطلاعات شخصی";
 
   return [
     {
       id: "account-info",
       index: 1,
-      title: "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u062d\u0633\u0627\u0628",
+      title: "اطلاعات حساب",
       items: [
-        { id: "account-type", label: "\u0646\u0648\u0639 \u062d\u0633\u0627\u0628", highlight: true },
+        { id: "account-type", label: "نوع حساب", highlight: true },
         { id: "personal-info", label: personalLabel },
-        { id: "business-info", label: "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u06a9\u0633\u0628 \u0648\u06a9\u0627\u0631" },
-        { id: "location", label: "\u0645\u0634\u062e\u0635\u0627\u062a \u0645\u06a9\u0627\u0646" },
+        { id: "business-info", label: "اطلاعات کسب و کار" },
+        { id: "location", label: "اطلاعات مکانی" },
       ],
     },
     {
       id: "services-request",
       index: 2,
-      title: "\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062e\u062f\u0645\u0627\u062a",
+      title: "درخواست خدمات",
       items: [
-        { id: "services-intro", label: "\u0645\u0639\u0631\u0641\u06cc \u062e\u062f\u0645\u0627\u062a", highlight: true },
+        { id: "services-intro", label: "معرفی خدمات", highlight: true },
       ],
     },
     {
       id: "review",
       index: 4,
-      title: "\u0645\u0631\u0648\u0631 \u0648 \u062a\u0623\u06cc\u06cc\u062f",
-      items: [{ id: "review-info", label: "\u0628\u0631\u0631\u0633\u06cc \u0646\u0647\u0627\u06cc\u06cc", highlight: true }],
+      title: "مرور و تأیید",
+      items: [{ id: "review-info", label: "بررسی نهایی", highlight: true }],
     },
   ];
 };
@@ -108,7 +108,7 @@ export function AuthSidebar({
         "overflow-hidden",
       )}
     >
-      <div className="relative grid grid-cols-[64px_1fr] items-start gap-x-1 gap-y-4">
+      <div className="relative grid grid-cols-[45px_1fr] items-start gap-x-1 gap-y-4">
         {steps.map((step) => {
           const isOpen = openSteps.has(step.id);
           const isStepActive =

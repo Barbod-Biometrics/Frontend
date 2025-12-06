@@ -6,8 +6,11 @@ import {
   LocationPayload,
   PersonalInfoPayload,
 } from "../../types/businessProfile";
+import { apiFetch } from "../api-client";
+import { getAccessToken } from "../auth-storage";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.example.com";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.barbodbiometrics.ir/api/v1";
 const USE_MOCK_API =
   process.env.NEXT_PUBLIC_BUSINESS_AUTH_USE_MOCK === "true" ||
   API_BASE_URL.includes("api.example.com");
@@ -84,24 +87,14 @@ type BackendProfile = {
 };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
-    ...init,
-  });
+  const token = getAccessToken();
+  const headers = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(init?.headers ?? {}),
+  };
 
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request to ${path} failed with status ${response.status}`);
-  }
-
-  if (response.status === 204) {
-    return undefined as T;
-  }
-
-  return (await response.json()) as T;
+  const payload = await apiFetch<T | null>(path, { ...init, headers });
+  return (payload === null ? undefined : payload) as T;
 }
 
 const normalizeType = (rawType: string | undefined): AccountKind => {

@@ -1,6 +1,6 @@
-// store/walletSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Language } from '../types';
+import { walletDeposit, getWalletSummary, getWalletTransactions, mapTransaction, currencyUtils } from '../lib/wallet-api';
 
 export interface Transaction {
   id: string;
@@ -22,106 +22,101 @@ export interface WalletState {
   currentPage: number;
   itemsPerPage: number;
   totalPages: number;
-   lastUpdated?: string;
+  lastUpdated?: string;
+  apiLoading: { summary: boolean; transactions: boolean; deposit: boolean };
 }
 
 const initialState: WalletState = {
-  balance: 2500000,
-  totalDeposits: 1500000,
-  totalWithdrawals: 650000,
-  transactionCount: 6,
-  transactions: [
-    {
-      id: '1',
-      type: 'deposit',
-      amount: 500000,
-      date: '2025-12-01',
-      description: 'شارژ حساب از درگاه بانکی',
-      status: 'completed'
-    },
-    {
-      id: '2',
-      type: 'withdrawal',
-      amount: 200000,
-      date: '2025-11-30',
-      description: 'انتقال به حساب بانکی',
-      status: 'completed'
-    },
-    {
-      id: '3',
-      type: 'deposit',
-      amount: 1000000,
-      date: '2025-11-28',
-      description: 'دریافت از فروش محصول',
-      status: 'completed'
-    },
-    {
-      id: '4',
-      type: 'withdrawal',
-      amount: 150000,
-      date: '2025-11-25',
-      description: 'خرید از فروشگاه',
-      status: 'completed'
-    },
-    {
-      id: '5',
-      type: 'withdrawal',
-      amount: 300000,
-      date: '2025-11-20',
-      description: 'انتقال به کیف پول دیگر',
-      status: 'completed'
-    },
-    {
-      id: '6',
-      type: 'deposit',
-      amount: 300000,
-      date: '2025-11-15',
-      description: 'بازگشت مبلغ',
-      status: 'completed'
-    }
-  ],
+  balance: 0,
+  totalDeposits: 0,
+  totalWithdrawals: 0,
+  transactionCount: 0,
+  transactions: [],
   loading: false,
   error: null,
   currentPage: 1,
-  itemsPerPage: 4,
-  totalPages: 2,
-  lastUpdated: new Date().toISOString()
+  itemsPerPage: 10,
+  totalPages: 1,
+  lastUpdated: undefined,
+  apiLoading: { summary: false, transactions: false, deposit: false }
 };
 
-// تعریف AsyncThunkConfig
-interface AsyncThunkConfig {
-  state: unknown;
-  rejectValue: string;
-}
+// Async Thunks
+export const fetchWalletSummary = createAsyncThunk(
+  'wallet/fetchSummary',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await getWalletSummary();
+      return {
+        balance: currencyUtils.rialToToman(res.data.balance),
+        totalDeposits: currencyUtils.rialToToman(res.data.total_deposits),
+        totalWithdrawals: currencyUtils.rialToToman(res.data.total_withdrawals),
+        transactionCount: res.data.transaction_count,
+        lastUpdated: res.data.last_updated,
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'خطا در دریافت اطلاعات کیف پول');
+    }
+  }
+);
 
-// Async thunk for fetching wallet data
-export const fetchWalletData = createAsyncThunk<
-  { 
-    balance: number; 
-    totalDeposits: number; 
-    totalWithdrawals: number; 
-    transactionCount: number;
-    transactions: Transaction[];
-  },
-  Language,
-  AsyncThunkConfig
->(
+export const fetchWalletTransactions = createAsyncThunk(
+  'wallet/fetchTransactions',
+  async ({ page = 1, pageSize = 10 }: { page?: number; pageSize?: number } = {}, { rejectWithValue }) => {
+    try {
+      const res = await getWalletTransactions(page, pageSize);
+      return {
+        transactions: res.data.transactions.map(mapTransaction),
+        totalCount: res.data.total_count,
+        currentPage: res.data.page,
+        totalPages: res.data.total_pages,
+        pageSize: res.data.page_size,
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'خطا در دریافت تراکنش‌ها');
+    }
+  }
+);
+
+export const createDeposit = createAsyncThunk(
+  'wallet/createDeposit',
+  async ({ amount, description }: { amount: number; description?: string }, { rejectWithValue }) => {
+    try {
+      const res = await walletDeposit(amount, description);
+      
+      
+      if (!res.success) {
+        return rejectWithValue(res.data.message || 'واریز ناموفق بود');
+      }
+
+      return {
+        transactionId: res.data.transaction_id,
+        newBalance: currencyUtils.rialToToman(res.data.new_balance),
+        message: res.data.message,
+        amount,
+        description: description || 'واریز',
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'خطا در پردازش واریز');
+    }
+  }
+);
+
+
+export const fetchWalletData = createAsyncThunk(
   'wallet/fetchData',
   async (language: Language = Language.FA, { rejectWithValue }) => {
     try {
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Return mock data
       return {
         balance: 2500000,
         totalDeposits: 1500000,
         totalWithdrawals: 650000,
         transactionCount: 6,
-        transactions: initialState.transactions
+        transactions: []
       };
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Unknown error occurred');
+      return rejectWithValue(error instanceof Error ? error.message : 'خطای ناشناخته');
     }
   }
 );
@@ -130,67 +125,78 @@ const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: {
-    setBalance(state, action: PayloadAction<number>) {
-      state.balance = action.payload;
-    },
-    
-    addTransaction(state, action: PayloadAction<Transaction>) {
-      // اضافه کردن تراکنش جدید به ابتدای لیست
-      state.transactions.unshift(action.payload);
-      state.transactionCount = state.transactions.length;
-      
-      // محاسبه مجدد صفحات
-      state.totalPages = Math.ceil(state.transactions.length / state.itemsPerPage);
-      
-      // به‌روزرسانی موجودی و آمار
-      if (action.payload.type === 'deposit') {
-        state.totalDeposits += action.payload.amount;
-        state.balance += action.payload.amount;
-      } else {
-        state.totalWithdrawals += action.payload.amount;
-        state.balance -= action.payload.amount;
-      }
-    },
-    
-    updateWalletData(state, action: PayloadAction<Partial<WalletState>>) {
-      return { ...state, ...action.payload };
-    },
-    
-    // Pagination actions
     setCurrentPage(state, action: PayloadAction<number>) {
-      const newPage = Math.max(1, Math.min(action.payload, state.totalPages));
-      state.currentPage = newPage;
+      state.currentPage = action.payload;
     },
-    
-    setItemsPerPage(state, action: PayloadAction<number>) {
-      state.itemsPerPage = action.payload;
-      // محاسبه مجدد صفحات
-      state.totalPages = Math.ceil(state.transactions.length / state.itemsPerPage);
-      // اگر صفحه جاری بزرگتر از صفحات جدید بود، به آخرین صفحه برو
-      if (state.currentPage > state.totalPages) {
-        state.currentPage = Math.max(1, state.totalPages);
-      }
-    },
-    
     goToNextPage(state) {
-      if (state.currentPage < state.totalPages) {
-        state.currentPage += 1;
-      }
+      if (state.currentPage < state.totalPages) state.currentPage++;
     },
-    
     goToPrevPage(state) {
-      if (state.currentPage > 1) {
-        state.currentPage -= 1;
-      }
+      if (state.currentPage > 1) state.currentPage--;
     },
-    
-    // Reset pagination to first page
-    resetPagination(state) {
-      state.currentPage = 1;
-    }
+    clearError(state) {
+      state.error = null;
+    },
   },
-  
   extraReducers: (builder) => {
+    // Summary
+    builder.addCase(fetchWalletSummary.pending, (state) => {
+      state.apiLoading.summary = true;
+      state.error = null;
+    }).addCase(fetchWalletSummary.fulfilled, (state, action) => {
+      state.apiLoading.summary = false;
+      state.balance = action.payload.balance;
+      state.totalDeposits = action.payload.totalDeposits;
+      state.totalWithdrawals = action.payload.totalWithdrawals;
+      state.transactionCount = action.payload.transactionCount;
+      state.lastUpdated = action.payload.lastUpdated;
+    }).addCase(fetchWalletSummary.rejected, (state, action) => {
+      state.apiLoading.summary = false;
+      state.error = action.payload as string;
+    });
+
+    // Transactions
+    builder.addCase(fetchWalletTransactions.pending, (state) => {
+      state.apiLoading.transactions = true;
+      state.error = null;
+    }).addCase(fetchWalletTransactions.fulfilled, (state, action) => {
+      state.apiLoading.transactions = false;
+      state.transactions = action.payload.transactions;
+      state.transactionCount = action.payload.totalCount;
+      state.totalPages = action.payload.totalPages;
+      state.currentPage = action.payload.currentPage;
+      state.itemsPerPage = action.payload.pageSize;
+    }).addCase(fetchWalletTransactions.rejected, (state, action) => {
+      state.apiLoading.transactions = false;
+      state.error = action.payload as string;
+    });
+
+    // Deposit
+    builder.addCase(createDeposit.pending, (state) => {
+      state.apiLoading.deposit = true;
+      state.error = null;
+    }).addCase(createDeposit.fulfilled, (state, action) => {
+      state.apiLoading.deposit = false;
+      const newTx: Transaction = {
+        id: action.payload.transactionId,
+        type: 'deposit',
+        amount: action.payload.amount,
+        date: new Date().toISOString().split('T')[0],
+        description: action.payload.description,
+        status: 'completed',
+      };
+      state.transactions.unshift(newTx);
+      state.balance = action.payload.newBalance;
+      state.totalDeposits += action.payload.amount;
+      state.transactionCount = state.transactions.length;
+      state.totalPages = Math.ceil(state.transactions.length / state.itemsPerPage);
+      state.lastUpdated = new Date().toISOString();
+    }).addCase(createDeposit.rejected, (state, action) => {
+      state.apiLoading.deposit = false;
+      state.error = action.payload as string;
+    });
+
+    // Legacy
     builder
       .addCase(fetchWalletData.pending, (state) => {
         state.loading = true;
@@ -198,58 +204,32 @@ const walletSlice = createSlice({
       })
       .addCase(fetchWalletData.fulfilled, (state, action) => {
         state.loading = false;
-        state.balance = action.payload.balance;
-        state.totalDeposits = action.payload.totalDeposits;
-        state.totalWithdrawals = action.payload.totalWithdrawals;
-        state.transactionCount = action.payload.transactionCount;
-        state.transactions = action.payload.transactions;
-        
-        
-        // محاسبه صفحات بعد از دریافت داده
-        state.totalPages = Math.ceil(action.payload.transactionCount / state.itemsPerPage);
-        // برگشت به صفحه اول
-        state.currentPage = 1;
+      
+        if (state.transactions.length === 0) {
+          state.balance = action.payload.balance;
+          state.totalDeposits = action.payload.totalDeposits;
+          state.totalWithdrawals = action.payload.totalWithdrawals;
+          state.transactionCount = action.payload.transactionCount;
+          state.transactions = action.payload.transactions;
+          state.totalPages = Math.ceil(action.payload.transactionCount / state.itemsPerPage);
+          state.currentPage = 1;
+        }
       })
       .addCase(fetchWalletData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'خطا در دریافت اطلاعات';
+         state.error = action.payload as string || 'خطا در دریافت اطلاعات';
       });
-  }
+  },
 });
 
-// Export actions
-export const { 
-  setBalance, 
-  addTransaction, 
-  updateWalletData,
-  setCurrentPage,
-  setItemsPerPage,
-  goToNextPage,
-  goToPrevPage,
-  resetPagination
-} = walletSlice.actions;
-
+export const { setCurrentPage, goToNextPage, goToPrevPage, clearError } = walletSlice.actions;
 export default walletSlice.reducer;
 
-// Selector functions (تعریف خارج از slice)
 export const selectCurrentPageTransactions = (state: { wallet: WalletState }) => {
   const { transactions, currentPage, itemsPerPage } = state.wallet;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  return transactions.slice(startIndex, endIndex);
+  const start = (currentPage - 1) * itemsPerPage;
+  return transactions.slice(start, start + itemsPerPage);
 };
 
-export const selectPaginationInfo = (state: { wallet: WalletState }) => {
-  const { transactions, currentPage, itemsPerPage, totalPages } = state.wallet;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  
-  return {
-    currentPage,
-    itemsPerPage,
-    totalPages,
-    totalItems: transactions.length,
-    startIndex: startIndex + 1,
-    endIndex: Math.min(endIndex, transactions.length)
-  };
-};
+export const selectApiLoading = (state: { wallet: WalletState }) => state.wallet.apiLoading;
+export const selectWalletError = (state: { wallet: WalletState }) => state.wallet.error;

@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import languageReducer from './languageSlice';
 import themeReducer from './themeSlice';
+import walletReducer from './walletSlice';
 import loginReducer from './loginSlice';
 
 export const store = configureStore({
@@ -8,7 +9,19 @@ export const store = configureStore({
     language: languageReducer,
     theme: themeReducer,
     login: loginReducer,
+  
+    wallet: walletReducer,
+    
   },
+
+    middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['wallet/fetchData/pending', 'wallet/fetchData/fulfilled', 'wallet/fetchData/rejected'],
+        ignoredPaths: ['wallet.transactions'],
+      },
+    }),
+
 });
 
 export type RootState = ReturnType<typeof store.getState>;

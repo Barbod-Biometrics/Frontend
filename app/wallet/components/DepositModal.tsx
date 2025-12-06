@@ -1,11 +1,10 @@
-
 "use client";
 
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../store/store';
-import { addTransaction } from '../../../store/walletSlice';
+import { createDeposit } from '../../../store/walletSlice';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
@@ -14,13 +13,17 @@ import { Language } from '../../../types';
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onDepositSuccess?: () => void;
 }
 
-export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
+export default function DepositModal({ isOpen, onClose, onDepositSuccess }: DepositModalProps) {
   const dispatch = useDispatch<AppDispatch>();
   const language = useSelector((state: RootState) => state.language.language);
+  const { apiLoading } = useSelector((state: RootState) => state.wallet);
+  
   const [amount, setAmount] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
 
   const translations = {
     title: {
@@ -34,6 +37,10 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
     amountLabel: {
       en: 'Amount (Toman)',
       fa: 'مبلغ (تومان)'
+    },
+    descriptionLabel: {
+      en: 'Description (Optional)',
+      fa: 'توضیحات (اختیاری)'
     },
     quickAmounts: {
       en: 'Quick Amounts',
@@ -58,38 +65,50 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
     placeholder: {
       en: 'Amount in Toman',
       fa: 'مبلغ به تومان'
+    },
+    errorMinAmount: {
+      en: 'Minimum amount is 1,000 Toman',
+      fa: 'حداقل مبلغ ۱,۰۰۰ تومان است'
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || parseInt(amount) <= 0) return;
+    setError('');
+    
+    const amountNum = parseInt(amount);
+    
+    if (!amount || amountNum <= 0) {
+      setError(translations.errorMinAmount[language]);
+      return;
+    }
+    
+    if (amountNum < 1000) {
+      setError(translations.errorMinAmount[language]);
+      return;
+    }
 
-    setLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const newTransaction = {
-      id: Date.now().toString(),
-      type: 'deposit' as const,
-      amount: parseInt(amount),
-      date: new Date().toISOString().split('T')[0],
-      description: language === Language.FA ? 'واریز از طریق درگاه' : 'Deposit via gateway',
-      status: 'completed' as const
-    };
-    
-    dispatch(addTransaction(newTransaction));
-    setLoading(false);
-    setAmount('');
-    onClose();
-    
-    // Show success message (in real app use toast)
-    alert(translations.success[language]);
+    try {
+      await dispatch(createDeposit({ 
+        amount: amountNum, 
+        description: description || undefined 
+      })).unwrap();
+      
+      setAmount('');
+      setDescription('');
+      onClose();
+      
+      if (onDepositSuccess) {
+        onDepositSuccess();
+      }
+    } catch (error: any) {
+      setError(error || 'An error occurred');
+    }
   };
 
   const handleQuickAmount = (value: number) => {
     setAmount(value.toString());
+    setError('');
   };
 
   if (!isOpen) return null;
@@ -106,6 +125,7 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
               variant="ghost"
               size="icon"
               onClick={onClose}
+              disabled={apiLoading.deposit}
             >
               <X className="w-6 h-6" /> 
             </Button>
@@ -115,19 +135,46 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
             {translations.description[language]}
           </Typography>
 
+          {error && (
+            <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800">
+              <Typography variant="body-sm" className="text-red-600 dark:text-red-400">
+                {error}
+              </Typography>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
-            <div className="mb-8">
+            <div className="mb-6">
               <label className="block mb-3 text-lg font-medium"> 
                 {translations.amountLabel[language]}
               </label>
               <input
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-5 py-4 text-lg rounded-lg border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]" /* py-4 و text-lg اضافه شد */
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  setError('');
+                }}
+                className="w-full px-5 py-4 text-lg rounded-lg border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]"
                 placeholder={translations.placeholder[language]}
                 required
                 min="1000"
+                step="1000"
+                disabled={apiLoading.deposit}
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block mb-3 text-lg font-medium"> 
+                {translations.descriptionLabel[language]}
+              </label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full px-5 py-4 text-lg rounded-lg border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]"
+                placeholder={language === Language.FA ? 'توضیحات واریز' : 'Deposit description'}
+                disabled={apiLoading.deposit}
               />
             </div>
 
@@ -144,6 +191,7 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
                     size="md"
                     onClick={() => handleQuickAmount(value)}
                     className="py-3"
+                    disabled={apiLoading.deposit}
                   >
                     {value.toLocaleString(language === Language.FA ? 'fa-IR' : 'en-US')}
                   </Button>
@@ -158,7 +206,7 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
                 size="lg" 
                 className="flex-1 py-4" 
                 onClick={onClose}
-                disabled={loading}
+                disabled={apiLoading.deposit}
               >
                 {translations.cancel[language]}
               </Button>
@@ -167,9 +215,9 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
                 variant="primary"
                 size="lg" 
                 className="flex-1 py-4"
-                disabled={loading || !amount}
+                disabled={apiLoading.deposit || !amount || parseInt(amount) < 1000}
               >
-                {loading ? translations.depositing[language] : translations.confirm[language]}
+                {apiLoading.deposit ? translations.depositing[language] : translations.confirm[language]}
               </Button>
             </div>
           </form>

@@ -35,6 +35,7 @@ type BackendProfile = {
   id: string;
   name: string;
   type: string;
+  profile_type?: string;
   verification_status?: string;
   is_active?: boolean;
   created_at?: string;
@@ -100,12 +101,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 const normalizeType = (rawType: string | undefined): AccountKind => {
   const value = (rawType ?? "").toLowerCase();
   if (["legal", "hoghooghi", "حقوقی"].includes(value)) return "legal";
-  if (["real", "haghighi", "حقیقی"].includes(value)) return "real";
+  if (["real", "personal", "haghighi", "حقیقی"].includes(value)) return "real";
   return "legal";
 };
 
 const toUiProfile = (data: BackendProfile): BusinessProfile => {
-  const normalizedType = normalizeType(data.type);
+  const profileType = data.type ?? data.profile_type;
+  const normalizedType = normalizeType(profileType);
   const isLegal = normalizedType === "legal";
 
   const rep = data.business_details;
@@ -121,6 +123,18 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
         fieldOfWork: businessInfoSource.field_of_work ?? "",
         websiteUrl: businessInfoSource.website_url ?? "",
         businessNationalId: isLegal ? data.business_details?.business_national_id ?? "" : undefined,
+      }
+    : undefined;
+
+  const locationInfo = locationSource
+    ? {
+        address: locationSource.address ?? "",
+        city: locationSource.city ?? "",
+        fixedPhone: locationSource.fixed_phone ?? "",
+        plateNumber: locationSource.plate_number ?? "",
+        postalCode: locationSource.postal_code ?? "",
+        province: locationSource.province ?? "",
+        unit: locationSource.unit ?? "",
       }
     : undefined;
 
@@ -162,18 +176,7 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
             businessNationalId: data.business_details?.business_national_id ?? "",
           }
         : undefined),
-    locationInfo:
-      isLegal && locationSource
-        ? {
-            address: locationSource.address ?? "",
-            city: locationSource.city ?? "",
-            fixedPhone: locationSource.fixed_phone ?? "",
-            plateNumber: locationSource.plate_number ?? "",
-            postalCode: locationSource.postal_code ?? "",
-            province: locationSource.province ?? "",
-            unit: locationSource.unit ?? "",
-          }
-        : undefined,
+    locationInfo,
   };
 };
 
@@ -259,7 +262,7 @@ export async function fetchBusinessProfile(profileId: string): Promise<BusinessP
     );
   }
 
-  const data = await request<BackendProfile>(`/profiles/${profileId}`);
+  const data = await request<BackendProfile>(`/profiles/${profileId}/`);
   return toUiProfile(data);
 }
 
@@ -296,8 +299,8 @@ export async function savePersonalInfo(
     return mockDelay(payload);
   }
 
-  await request(`/profiles/${profileId}`, {
-    method: "PUT",
+  await request(`/profiles/${profileId}/`, {
+    method: "PATCH",
     body: JSON.stringify(toBackendPersonal(accountType, payload)),
   });
   return payload;
@@ -312,8 +315,8 @@ export async function saveBusinessInfo(
     return mockDelay(payload);
   }
 
-  await request(`/profiles/${profileId}`, {
-    method: "PUT",
+  await request(`/profiles/${profileId}/`, {
+    method: "PATCH",
     body: JSON.stringify(toBackendBusinessInfo(accountType, payload)),
   });
   return payload;
@@ -328,8 +331,8 @@ export async function saveLocationInfo(
     return mockDelay(payload);
   }
 
-  await request(`/profiles/${profileId}`, {
-    method: "PUT",
+  await request(`/profiles/${profileId}/`, {
+    method: "PATCH",
     body: JSON.stringify(toBackendLocation(accountType, payload)),
   });
   return payload;
@@ -340,5 +343,5 @@ export async function submitBusinessProfile(profileId: string): Promise<void> {
     return mockDelay(undefined);
   }
 
-  await request<void>(`/profiles/${profileId}/submit`, { method: "POST" });
+  await request<void>(`/profiles/${profileId}/submit/`, { method: "POST" });
 }

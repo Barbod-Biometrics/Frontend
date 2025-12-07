@@ -6,7 +6,6 @@ export type AccountTypePayload = {
 };
 
 export type PersonalInfoPayload = {
-  isBusinessOwner?: boolean;
   firstName: string;
   lastName: string;
   nationalId: string;

@@ -88,9 +88,12 @@ export default function Page() {
     }
 
     try {
-      await dispatch(
+      const createdProfile = await dispatch(
         createBusinessProfile({ accountType: selectedType, accountName: trimmedName }),
       ).unwrap();
+      if (createdProfile?.id && typeof window !== "undefined") {
+        window.localStorage.setItem(PROFILE_STORAGE_KEY, createdProfile.id);
+      }
       setActiveItemId("personal-info");
     } catch (error) {
       console.error(error);
@@ -203,7 +206,6 @@ export default function Page() {
           onBack={() => setActiveItemId("services-intro")}
           onSubmit={handleSubmitProfile}
           completedSections={completedSections}
-          servicesRequestedCount={0}
           isSubmitting={statuses.submit === "loading"}
           onEditSection={(section) => {
             if (section === "personal") return setActiveItemId("personal-info");
@@ -211,7 +213,6 @@ export default function Page() {
             if (section === "location") {
               return setActiveItemId(currentAccountType === "real" ? "business-info" : "location");
             }
-            if (section === "services") return setActiveItemId("services-intro");
           }}
         />
       );

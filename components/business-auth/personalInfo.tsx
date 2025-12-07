@@ -24,7 +24,6 @@ type PersonalInfoForm = PersonalInfoPayload;
 
 export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: PersonalInfoProps) {
   const [form, setForm] = useState<PersonalInfoForm>({
-    isBusinessOwner: true,
     firstName: "",
     lastName: "",
     nationalId: "",
@@ -55,7 +54,7 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
     }
   }, [form.birthDate]);
 
-  const handleChange = (key: keyof PersonalInfoForm, value: string | boolean) => {
+  const handleChange = (key: keyof PersonalInfoForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -88,43 +87,6 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
           className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7"
         >
           در ادامه اطلاعات شخصی خود را وارد کنید.
-        </Typography>
-      </div>
-
-      <div className="mt-6 space-y-3 rounded-3xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface-container)] px-5 py-5 shadow-[var(--elevation-1)]">
-        <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface)]">
-          آیا صاحب کسب و کار هستید؟
-        </Typography>
-        <div className="flex items-center gap-6 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-          {[
-            { id: "yes", label: "هستم", value: true },
-            { id: "no", label: "نیستم", value: false },
-          ].map((option) => {
-            const checked = form.isBusinessOwner === option.value;
-            return (
-              <label
-                key={option.id}
-                className="inline-flex cursor-pointer items-center gap-2"
-              >
-                <input
-                  type="radio"
-                  name="business-owner"
-                  className="h-4 w-4 accent-[color:var(--md-sys-color-primary)]"
-                  checked={checked}
-                  onChange={() => handleChange("isBusinessOwner", option.value)}
-                />
-                <span className="select-none">{option.label}</span>
-              </label>
-            );
-          })}
-        </div>
-        <Typography
-          variant="body-sm"
-          className="text-[color:var(--md-sys-color-on-surface-variant)] leading-6"
-        >
-          در صورتی که خودتان صاحب کسب و کار هستید، می‌بایست شماره موبایلی که آن را وارد می‌کنید
-          با نام شما تطابق داشته باشد؛ در غیر این صورت در بخش‌های بعدی اطلاعات فردی که شماره
-          موبایل و کد ملی یکسانی دارد را وارد کنید.
         </Typography>
       </div>
 

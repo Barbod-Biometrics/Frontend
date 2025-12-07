@@ -1,16 +1,15 @@
 "use client";
 
-import { CheckCircle2, Info, Pencil, AlertTriangle } from "lucide-react";
+import { CheckCircle2, Pencil, AlertTriangle } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
 import { AccountKind } from "../../types/businessProfile";
 
-type SectionId = "personal" | "business" | "location" | "services";
+type SectionId = "personal" | "business" | "location";
 
 interface InfoCheckingProps {
   accountType?: AccountKind;
   completedSections?: Partial<Record<SectionId, boolean>>;
-  servicesRequestedCount?: number;
   onEditSection?: (section: SectionId) => void;
   onBack?: () => void;
   onSubmit?: () => void;
@@ -21,61 +20,28 @@ const getSectionCopy = (accountType: AccountKind): Record<SectionId, string> => 
   personal: accountType === "legal" ? "اطلاعات نماینده شرکت" : "اطلاعات شخصی",
   business: "اطلاعات کسب‌وکار",
   location: "آدرس و محل فعالیت",
-  services: "خدمات درخواستی",
 });
 
-function StatusBadge({
-  section,
-  isComplete,
-  servicesRequestedCount = 0,
-}: {
-  section: SectionId;
-  isComplete: boolean;
-  servicesRequestedCount?: number;
-}) {
+function StatusBadge({ isComplete }: { isComplete: boolean }) {
   const baseClasses =
     "flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold bg-[color:var(--md-sys-color-surface-container)]";
-
-  if (section === "services") {
-    const hasService = servicesRequestedCount > 0;
-    return (
-      <div
-        className={`${baseClasses} ${
-          hasService
-            ? "border-[color:var(--md-sys-color-primary)]/40 text-[color:var(--md-sys-color-primary)]"
-            : "border-[color:var(--md-sys-color-primary)]/30 text-[color:var(--md-sys-color-primary)]"
-        }`}
-      >
-        {hasService ? (
-          <CheckCircle2 className="h-4 w-4" />
-        ) : (
-          <Info className="h-4 w-4" />
-        )}
-        <span>
-          {hasService
-            ? `تا اینجا ${servicesRequestedCount} خدمت انتخاب شده است. در صورت نیاز می‌توانید ویرایش کنید.`
-            : "هنوز خدمتی انتخاب نشده است. لطفا یکی از خدمات را انتخاب و ثبت کنید."}
-        </span>
-      </div>
-    );
-  }
 
   return (
     <div
       className={`${baseClasses} ${
         isComplete
-          ? "border-[color:var(--md-sys-color-primary)]/40 text-[color:var(--md-sys-color-primary)]"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
           : "border-[color:var(--md-sys-color-error)]/60 text-[color:var(--md-sys-color-error)] bg-[color:var(--md-sys-color-error)]/08"
       }`}
     >
       {isComplete ? (
-        <CheckCircle2 className="h-4 w-4" />
+        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
       ) : (
         <AlertTriangle className="h-4 w-4" />
       )}
       <span>
         {isComplete
-          ? "این بخش کامل است و می‌توانید ادامه دهید."
+          ? "اطلاعات این بخش تکمیل شده است"
           : "این بخش کامل نشده است. لطفا ویرایش کنید و اطلاعات را تکمیل کنید."}
       </span>
     </div>
@@ -86,13 +52,11 @@ function SectionCard({
   id,
   copy,
   isComplete,
-  servicesRequestedCount,
   onEdit,
 }: {
   id: SectionId;
   copy: Record<SectionId, string>;
   isComplete: boolean;
-  servicesRequestedCount?: number;
   onEdit?: (section: SectionId) => void;
 }) {
   return (
@@ -112,11 +76,7 @@ function SectionCard({
       </div>
 
       <div className="mt-3">
-        <StatusBadge
-          section={id}
-          isComplete={isComplete}
-          servicesRequestedCount={servicesRequestedCount}
-        />
+        <StatusBadge isComplete={isComplete} />
       </div>
     </article>
   );
@@ -125,13 +85,12 @@ function SectionCard({
 export function InfoChecking({
   accountType = "legal",
   completedSections,
-  servicesRequestedCount = 0,
   onEditSection,
   onBack,
   onSubmit,
   isSubmitting,
 }: InfoCheckingProps) {
-  const sections: SectionId[] = ["personal", "business", "location", "services"];
+  const sections: SectionId[] = ["personal", "business", "location"];
   const sectionCopy = getSectionCopy(accountType);
 
   return (
@@ -160,7 +119,6 @@ export function InfoChecking({
               id={section}
               copy={sectionCopy}
               isComplete={Boolean(completedSections?.[section])}
-              servicesRequestedCount={servicesRequestedCount}
               onEdit={onEditSection}
             />
           ))}

@@ -122,10 +122,7 @@ export const saveLocationInfo = createAsyncThunk<
   try {
     const { profile } = getState().businessProfile;
     if (!profile?.id) throw new Error("Profile not created yet");
-    if (profile.type === "real") {
-      throw new Error("Location is not required for real accounts");
-    }
-    await saveLocationInfoApi(profile.id, profile.type, payload);
+    await saveLocationInfoApi(profile.id, profile.type, payload, profile.personalInfo);
     return payload;
   } catch (error) {
     return rejectWithValue(getErrorMessage(error, "Failed to save location info"));
@@ -140,7 +137,7 @@ export const submitBusinessProfile = createAsyncThunk<
   try {
     const { profile } = getState().businessProfile;
     if (!profile?.id) throw new Error("Profile not created yet");
-    await submitBusinessProfileApi(profile.id);
+    await submitBusinessProfileApi(profile);
   } catch (error) {
     return rejectWithValue(getErrorMessage(error, "Failed to submit business profile"));
   }

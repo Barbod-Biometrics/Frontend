@@ -5,13 +5,14 @@ import { ChevronDown } from "lucide-react";
 import provincesAndCities from "../../data/iran-provinces-cities.json";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
-import { LocationPayload } from "../../types/businessProfile";
+import { AccountKind, LocationPayload } from "../../types/businessProfile";
 
 interface LocationInfoProps {
   onContinue?: (data: LocationForm) => void;
   onBack?: () => void;
   initialData?: LocationPayload;
   isLoading?: boolean;
+  accountType?: AccountKind;
 }
 
 type LocationForm = LocationPayload;
@@ -19,7 +20,13 @@ type LocationForm = LocationPayload;
 const provinceCityMap = provincesAndCities as Record<string, string[]>;
 const provinceOptions = Object.keys(provinceCityMap);
 
-export function LocationInfo({ onContinue, onBack, initialData, isLoading }: LocationInfoProps) {
+export function LocationInfo({
+  onContinue,
+  onBack,
+  initialData,
+  isLoading,
+  accountType = "legal",
+}: LocationInfoProps) {
   const [form, setForm] = useState<LocationForm>({
     address: "",
     province: "",
@@ -58,13 +65,13 @@ export function LocationInfo({ onContinue, onBack, initialData, isLoading }: Loc
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
-          اطلاعات موقعیت مکانی
+          اطلاعات مکانی
         </Typography>
         <Typography
           variant="body-md"
           className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7"
         >
-          لطفاً آدرس محل فعالیت کسب‌ و کار را دقیق وارد کنید تا بررسی مدارک بدون مشکل انجام شود.
+          لطفا آدرس و کد پستی و سایر جزئیات محل فعالیت را وارد کنید.
         </Typography>
       </div>
 
@@ -78,7 +85,7 @@ export function LocationInfo({ onContinue, onBack, initialData, isLoading }: Loc
             type="text"
             value={form.address}
             onChange={(event) => handleChange("address", event.target.value)}
-            placeholder="خیابان، کوچه، پلاک..."
+            placeholder="مثال: تهران، خیابان ..."
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
         </div>
@@ -140,17 +147,17 @@ export function LocationInfo({ onContinue, onBack, initialData, isLoading }: Loc
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2 text-right">
-          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-            شماره ثابت
-          </label>
-          <input
-            dir="ltr"
-            type="tel"
-            value={form.fixedPhone}
-            onChange={(event) => handleChange("fixedPhone", event.target.value)}
-            placeholder="01312345678"
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-          />
+            <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+              تلفن ثابت
+            </label>
+            <input
+              dir="ltr"
+              type="tel"
+              value={form.fixedPhone}
+              onChange={(event) => handleChange("fixedPhone", event.target.value)}
+              placeholder="01312345678"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            />
           </div>
 
           <div className="space-y-2 text-right">
@@ -167,7 +174,7 @@ export function LocationInfo({ onContinue, onBack, initialData, isLoading }: Loc
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
             <Typography variant="caption" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-              کد پستی باید ۱۰ رقم و بدون فاصله باشد؛ از روی قبوض یا سامانه پست قابل دریافت است.
+              کد پستی باید ۱۰ رقم و بدون خط تیره وارد شود.
             </Typography>
           </div>
         </div>
@@ -175,7 +182,7 @@ export function LocationInfo({ onContinue, onBack, initialData, isLoading }: Loc
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2 text-right">
             <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-              شماره پلاک
+              پلاک
             </label>
             <input
               dir="ltr"
@@ -203,12 +210,8 @@ export function LocationInfo({ onContinue, onBack, initialData, isLoading }: Loc
         </div>
 
         <div className="flex flex-row-reverse items-center justify-between gap-4">
-          <Button
-            type="submit"
-            className="min-w-[140px]"
-            disabled={isLoading}
-          >
-            ادامه
+          <Button type="submit" className="min-w-[140px]" disabled={isLoading}>
+            ذخیره
           </Button>
           <Button
             type="button"

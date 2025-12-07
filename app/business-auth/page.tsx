@@ -68,12 +68,6 @@ export default function Page() {
     }
   }, [accountType]);
 
-  useEffect(() => {
-    if (currentAccountType === "real" && activeItemId === "location") {
-      setActiveItemId("services-intro");
-    }
-  }, [currentAccountType, activeItemId]);
-
   const handleAccountContinue = async (selectedType: AccountKind, accountName: string) => {
     const trimmedName = accountName.trim();
     if (!trimmedName) return;
@@ -114,7 +108,7 @@ export default function Page() {
   const handleBusinessContinue = async (data: BusinessInfoPayload) => {
     try {
       await dispatch(saveBusinessInfo(data)).unwrap();
-      setActiveItemId(currentAccountType === "real" ? "services-intro" : "location");
+      setActiveItemId("location");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
@@ -181,6 +175,7 @@ export default function Page() {
     case "location":
       content = (
         <LocationInfo
+          accountType={currentAccountType}
           initialData={profile?.locationInfo}
           isLoading={statuses.location === "loading"}
           onBack={() => setActiveItemId("business-info")}

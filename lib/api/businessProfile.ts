@@ -101,6 +101,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (payload === null ? undefined : payload) as T;
 }
 
+const normalizeDate = (value?: string) => (value ? value.split("T")[0] : "");
+
 const normalizeType = (rawType: string | undefined): AccountKind => {
   const value = (rawType ?? "").toLowerCase();
   if (["legal", "hoghooghi", "حقوقی"].includes(value)) return "legal";
@@ -190,7 +192,7 @@ const toBackendPersonal = (accountType: AccountKind, payload: PersonalInfoPayloa
         rep_first_name: payload.firstName,
         rep_last_name: payload.lastName,
         rep_national_id: payload.nationalId,
-        rep_dob: payload.birthDate,
+        rep_dob: normalizeDate(payload.birthDate),
         rep_mobile_number: payload.phone,
       },
     };
@@ -201,7 +203,7 @@ const toBackendPersonal = (accountType: AccountKind, payload: PersonalInfoPayloa
       first_name: payload.firstName,
       last_name: payload.lastName,
       national_id: payload.nationalId,
-      dob: payload.birthDate,
+      dob: normalizeDate(payload.birthDate),
       mobile_number: payload.phone,
     },
   };
@@ -229,10 +231,10 @@ const toBackendBusinessInfo = (
         rep_first_name: repInfo.firstName,
         rep_last_name: repInfo.lastName,
         rep_national_id: repInfo.nationalId,
-        rep_dob: repInfo.birthDate,
+        rep_dob: normalizeDate(repInfo.birthDate),
         rep_mobile_number: repInfo.phone,
-        business_info: info,
         ...(businessNationalId ? { business_national_id: businessNationalId } : {}),
+        business_info: info,
       },
     };
   }
@@ -246,30 +248,120 @@ const toBackendBusinessInfo = (
       first_name: repInfo.firstName,
       last_name: repInfo.lastName,
       national_id: repInfo.nationalId,
-      dob: repInfo.birthDate,
+      dob: normalizeDate(repInfo.birthDate),
       mobile_number: repInfo.phone,
       business_info: info,
       ...(businessNationalId ? { business_national_id: businessNationalId } : {}),
     },
   };
 };
+const toBackendLocation = (
+  accountType: AccountKind,
+  payload: LocationPayload,
+  personal?: PersonalInfoPayload,
+) => {
+  if (accountType !== "legal" && !personal) {
+    throw new Error("Personal info missing. Please complete personal info first.");
+  }
 
-const toBackendLocation = (accountType: AccountKind, payload: LocationPayload) => {
-  if (accountType !== "legal") {
-    throw new Error("Location info is only applicable to legal (حقوقی) accounts.");
+  const location = {
+    address: payload.address,
+    city: payload.city,
+    fixed_phone: payload.fixedPhone,
+    plate_number: payload.plateNumber,
+    postal_code: payload.postalCode,
+    province: payload.province,
+    unit: payload.unit,
+  };
+
+  if (accountType === "legal") {
+    return {
+      business_details: {
+        location_info: location,
+      },
+    };
   }
 
   return {
-    business_details: {
-      location_info: {
-        address: payload.address,
-        city: payload.city,
-        fixed_phone: payload.fixedPhone,
-        plate_number: payload.plateNumber,
-        postal_code: payload.postalCode,
-        province: payload.province,
-        unit: payload.unit,
+    person_details: {
+      first_name: personal!.firstName,
+      last_name: personal!.lastName,
+      national_id: personal!.nationalId,
+      dob: normalizeDate(personal!.birthDate),
+      mobile_number: personal!.phone,
+      location_info: location,
+    },
+  };
+};
+
+const buildSubmitPayload = (profile: BusinessProfile) => {
+  const isLegal = profile.type === "legal";
+  const personal = profile.personalInfo;
+  const business = profile.businessInfo;
+  const location = profile.locationInfo;
+
+  const commonBusinessInfo = business
+    ? {
+        brand_name: business.brandName,
+        field_of_work: business.fieldOfWork,
+        website_url: business.websiteUrl,
+      }
+    : undefined;
+
+  if (isLegal) {
+    return {
+      name: profile.name,
+      type: "business",
+      business_details: {
+        rep_first_name: personal?.firstName ?? "",
+        rep_last_name: personal?.lastName ?? "",
+        rep_national_id: personal?.nationalId ?? "",
+        rep_dob: normalizeDate(personal?.birthDate),
+        rep_mobile_number: personal?.phone ?? "",
+        ...(business?.businessNationalId
+          ? { business_national_id: business.businessNationalId }
+          : {}),
+        ...(commonBusinessInfo ? { business_info: commonBusinessInfo } : {}),
+        ...(location
+          ? {
+              location_info: {
+                address: location.address,
+                postal_code: location.postalCode,
+                city: location.city,
+                fixed_phone: location.fixedPhone,
+                plate_number: location.plateNumber,
+                province: location.province,
+                unit: location.unit,
+              },
+            }
+          : {}),
       },
+    };
+  }
+
+  return {
+    name: profile.name,
+    type: "personal",
+    person_details: {
+      first_name: personal?.firstName ?? "",
+      last_name: personal?.lastName ?? "",
+      national_id: personal?.nationalId ?? "",
+      dob: normalizeDate(personal?.birthDate),
+      mobile_number: personal?.phone ?? "",
+      ...(commonBusinessInfo ? { business_info: commonBusinessInfo } : {}),
+      ...(location
+        ? {
+            location_info: {
+              address: location.address,
+              city: location.city,
+              fixed_phone: location.fixedPhone,
+              plate_number: location.plateNumber,
+              postal_code: location.postalCode,
+              province: location.province,
+              unit: location.unit,
+            },
+          }
+        : {}),
     },
   };
 };
@@ -353,6 +445,7 @@ export async function saveLocationInfo(
   profileId: string,
   accountType: AccountKind,
   payload: LocationPayload,
+  personal?: PersonalInfoPayload,
 ): Promise<LocationPayload> {
   if (USE_MOCK_API) {
     return mockDelay(payload);
@@ -360,15 +453,23 @@ export async function saveLocationInfo(
 
   await request(`/profiles/${profileId}`, {
     method: "PATCH",
-    body: JSON.stringify(toBackendLocation(accountType, payload)),
+    body: JSON.stringify(toBackendLocation(accountType, payload, personal)),
   });
   return payload;
 }
 
-export async function submitBusinessProfile(profileId: string): Promise<void> {
+export async function submitBusinessProfile(profile: BusinessProfile): Promise<void> {
   if (USE_MOCK_API) {
     return mockDelay(undefined);
   }
 
-  await request<void>(`/profiles/${profileId}/submit`, { method: "POST" });
+  if (!profile?.id) {
+    throw new Error("Profile not created yet");
+  }
+
+  await request<void>(`/profiles/${profile.id}/submit`, {
+    method: "POST",
+    body: JSON.stringify(buildSubmitPayload(profile)),
+  });
 }
+

@@ -17,12 +17,12 @@ interface BusinessInfoProps {
 type BusinessInfoForm = BusinessInfoPayload;
 
 const activityOptions: { value: string; label: string }[] = [
-  { value: "", label: "Choose activity" },
-  { value: "online-store", label: "Online store" },
-  { value: "services", label: "Services" },
-  { value: "content-media", label: "Content / Media" },
-  { value: "education", label: "Education" },
-  { value: "other", label: "Other" },
+  { value: "", label: "انتخاب حوزه فعالیت" },
+  { value: "online-store", label: "فروشگاه آنلاین" },
+  { value: "services", label: "خدمات" },
+  { value: "content-media", label: "محتوا / رسانه" },
+  { value: "education", label: "آموزش" },
+  { value: "other", label: "سایر" },
 ];
 
 export function BusinessInfo({

@@ -107,7 +107,7 @@ export const saveBusinessInfo = createAsyncThunk<
   try {
     const { profile } = getState().businessProfile;
     if (!profile?.id) throw new Error("Profile not created yet");
-    await saveBusinessInfoApi(profile.id, profile.type, payload);
+    await saveBusinessInfoApi(profile.id, profile.type, payload, profile.personalInfo);
     return payload;
   } catch (error) {
     return rejectWithValue(getErrorMessage(error, "Failed to save business info"));

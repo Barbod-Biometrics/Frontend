@@ -17,7 +17,7 @@ interface PersonalInfoProps {
   isLoading?: boolean;
 }
 
-const BIRTHDATE_FORMAT = "YYYY/MM/DD";
+const BIRTHDATE_FORMAT = "YYYY-MM-DD";
 const LATIN_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 type PersonalInfoForm = PersonalInfoPayload;

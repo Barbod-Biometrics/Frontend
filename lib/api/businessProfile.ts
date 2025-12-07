@@ -89,8 +89,11 @@ type BackendProfile = {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getAccessToken();
+  if (!token) {
+    throw new Error("Missing access token. Please log in again.");
+  }
   const headers = {
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    Authorization: `Bearer ${token}`,
     ...(init?.headers ?? {}),
   };
 
@@ -204,26 +207,49 @@ const toBackendPersonal = (accountType: AccountKind, payload: PersonalInfoPayloa
   };
 };
 
-const toBackendBusinessInfo = (accountType: AccountKind, payload: BusinessInfoPayload) => {
+const toBackendBusinessInfo = (
+  accountType: AccountKind,
+  payload: BusinessInfoPayload,
+  repInfo?: PersonalInfoPayload,
+) => {
   const info = {
     brand_name: payload.brandName,
-    legal_name: accountType === "legal" ? payload.legalName : undefined,
     field_of_work: payload.fieldOfWork,
     website_url: payload.websiteUrl,
   };
+  const businessNationalId = payload.businessNationalId?.trim();
 
   if (accountType === "legal") {
+    if (!repInfo) {
+      throw new Error("Representative info missing. Please complete personal info first.");
+    }
+
     return {
       business_details: {
+        rep_first_name: repInfo.firstName,
+        rep_last_name: repInfo.lastName,
+        rep_national_id: repInfo.nationalId,
+        rep_dob: repInfo.birthDate,
+        rep_mobile_number: repInfo.phone,
         business_info: info,
-        business_national_id: payload.businessNationalId,
+        ...(businessNationalId ? { business_national_id: businessNationalId } : {}),
       },
     };
   }
 
+  if (!repInfo) {
+    throw new Error("Personal info missing. Please complete personal info first.");
+  }
+
   return {
     person_details: {
+      first_name: repInfo.firstName,
+      last_name: repInfo.lastName,
+      national_id: repInfo.nationalId,
+      dob: repInfo.birthDate,
+      mobile_number: repInfo.phone,
       business_info: info,
+      ...(businessNationalId ? { business_national_id: businessNationalId } : {}),
     },
   };
 };
@@ -262,7 +288,7 @@ export async function fetchBusinessProfile(profileId: string): Promise<BusinessP
     );
   }
 
-  const data = await request<BackendProfile>(`/profiles/${profileId}/`);
+  const data = await request<BackendProfile>(`/profiles/${profileId}`);
   return toUiProfile(data);
 }
 
@@ -278,7 +304,7 @@ export async function createBusinessProfile(payload: AccountTypePayload): Promis
   }
 
   // Backend expects specific string literals for profile_type
-  const backendProfileType = payload.type === "real" ? "personal" : "legal";
+  const backendProfileType = payload.type === "real" ? "personal" : "business";
 
   const data = await request<BackendProfile>("/profiles/", {
     method: "POST",
@@ -299,7 +325,7 @@ export async function savePersonalInfo(
     return mockDelay(payload);
   }
 
-  await request(`/profiles/${profileId}/`, {
+  await request(`/profiles/${profileId}`, {
     method: "PATCH",
     body: JSON.stringify(toBackendPersonal(accountType, payload)),
   });
@@ -310,14 +336,15 @@ export async function saveBusinessInfo(
   profileId: string,
   accountType: AccountKind,
   payload: BusinessInfoPayload,
+  repInfo?: PersonalInfoPayload,
 ): Promise<BusinessInfoPayload> {
   if (USE_MOCK_API) {
     return mockDelay(payload);
   }
 
-  await request(`/profiles/${profileId}/`, {
+  await request(`/profiles/${profileId}`, {
     method: "PATCH",
-    body: JSON.stringify(toBackendBusinessInfo(accountType, payload)),
+    body: JSON.stringify(toBackendBusinessInfo(accountType, payload, repInfo)),
   });
   return payload;
 }
@@ -331,7 +358,7 @@ export async function saveLocationInfo(
     return mockDelay(payload);
   }
 
-  await request(`/profiles/${profileId}/`, {
+  await request(`/profiles/${profileId}`, {
     method: "PATCH",
     body: JSON.stringify(toBackendLocation(accountType, payload)),
   });
@@ -343,5 +370,5 @@ export async function submitBusinessProfile(profileId: string): Promise<void> {
     return mockDelay(undefined);
   }
 
-  await request<void>(`/profiles/${profileId}/submit/`, { method: "POST" });
+  await request<void>(`/profiles/${profileId}/submit`, { method: "POST" });
 }

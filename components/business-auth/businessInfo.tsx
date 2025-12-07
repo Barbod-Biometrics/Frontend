@@ -17,12 +17,12 @@ interface BusinessInfoProps {
 type BusinessInfoForm = BusinessInfoPayload;
 
 const activityOptions: { value: string; label: string }[] = [
-  { value: "", label: "انتخاب کنید" },
-  { value: "online-store", label: "فروشگاه آنلاین" },
-  { value: "services", label: "ارائه خدمات" },
-  { value: "content-media", label: "محتوا / رسانه" },
-  { value: "education", label: "آموزش" },
-  { value: "other", label: "سایر" },
+  { value: "", label: "Choose activity" },
+  { value: "online-store", label: "Online store" },
+  { value: "services", label: "Services" },
+  { value: "content-media", label: "Content / Media" },
+  { value: "education", label: "Education" },
+  { value: "other", label: "Other" },
 ];
 
 export function BusinessInfo({
@@ -32,10 +32,8 @@ export function BusinessInfo({
   initialData,
   isLoading,
 }: BusinessInfoProps) {
-  const isLegal = accountType === "legal";
   const [form, setForm] = useState<BusinessInfoForm>({
     brandName: "",
-    legalName: "",
     fieldOfWork: "",
     websiteUrl: "",
     businessNationalId: "",
@@ -46,12 +44,6 @@ export function BusinessInfo({
       setForm((prev) => ({ ...prev, ...initialData }));
     }
   }, [initialData]);
-
-  useEffect(() => {
-    if (!isLegal) {
-      setForm((prev) => ({ ...prev, businessNationalId: "", legalName: "" }));
-    }
-  }, [isLegal]);
 
   const handleChange = (key: keyof BusinessInfoForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -64,9 +56,7 @@ export function BusinessInfo({
       brandName: form.brandName,
       fieldOfWork: form.fieldOfWork,
       websiteUrl: form.websiteUrl,
-      ...(isLegal
-        ? { businessNationalId: form.businessNationalId, legalName: form.legalName }
-        : {}),
+      businessNationalId: form.businessNationalId,
     };
 
     onContinue?.(payload);
@@ -79,13 +69,13 @@ export function BusinessInfo({
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
-          اطلاعات کسب‌وکار
+          اطلاعات کسب‌ و کار
         </Typography>
         <Typography
           variant="body-md"
           className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7"
         >
-          لطفاً اطلاعات کسب‌وکار و برند خود را تکمیل کنید.
+          لطفا جزئیات فعالیت و شناسه ملی کسب‌وکار خود را وارد کنید.
         </Typography>
       </div>
 
@@ -98,40 +88,23 @@ export function BusinessInfo({
             type="text"
             value={form.brandName}
             onChange={(event) => handleChange("brandName", event.target.value)}
-            placeholder="مثلا: باربود"
+            placeholder="مثال: باربد"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
         </div>
 
-        {isLegal && (
-          <div className="space-y-2 text-right">
-            <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-              نام حقوقی
-            </label>
-            <input
-              type="text"
-              value={form.legalName ?? ""}
-              onChange={(event) => handleChange("legalName", event.target.value)}
-              placeholder="مثلا: شرکت نمونه"
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-            />
-          </div>
-        )}
-
-        {isLegal && (
-          <div className="space-y-2 text-right">
-            <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-              شناسه ملی کسب‌وکار
-            </label>
-            <input
-              type="text"
-              value={form.businessNationalId ?? ""}
-              onChange={(event) => handleChange("businessNationalId", event.target.value)}
-              placeholder="10345678901"
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-            />
-          </div>
-        )}
+        <div className="space-y-2 text-right">
+          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+            شناسه / کد ملی کسب‌ و کار
+          </label>
+          <input
+            type="text"
+            value={form.businessNationalId ?? ""}
+            onChange={(event) => handleChange("businessNationalId", event.target.value)}
+            placeholder="10345678901"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+          />
+        </div>
 
         <div className="space-y-2 text-right">
           <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
@@ -158,11 +131,11 @@ export function BusinessInfo({
 
         <div className="space-y-2 text-right">
           <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-            آدرس وب‌سایت
+            وب‌ سایت
           </label>
           <div className="relative">
             <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface-variant)]">
-              مثال:
+              آدرس:
             </span>
             <input
               dir="ltr"
@@ -186,7 +159,7 @@ export function BusinessInfo({
             بازگشت
           </Button>
           <Button type="submit" className="min-w-[140px]" disabled={isLoading}>
-            ادامه و ثبت
+            ذخیره و ادامه
           </Button>
         </div>
       </form>

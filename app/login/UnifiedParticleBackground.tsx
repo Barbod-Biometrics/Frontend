@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Theme } from "../../types";
+//fixed 
 
 // Unified particle that can morph between states
 interface MorphingParticle {

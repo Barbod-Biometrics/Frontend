@@ -33,8 +33,9 @@ const createMockProfile = (overrides?: Partial<BusinessProfile>): BusinessProfil
 
 type BackendProfile = {
   id: string;
-  name: string;
-  type: string;
+  name?: string;
+  profile_name?: string;
+  type?: string;
   profile_type?: string;
   verification_status?: string;
   is_active?: boolean;
@@ -62,6 +63,19 @@ type BackendProfile = {
     rep_last_name?: string;
     rep_mobile_number?: string;
     rep_national_id?: string;
+    signatories?: Array<{
+      dob?: string;
+      documents?: {
+        id_book_page_one?: string;
+        national_card_back?: string;
+        national_card_front?: string;
+      };
+      first_name?: string;
+      last_name?: string;
+      mobile_number?: string;
+      national_id?: string;
+      signatory_id?: number;
+    }>;
   };
   person_details?: {
     business_info?: {
@@ -69,6 +83,12 @@ type BackendProfile = {
       field_of_work?: string;
       website_url?: string;
       legal_name?: string;
+    };
+    business_national_id?: string;
+    documents?: {
+      id_book_page_one?: string;
+      national_card_back?: string;
+      national_card_front?: string;
     };
     dob?: string;
     first_name?: string;
@@ -103,16 +123,17 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 const normalizeDate = (value?: string) => (value ? value.split("T")[0] : "");
 
-const normalizeType = (rawType: string | undefined): AccountKind => {
+const normalizeType = (rawType: string | undefined): AccountKind | undefined => {
   const value = (rawType ?? "").toLowerCase();
-  if (["legal", "hoghooghi", "حقوقی"].includes(value)) return "legal";
+  if (["legal", "business", "hoghooghi", "حقوقی"].includes(value)) return "legal";
   if (["real", "personal", "haghighi", "حقیقی"].includes(value)) return "real";
-  return "legal";
+  return undefined;
 };
 
 const toUiProfile = (data: BackendProfile): BusinessProfile => {
-  const profileType = data.type ?? data.profile_type;
-  const normalizedType = normalizeType(profileType);
+  const profileType = data.profile_type ?? data.type;
+  const normalizedType =
+    normalizeType(profileType) ?? (data.person_details ? "real" : "legal");
   const isLegal = normalizedType === "legal";
 
   const rep = data.business_details;
@@ -127,7 +148,9 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
         legalName: isLegal ? businessInfoSource.legal_name ?? "" : undefined,
         fieldOfWork: businessInfoSource.field_of_work ?? "",
         websiteUrl: businessInfoSource.website_url ?? "",
-        businessNationalId: isLegal ? data.business_details?.business_national_id ?? "" : undefined,
+        businessNationalId: isLegal
+          ? data.business_details?.business_national_id ?? ""
+          : person?.business_national_id ?? "",
       }
     : undefined;
 
@@ -145,7 +168,7 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
 
   return {
     id: data.id,
-    name: data.name,
+    name: data.name ?? data.profile_name ?? "",
     type: normalizedType,
     verificationStatus: data.verification_status,
     isActive: data.is_active,
@@ -157,7 +180,7 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
             firstName: rep.rep_first_name ?? "",
             lastName: rep.rep_last_name ?? "",
             nationalId: rep.rep_national_id ?? "",
-            birthDate: rep.rep_dob ?? "",
+            birthDate: normalizeDate(rep.rep_dob),
             phone: rep.rep_mobile_number ?? "",
           }
         : undefined
@@ -166,19 +189,19 @@ const toUiProfile = (data: BackendProfile): BusinessProfile => {
             firstName: person.first_name ?? "",
             lastName: person.last_name ?? "",
             nationalId: person.national_id ?? "",
-            birthDate: person.dob ?? "",
+            birthDate: normalizeDate(person.dob),
             phone: person.mobile_number ?? "",
           }
         : undefined,
     businessInfo:
       businessInfo ||
-      (isLegal && data.business_details?.business_national_id
+      (isLegal && rep?.business_national_id
         ? {
             brandName: "",
             legalName: "",
             fieldOfWork: "",
             websiteUrl: "",
-            businessNationalId: data.business_details?.business_national_id ?? "",
+            businessNationalId: rep?.business_national_id ?? "",
           }
         : undefined),
     locationInfo,

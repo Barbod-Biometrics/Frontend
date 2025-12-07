@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { requestOtp, verifyOtp, VerifyOtpResponse } from "../lib/auth-api";
+import { saveAuth } from "../lib/auth-storage";
 import type { RootState } from "./store";
 
 type Step = "login" | "otp";
@@ -10,6 +11,7 @@ interface LoginState {
   authError: string | null;
   isSubmitting: boolean;
   isHovered: boolean;
+  isAdmin?: boolean;
 }
 
 const initialState: LoginState = {
@@ -18,6 +20,7 @@ const initialState: LoginState = {
   authError: null,
   isSubmitting: false,
   isHovered: false,
+  isAdmin: undefined,
 };
 
 const toMessage = (error: unknown, fallback: string) => {
@@ -127,9 +130,14 @@ const loginSlice = createSlice({
         state.isSubmitting = true;
         state.authError = null;
       })
-      .addCase(verifyOtpThunk.fulfilled, (state) => {
+      .addCase(verifyOtpThunk.fulfilled, (state, action) => {
         state.isSubmitting = false;
         state.authError = null;
+        // store admin flag on successful verification
+        const payload = action.payload as VerifyOtpResponse | undefined;
+        state.isAdmin = payload?.is_admin ?? false;
+        // persist tokens and related info
+        if (payload) saveAuth(payload);
       })
       .addCase(verifyOtpThunk.rejected, (state, action) => {
         state.isSubmitting = false;
@@ -161,5 +169,7 @@ export const { setIsHovered, resetLogin } = loginSlice.actions;
 export const selectLogin = (state: RootState) => state.login;
 export const selectMaskedPhone = (state: RootState) =>
   maskPhoneNumber(state.login.phoneNumber);
+
+export const selectIsAdmin = (state: RootState) => state.login.isAdmin;
 
 export default loginSlice.reducer;

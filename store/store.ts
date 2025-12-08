@@ -3,12 +3,14 @@ import languageReducer from './languageSlice';
 import themeReducer from './themeSlice';
 import walletReducer from './walletSlice';
 import loginReducer from './loginSlice';
+import businessProfileReducer from './businessProfileSlice';
 
 export const store = configureStore({
   reducer: {
     language: languageReducer,
     theme: themeReducer,
     login: loginReducer,
+    businessProfile: businessProfileReducer,
   
     wallet: walletReducer,
     
@@ -26,3 +28,4 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+

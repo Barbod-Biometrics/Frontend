@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
@@ -55,7 +55,30 @@ const isValidStep = (value: string | null): value is StepId =>
 
 const getStepStorageKey = (profileId: string) => `${STEP_STORAGE_PREFIX}-${profileId}`;
 
+function LoadingFallback() {
+  return (
+    <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-6 py-10">
+        <Typography
+          variant="body-lg"
+          className="text-[color:var(--md-sys-color-on-surface-variant)]"
+        >
+          Loading...
+        </Typography>
+      </div>
+    </main>
+  );
+}
+
 export default function Page() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <BusinessAuthPage />
+    </Suspense>
+  );
+}
+
+function BusinessAuthPage() {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectBusinessProfile);
   const statuses = useAppSelector(selectBusinessProfileStatuses);

@@ -16,6 +16,16 @@ import {
   submitBusinessProfile as submitBusinessProfileApi,
 } from "../lib/api/businessProfile";
 
+export type ProfileStep =
+  | "account-type"
+  | "personal-info"
+  | "business-info"
+  | "location"
+  | "services-intro"
+  | "review-info";
+
+const DEFAULT_STEP: ProfileStep = "account-type";
+
 type AsyncStatus = "idle" | "loading" | "succeeded" | "failed";
 
 type SectionStatusKey =
@@ -32,6 +42,7 @@ export interface BusinessProfileState {
   profile?: BusinessProfile;
   statuses: SectionStatuses;
   error?: string | null;
+  currentStep: ProfileStep;
 }
 
 const initialStatuses: SectionStatuses = {
@@ -47,6 +58,7 @@ const initialState: BusinessProfileState = {
   profile: undefined,
   statuses: { ...initialStatuses },
   error: null,
+  currentStep: DEFAULT_STEP,
 };
 
 const getErrorMessage = (error: unknown, fallback: string) =>
@@ -151,6 +163,9 @@ const businessProfileSlice = createSlice({
       state.statuses = { ...initialStatuses };
       state.error = null;
     },
+    setCurrentStep(state, action: PayloadAction<ProfileStep>) {
+      state.currentStep = action.payload;
+    },
     setProfileId(state, action: PayloadAction<string>) {
       if (!state.profile) {
         state.profile = { id: action.payload, name: "", type: "legal" };
@@ -247,6 +262,8 @@ export const selectBusinessProfileState = (state: { businessProfile: BusinessPro
   state.businessProfile;
 export const selectBusinessProfile = (state: { businessProfile: BusinessProfileState }) =>
   state.businessProfile.profile;
+export const selectCurrentStep = (state: { businessProfile: BusinessProfileState }) =>
+  state.businessProfile.currentStep;
 export const selectBusinessProfileStatuses = (state: { businessProfile: BusinessProfileState }) =>
   state.businessProfile.statuses;
 export const selectProfileId = (state: { businessProfile: BusinessProfileState }) =>
@@ -263,5 +280,5 @@ export const selectCompletedSections = (state: { businessProfile: BusinessProfil
 };
 export const selectServicesRequestedCount = () => 0;
 
-export const { resetStatuses, setProfileId } = businessProfileSlice.actions;
+export const { resetStatuses, setProfileId, setCurrentStep } = businessProfileSlice.actions;
 export default businessProfileSlice.reducer;

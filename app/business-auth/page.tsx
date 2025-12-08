@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
@@ -18,10 +18,13 @@ import {
   saveBusinessInfo,
   saveLocationInfo,
   savePersonalInfo,
+  selectCurrentStep,
   selectBusinessProfile,
   selectBusinessProfileStatuses,
   selectCompletedSections,
+  setCurrentStep,
   submitBusinessProfile,
+  type ProfileStep,
 } from "../../store/businessProfileSlice";
 import {
   AccountKind,
@@ -30,22 +33,48 @@ import {
   PersonalInfoPayload,
 } from "../../types/businessProfile";
 
-const DEFAULT_ITEM_ID = "account-type";
+type StepId = ProfileStep;
+const DEFAULT_ITEM_ID: StepId = "account-type";
 const PROFILE_STORAGE_KEY = "business-profile-id";
+const STEP_STORAGE_PREFIX = "business-profile-step";
 const CONNECTION_ERROR_TEXT = "در برقراری ارتباط با سرور مشکلی پیش آمد. لطفاً بعداً دوباره تلاش کنید.";
+const VALID_STEPS: StepId[] = [
+  "account-type",
+  "personal-info",
+  "business-info",
+  "location",
+  "services-intro",
+  "review-info",
+];
+
+const isValidStep = (value: string | null): value is StepId =>
+  Boolean(value && VALID_STEPS.includes(value as StepId));
+
+const getStepStorageKey = (profileId: string) => `${STEP_STORAGE_PREFIX}-${profileId}`;
 
 export default function Page() {
-  const [activeItemId, setActiveItemId] = useState<string>(DEFAULT_ITEM_ID);
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectBusinessProfile);
   const statuses = useAppSelector(selectBusinessProfileStatuses);
   const completedSections = useAppSelector(selectCompletedSections);
+  const activeItemId = useAppSelector(selectCurrentStep);
   const profileId = profile?.id;
   const [currentAccountType, setCurrentAccountType] = useState<AccountKind>("legal");
   const accountType = profile?.type;
   const searchParams = useSearchParams();
   const urlProfileId = searchParams?.get("profileId") ?? searchParams?.get("id");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const hasHydratedStep = useRef(false);
+
+  const persistStep = (step: StepId, id?: string) => {
+    if (!id || typeof window === "undefined") return;
+    window.localStorage.setItem(getStepStorageKey(id), step);
+  };
+
+  const setActiveStep = (step: StepId) => {
+    dispatch(setCurrentStep(step));
+    persistStep(step, profileId);
+  };
 
   useEffect(() => {
     const storedId =
@@ -57,10 +86,32 @@ export default function Page() {
   }, [dispatch, profileId, statuses.bootstrap, urlProfileId]);
 
   useEffect(() => {
+    if (hasHydratedStep.current) return;
+    const storedId =
+      typeof window !== "undefined" ? window.localStorage.getItem(PROFILE_STORAGE_KEY) : null;
+    const targetProfileId = profileId ?? urlProfileId ?? storedId;
+    if (!targetProfileId) return;
+    const storedStep =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem(getStepStorageKey(targetProfileId))
+        : null;
+    if (isValidStep(storedStep)) {
+      dispatch(setCurrentStep(storedStep));
+      hasHydratedStep.current = true;
+    }
+  }, [dispatch, profileId, urlProfileId]);
+
+  useEffect(() => {
     if (profileId && typeof window !== "undefined") {
       window.localStorage.setItem(PROFILE_STORAGE_KEY, profileId);
     }
   }, [profileId]);
+
+  useEffect(() => {
+    if (profileId && isValidStep(activeItemId)) {
+      persistStep(activeItemId, profileId);
+    }
+  }, [activeItemId, profileId]);
 
   useEffect(() => {
     if (accountType) {
@@ -77,7 +128,7 @@ export default function Page() {
     setErrorMessage(null);
 
     if (hasExistingDraft) {
-      setActiveItemId("personal-info");
+      setActiveStep("personal-info");
       return;
     }
 
@@ -88,7 +139,7 @@ export default function Page() {
       if (createdProfile?.id && typeof window !== "undefined") {
         window.localStorage.setItem(PROFILE_STORAGE_KEY, createdProfile.id);
       }
-      setActiveItemId("personal-info");
+      setActiveStep("personal-info");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
@@ -98,7 +149,7 @@ export default function Page() {
   const handlePersonalContinue = async (data: PersonalInfoPayload) => {
     try {
       await dispatch(savePersonalInfo(data)).unwrap();
-      setActiveItemId("business-info");
+      setActiveStep("business-info");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
@@ -108,7 +159,7 @@ export default function Page() {
   const handleBusinessContinue = async (data: BusinessInfoPayload) => {
     try {
       await dispatch(saveBusinessInfo(data)).unwrap();
-      setActiveItemId("location");
+      setActiveStep("location");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
@@ -118,14 +169,14 @@ export default function Page() {
   const handleLocationContinue = async (data: LocationPayload) => {
     try {
       await dispatch(saveLocationInfo(data)).unwrap();
-      setActiveItemId("services-intro");
+      setActiveStep("services-intro");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
     }
   };
 
-  const handleServiceContinue = () => setActiveItemId("review-info");
+  const handleServiceContinue = () => setActiveStep("review-info");
 
   const handleSubmitProfile = async () => {
     try {
@@ -133,6 +184,12 @@ export default function Page() {
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
+    }
+  };
+
+  const handleSidebarSelect = (step: string) => {
+    if (isValidStep(step)) {
+      setActiveStep(step);
     }
   };
 
@@ -147,7 +204,7 @@ export default function Page() {
           isLoading={statuses.accountType === "loading"}
           onContinue={handleAccountContinue}
           onTypeChange={setCurrentAccountType}
-          onBack={() => setActiveItemId("account-type")}
+          onBack={() => setActiveStep("account-type")}
         />
       );
       break;
@@ -156,7 +213,7 @@ export default function Page() {
         <PersonalInfo
           initialData={profile?.personalInfo}
           isLoading={statuses.personalInfo === "loading"}
-          onBack={() => setActiveItemId("account-type")}
+          onBack={() => setActiveStep("account-type")}
           onContinue={handlePersonalContinue}
         />
       );
@@ -167,7 +224,7 @@ export default function Page() {
           accountType={currentAccountType}
           initialData={profile?.businessInfo}
           isLoading={statuses.businessInfo === "loading"}
-          onBack={() => setActiveItemId("personal-info")}
+          onBack={() => setActiveStep("personal-info")}
           onContinue={handleBusinessContinue}
         />
       );
@@ -178,7 +235,7 @@ export default function Page() {
           accountType={currentAccountType}
           initialData={profile?.locationInfo}
           isLoading={statuses.location === "loading"}
-          onBack={() => setActiveItemId("business-info")}
+          onBack={() => setActiveStep("business-info")}
           onContinue={handleLocationContinue}
         />
       );
@@ -187,7 +244,7 @@ export default function Page() {
       content = (
         <ServiceIntro
           isLoading={false}
-          onBack={() => setActiveItemId("location")}
+          onBack={() => setActiveStep("location")}
           onContinue={handleServiceContinue}
         />
       );
@@ -196,15 +253,15 @@ export default function Page() {
       content = (
         <InfoChecking
           accountType={currentAccountType}
-          onBack={() => setActiveItemId("services-intro")}
+          onBack={() => setActiveStep("services-intro")}
           onSubmit={handleSubmitProfile}
           completedSections={completedSections}
           isSubmitting={statuses.submit === "loading"}
           onEditSection={(section) => {
-            if (section === "personal") return setActiveItemId("personal-info");
-            if (section === "business") return setActiveItemId("business-info");
+            if (section === "personal") return setActiveStep("personal-info");
+            if (section === "business") return setActiveStep("business-info");
             if (section === "location") {
-              return setActiveItemId(currentAccountType === "real" ? "business-info" : "location");
+              return setActiveStep(currentAccountType === "real" ? "business-info" : "location");
             }
           }}
         />
@@ -231,7 +288,7 @@ export default function Page() {
           <div className="md:sticky md:top-6 md:self-start">
             <AuthSidebar
               activeItemId={activeItemId}
-              onItemSelect={setActiveItemId}
+              onItemSelect={handleSidebarSelect}
               accountType={currentAccountType}
             />
           </div>

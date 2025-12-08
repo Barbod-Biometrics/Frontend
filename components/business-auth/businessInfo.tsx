@@ -15,6 +15,7 @@ interface BusinessInfoProps {
 }
 
 type BusinessInfoForm = BusinessInfoPayload;
+const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
 
 const activityOptions: { value: string; label: string }[] = [
   { value: "", label: "انتخاب حوزه فعالیت" },
@@ -38,6 +39,7 @@ export function BusinessInfo({
     websiteUrl: "",
     businessNationalId: "",
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof BusinessInfoForm, string>>>({});
 
   useEffect(() => {
     if (initialData) {
@@ -45,21 +47,44 @@ export function BusinessInfo({
     }
   }, [initialData]);
 
+  const clearError = (key: keyof BusinessInfoForm, value: string) => {
+    setErrors((prev) => {
+      if (!prev[key] || !value.trim()) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
   const handleChange = (key: keyof BusinessInfoForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    clearError(key, value);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const payload: BusinessInfoPayload = {
-      brandName: form.brandName,
-      fieldOfWork: form.fieldOfWork,
-      websiteUrl: form.websiteUrl,
-      businessNationalId: form.businessNationalId,
+    const trimmed: BusinessInfoForm = {
+      brandName: form.brandName.trim(),
+      fieldOfWork: form.fieldOfWork.trim(),
+      websiteUrl: form.websiteUrl.trim(),
+      businessNationalId: (form.businessNationalId ?? "").trim(),
     };
 
-    onContinue?.(payload);
+    const nextErrors: Partial<Record<keyof BusinessInfoForm, string>> = {};
+    (Object.keys(trimmed) as Array<keyof BusinessInfoForm>).forEach((key) => {
+      if (!trimmed[key]) {
+        nextErrors[key] = REQUIRED_FIELD_ERROR;
+      }
+    });
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    setForm(trimmed);
+    onContinue?.(trimmed);
   };
 
   return (
@@ -91,6 +116,11 @@ export function BusinessInfo({
             placeholder="مثال: باربد"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
+          {errors.brandName && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.brandName}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2 text-right">
@@ -104,6 +134,11 @@ export function BusinessInfo({
             placeholder="10345678901"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
+          {errors.businessNationalId && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.businessNationalId}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2 text-right">
@@ -127,6 +162,11 @@ export function BusinessInfo({
               aria-hidden
             />
           </div>
+          {errors.fieldOfWork && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.fieldOfWork}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2 text-right">
@@ -146,6 +186,11 @@ export function BusinessInfo({
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           </div>
+          {errors.websiteUrl && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.websiteUrl}
+            </p>
+          )}
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">

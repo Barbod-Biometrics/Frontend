@@ -187,9 +187,7 @@ export default function Page() {
       content = (
         <ServiceIntro
           isLoading={false}
-          onBack={() =>
-            setActiveItemId(currentAccountType === "real" ? "business-info" : "location")
-          }
+          onBack={() => setActiveItemId("location")}
           onContinue={handleServiceContinue}
         />
       );

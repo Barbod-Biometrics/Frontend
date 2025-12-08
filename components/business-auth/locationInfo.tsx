@@ -16,6 +16,7 @@ interface LocationInfoProps {
 }
 
 type LocationForm = LocationPayload;
+const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
 
 const provinceCityMap = provincesAndCities as Record<string, string[]>;
 const provinceOptions = Object.keys(provinceCityMap);
@@ -36,6 +37,7 @@ export function LocationInfo({
     plateNumber: "",
     unit: "",
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof LocationForm, string>>>({});
 
   useEffect(() => {
     if (initialData) {
@@ -45,17 +47,51 @@ export function LocationInfo({
 
   const cityOptions = form.province ? provinceCityMap[form.province] ?? [] : [];
 
+  const clearError = (key: keyof LocationForm, value: string) => {
+    setErrors((prev) => {
+      if (!prev[key] || !value.trim()) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
   const handleChange = (key: keyof LocationForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    clearError(key, value);
   };
 
   const handleProvinceChange = (value: string) => {
     setForm((prev) => ({ ...prev, province: value, city: "" }));
+    clearError("province", value);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onContinue?.(form);
+    const trimmed: LocationForm = {
+      address: form.address.trim(),
+      province: form.province.trim(),
+      city: form.city.trim(),
+      fixedPhone: form.fixedPhone.trim(),
+      postalCode: form.postalCode.trim(),
+      plateNumber: form.plateNumber.trim(),
+      unit: form.unit.trim(),
+    };
+
+    const nextErrors: Partial<Record<keyof LocationForm, string>> = {};
+    (Object.keys(trimmed) as Array<keyof LocationForm>).forEach((key) => {
+      if (!trimmed[key]) {
+        nextErrors[key] = REQUIRED_FIELD_ERROR;
+      }
+    });
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    setForm(trimmed);
+    onContinue?.(trimmed);
   };
 
   return (
@@ -88,6 +124,11 @@ export function LocationInfo({
             placeholder="مثال: تهران، خیابان ..."
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
+          {errors.address && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.address}
+            </p>
+          )}
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
@@ -115,6 +156,11 @@ export function LocationInfo({
                 aria-hidden
               />
             </div>
+            {errors.province && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.province}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2 text-right">
@@ -142,6 +188,11 @@ export function LocationInfo({
                 aria-hidden
               />
             </div>
+            {errors.city && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.city}
+              </p>
+            )}
           </div>
         </div>
 
@@ -158,6 +209,11 @@ export function LocationInfo({
               placeholder="01312345678"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
+            {errors.fixedPhone && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.fixedPhone}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2 text-right">
@@ -170,13 +226,18 @@ export function LocationInfo({
               maxLength={10}
               value={form.postalCode}
               onChange={(event) => handleChange("postalCode", event.target.value)}
-              placeholder="0133456789"
-              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-            />
-            <Typography variant="caption" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-              کد پستی باید ۱۰ رقم و بدون خط تیره وارد شود.
-            </Typography>
-          </div>
+            placeholder="0133456789"
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+          />
+          <Typography variant="caption" className="text-[color:var(--md-sys-color-on-surface-variant)]">
+            کد پستی باید ۱۰ رقم و بدون خط تیره وارد شود.
+          </Typography>
+          {errors.postalCode && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.postalCode}
+            </p>
+          )}
+        </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
@@ -192,6 +253,11 @@ export function LocationInfo({
               placeholder="12"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
+            {errors.plateNumber && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.plateNumber}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2 text-right">
@@ -206,6 +272,11 @@ export function LocationInfo({
               placeholder="4"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
+            {errors.unit && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.unit}
+              </p>
+            )}
           </div>
         </div>
 

@@ -21,6 +21,7 @@ const BIRTHDATE_FORMAT = "YYYY-MM-DD";
 const LATIN_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 type PersonalInfoForm = PersonalInfoPayload;
+const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
 
 export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: PersonalInfoProps) {
   const [form, setForm] = useState<PersonalInfoForm>({
@@ -30,6 +31,7 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
     birthDate: "",
     phone: "",
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof PersonalInfoForm, string>>>({});
 
   const [isDateDialogOpen, setIsDateDialogOpen] = useState(false);
 
@@ -54,8 +56,18 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
     }
   }, [form.birthDate]);
 
+  const clearError = (key: keyof PersonalInfoForm, value: string) => {
+    setErrors((prev) => {
+      if (!prev[key] || !value.trim()) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
   const handleChange = (key: keyof PersonalInfoForm, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    clearError(key, value);
   };
 
   const handleBirthDateSelect = (date: DateObject | DateObject[] | null) => {
@@ -70,7 +82,28 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
   };
 
   const handleSubmit = () => {
-    onContinue?.(form);
+    const trimmed: PersonalInfoForm = {
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      nationalId: form.nationalId.trim(),
+      birthDate: form.birthDate.trim(),
+      phone: form.phone.trim(),
+    };
+
+    const nextErrors: Partial<Record<keyof PersonalInfoForm, string>> = {};
+    (Object.keys(trimmed) as Array<keyof PersonalInfoForm>).forEach((key) => {
+      if (!trimmed[key]) {
+        nextErrors[key] = REQUIRED_FIELD_ERROR;
+      }
+    });
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    setForm(trimmed);
+    onContinue?.(trimmed);
   };
 
   return (
@@ -104,6 +137,11 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
               placeholder="امین"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
+            {errors.firstName && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.firstName}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -117,6 +155,11 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
               placeholder="خلج"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
+            {errors.lastName && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.lastName}
+              </p>
+            )}
           </div>
         </div>
 
@@ -132,6 +175,11 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
             placeholder="0982342316"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
+          {errors.nationalId && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.nationalId}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -157,6 +205,11 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
               <CalendarIcon className="h-5 w-5" aria-hidden />
             </button>
           </div>
+          {errors.birthDate && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.birthDate}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -170,6 +223,11 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
             placeholder="09904644661"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
+          {errors.phone && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.phone}
+            </p>
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Theme } from "../../types";
+//fixed 
 
 // Unified particle that can morph between states
 interface MorphingParticle {
@@ -36,13 +37,6 @@ interface MorphingParticle {
   opacity: number;
 }
 
-interface Beam {
-  targetIndex: number;
-  progress: number;
-  speed: number;
-  width: number;
-}
-
 type Palette = {
   BG: string;
   COLOR: string;
@@ -60,9 +54,6 @@ const UnifiedParticleBackground = () => {
   const imageLoadedRef = useRef(false);
   const hoverRef = useRef(false);
   const prevHoverRef = useRef(false);
-  const hoverStartRef = useRef<number | null>(null);
-  const beamsRef = useRef<Beam[]>([]);
-  const phantomTargetsRef = useRef<{ x: number; y: number }[]>([]);
   const themeRef = useRef<Theme>(theme);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -121,15 +112,6 @@ const UnifiedParticleBackground = () => {
       // Position offset for the face - high and centered
       FACE_OFFSET_X: 100, // Centered horizontally
       FACE_OFFSET_Y_PERCENT: 0.0, // Move face a bit higher
-      // Beam styling
-      MAX_BEAMS: 14,
-      BEAM_SPEED_MIN: 0.12,
-      BEAM_SPEED_MAX: 0.24,
-      BEAM_WIDTH_MIN: 1.2,
-      BEAM_WIDTH_MAX: 2.8,
-      BEAM_COLOR: "#3B82F6",
-      BEAM_HIGHLIGHT: "#bfdbfe",
-      BEAM_DELAY_MS: 4000,
     };
 
     let lastWidth = window.innerWidth;
@@ -137,13 +119,6 @@ const UnifiedParticleBackground = () => {
 
     const randomRange = (min: number, max: number) =>
       Math.random() * (max - min) + min;
-
-    const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-
-    const smoothStep = (t: number) => {
-      const clamped = clamp01(t);
-      return clamped * clamped * (3 - 2 * clamped);
-    };
 
     const randomOffsetInCircle = (radius: number) => {
       const angle = Math.random() * Math.PI * 2;
@@ -240,16 +215,6 @@ const UnifiedParticleBackground = () => {
           }
         }
 
-        const xs = targetPositions.map((p) => p.x);
-        const ys = targetPositions.map((p) => p.y);
-        const minX = Math.min(...xs);
-        const maxX = Math.max(...xs);
-        const minY = Math.min(...ys);
-        const maxY = Math.max(...ys);
-        const faceWidth = maxX - minX;
-        const faceHeight = maxY - minY;
-        const midY = (minY + maxY) / 2;
-
         // Create particles with random starting positions
         const particles: MorphingParticle[] = [];
         for (let i = 0; i < targetPositions.length; i++) {
@@ -301,148 +266,13 @@ const UnifiedParticleBackground = () => {
         }
 
         particlesRef.current = particles;
-        const frontX = maxX + faceWidth * 0.12 + 28;
-        const cheekX = minX + faceWidth * 0.68;
-        const y1 = minY + faceHeight * 0.25;
-        const y2 = minY + faceHeight * 0.5;
-        const y3 = minY + faceHeight * 0.7;
-        phantomTargetsRef.current = [
-          { x: frontX, y: midY },
-          { x: frontX, y: y1 },
-          { x: frontX, y: y2 },
-          { x: frontX, y: y3 },
-          { x: cheekX, y: y1 },
-          { x: cheekX, y: y2 },
-          { x: cheekX, y: y3 },
-        ];
         imageLoadedRef.current = true;
       };
-    };
-
-    const pickRandomTargetIndex = (len: number) =>
-      Math.floor(Math.random() * len);
-
-    const resetBeam = (beam: Beam, targetCount: number) => {
-      beam.targetIndex = pickRandomTargetIndex(targetCount);
-      beam.progress = -0.35; // start offscreen for fade-in
-      beam.speed = randomRange(CONFIG.BEAM_SPEED_MIN, CONFIG.BEAM_SPEED_MAX);
-      beam.width = randomRange(CONFIG.BEAM_WIDTH_MIN, CONFIG.BEAM_WIDTH_MAX);
-    };
-
-    const ensureBeams = (targetCount: number) => {
-      const beams = beamsRef.current;
-      while (beams.length < CONFIG.MAX_BEAMS) {
-        beams.push({
-          targetIndex: pickRandomTargetIndex(targetCount),
-          progress: -Math.random() * 0.35, // staggered fade-in
-          speed: randomRange(CONFIG.BEAM_SPEED_MIN, CONFIG.BEAM_SPEED_MAX),
-          width: randomRange(CONFIG.BEAM_WIDTH_MIN, CONFIG.BEAM_WIDTH_MAX),
-        });
-      }
-    };
-
-    const drawEmitterFlare = (
-      _palette: Palette,
-      emitterX: number,
-      emitterY: number,
-      alpha: number,
-      timeMs: number
-    ) => {
-      ctx.save();
-      const pulse =
-        0.9 + 0.1 * Math.sin(timeMs * 0.006 + emitterX * 0.01 + emitterY * 0.01);
-      const grad = ctx.createRadialGradient(
-        emitterX,
-        emitterY,
-        0,
-        emitterX,
-        emitterY,
-        26
-      );
-      grad.addColorStop(0, CONFIG.BEAM_HIGHLIGHT);
-      grad.addColorStop(0.35, CONFIG.BEAM_COLOR);
-      grad.addColorStop(1, "rgba(59,130,246,0)");
-      ctx.globalAlpha = alpha * pulse;
-      ctx.fillStyle = grad;
-      ctx.shadowColor = CONFIG.BEAM_COLOR;
-      ctx.shadowBlur = 34;
-      ctx.beginPath();
-      ctx.arc(emitterX, emitterY, 20, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    };
-
-    const drawBeam = (
-      _palette: Palette,
-      emitterX: number,
-      emitterY: number,
-      target: { x: number; y: number },
-      beam: Beam,
-      alpha: number,
-      timeMs: number
-    ) => {
-      const pulse = 0.9 + 0.1 * Math.sin(timeMs * 0.008 + beam.targetIndex);
-      const beamAlpha = alpha * pulse;
-      ctx.save();
-
-      // Outer glow stroke
-      ctx.globalAlpha = 0.7 * beamAlpha;
-      ctx.strokeStyle = CONFIG.BEAM_COLOR;
-      ctx.lineWidth = beam.width;
-      ctx.shadowColor = CONFIG.BEAM_COLOR;
-      ctx.shadowBlur = 34;
-      ctx.beginPath();
-      ctx.moveTo(emitterX, emitterY);
-      ctx.lineTo(target.x, target.y);
-      ctx.stroke();
-
-      // Inner bright core
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = beamAlpha;
-      ctx.strokeStyle = CONFIG.BEAM_HIGHLIGHT;
-      ctx.lineWidth = Math.max(1, beam.width * 0.45);
-      ctx.beginPath();
-      ctx.moveTo(emitterX, emitterY);
-      ctx.lineTo(target.x, target.y);
-      ctx.stroke();
-
-      ctx.restore();
-    };
-
-    const drawTargetGlow = (
-      _palette: Palette,
-      target: { x: number; y: number },
-      alpha: number,
-      timeMs: number
-    ) => {
-      ctx.save();
-      const pulse =
-        0.9 + 0.1 * Math.sin(timeMs * 0.01 + target.x * 0.01 + target.y * 0.01);
-      const grad = ctx.createRadialGradient(
-        target.x,
-        target.y,
-        0,
-        target.x,
-        target.y,
-        24
-      );
-      grad.addColorStop(0, CONFIG.BEAM_HIGHLIGHT);
-      grad.addColorStop(0.35, CONFIG.BEAM_COLOR);
-      grad.addColorStop(1, "rgba(59,130,246,0)");
-      ctx.globalAlpha = alpha * pulse;
-      ctx.fillStyle = grad;
-      ctx.shadowColor = CONFIG.BEAM_COLOR;
-      ctx.shadowBlur = 26;
-      ctx.beginPath();
-      ctx.arc(target.x, target.y, 18, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
     };
 
     // Main animation loop
     const update = () => {
       const palette = getPalette();
-      const timeMs = performance.now();
       // Clear canvas
       ctx.fillStyle = palette.BG;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -458,7 +288,6 @@ const UnifiedParticleBackground = () => {
       // Capture scatter homes when hover starts, randomize speeds each transition
       if (nowHovered !== prevHoverRef.current) {
         if (nowHovered) {
-          hoverStartRef.current = performance.now();
           particles.forEach((p) => {
             p.homeX = p.x;
             p.homeY = p.y;
@@ -487,33 +316,6 @@ const UnifiedParticleBackground = () => {
           });
         }
         prevHoverRef.current = nowHovered;
-        if (!nowHovered) {
-          beamsRef.current = [];
-          hoverStartRef.current = null;
-        }
-      }
-
-      const hoverElapsed =
-        hoverStartRef.current !== null
-          ? performance.now() - hoverStartRef.current
-          : 0;
-      const beamsAllowed =
-        nowHovered &&
-        hoverStartRef.current !== null &&
-        hoverElapsed >= CONFIG.BEAM_DELAY_MS;
-
-      const beamTargetPool: { x: number; y: number }[] = [];
-      if (particles.length > 0) {
-        for (const p of particles) {
-          beamTargetPool.push({ x: p.x, y: p.y });
-        }
-      }
-      if (phantomTargetsRef.current.length > 0) {
-        beamTargetPool.push(...phantomTargetsRef.current);
-      }
-
-      if (beamsAllowed && beamTargetPool.length > 0) {
-        ensureBeams(beamTargetPool.length);
       }
 
       for (const p of particles) {
@@ -567,48 +369,6 @@ const UnifiedParticleBackground = () => {
         drawParticle(p.x, p.y, renderSize, renderOpacity, palette);
       }
 
-      if (beamsAllowed && beamTargetPool.length > 0) {
-        // Approximate the form's left edge and place emitter just left of it
-        const approxFormWidth = Math.min(560, canvas.width * 0.7);
-        const rightMargin = Math.max(canvas.width * 0.08, 60);
-        const emitterX = Math.max(
-          40,
-          Math.min(
-            canvas.width - rightMargin - approxFormWidth - 32,
-            canvas.width - 120
-          )
-        );
-        const emitterY = canvas.height * 0.5;
-        const beams = beamsRef.current;
-
-        const emitterAlpha = clamp01(
-          (hoverElapsed - CONFIG.BEAM_DELAY_MS) / 800
-        );
-
-        drawEmitterFlare(palette, emitterX, emitterY, emitterAlpha, timeMs);
-
-        for (let i = 0; i < beams.length; i++) {
-          const beam = beams[i];
-          const target = beamTargetPool[beam.targetIndex];
-          if (!target) {
-            resetBeam(beam, beamTargetPool.length);
-            continue;
-          }
-
-          beam.progress += beam.speed;
-          const t = clamp01(beam.progress);
-          const fadeIn = smoothStep(clamp01((beam.progress + 0.35) / 0.35));
-          const alpha = (1 - t) * fadeIn;
-
-          drawBeam(palette, emitterX, emitterY, target, beam, alpha, timeMs);
-          drawTargetGlow(palette, target, alpha, timeMs);
-
-          if (beam.progress >= 1) {
-            resetBeam(beam, beamTargetPool.length);
-          }
-        }
-      }
-
       // Restore global state
       ctx.globalAlpha = 1.0;
       ctx.shadowBlur = 0;
@@ -640,13 +400,6 @@ const UnifiedParticleBackground = () => {
           p.homeX *= widthRatio;
           p.homeY *= heightRatio;
         });
-
-        if (phantomTargetsRef.current.length > 0) {
-          phantomTargetsRef.current = phantomTargetsRef.current.map((pt) => ({
-            x: pt.x * widthRatio,
-            y: pt.y * heightRatio,
-          }));
-        }
       }
 
       lastWidth = canvas.width;

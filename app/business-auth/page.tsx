@@ -65,6 +65,7 @@ export default function Page() {
   const urlProfileId = searchParams?.get("profileId") ?? searchParams?.get("id");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const hasHydratedStep = useRef(false);
+  const lastProfileId = useRef<string | null>(null);
 
   const persistStep = (step: StepId, id?: string) => {
     if (!id || typeof window === "undefined") return;
@@ -86,20 +87,26 @@ export default function Page() {
   }, [dispatch, profileId, statuses.bootstrap, urlProfileId]);
 
   useEffect(() => {
-    if (hasHydratedStep.current) return;
-    const storedId =
-      typeof window !== "undefined" ? window.localStorage.getItem(PROFILE_STORAGE_KEY) : null;
-    const targetProfileId = profileId ?? urlProfileId ?? storedId;
-    if (!targetProfileId) return;
-    const storedStep =
-      typeof window !== "undefined"
-        ? window.localStorage.getItem(getStepStorageKey(targetProfileId))
-        : null;
-    if (isValidStep(storedStep)) {
-      dispatch(setCurrentStep(storedStep));
+    if (!profileId) {
+      hasHydratedStep.current = false;
+      lastProfileId.current = null;
+      return;
+    }
+
+    if (lastProfileId.current !== profileId) {
+      lastProfileId.current = profileId;
+      const storedStep =
+        typeof window !== "undefined"
+          ? window.localStorage.getItem(getStepStorageKey(profileId))
+          : null;
+      if (isValidStep(storedStep)) {
+        dispatch(setCurrentStep(storedStep));
+      } else {
+        dispatch(setCurrentStep(DEFAULT_ITEM_ID));
+      }
       hasHydratedStep.current = true;
     }
-  }, [dispatch, profileId, urlProfileId]);
+  }, [dispatch, profileId]);
 
   useEffect(() => {
     if (profileId && typeof window !== "undefined") {

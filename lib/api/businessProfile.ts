@@ -323,68 +323,68 @@ const buildSubmitPayload = (profile: BusinessProfile) => {
   const business = profile.businessInfo;
   const location = profile.locationInfo;
 
-  const commonBusinessInfo = business
-    ? {
-        brand_name: business.brandName,
-        field_of_work: business.fieldOfWork,
-        website_url: business.websiteUrl,
-      }
-    : undefined;
+  if (!personal || !business || !location) {
+    throw new Error("لطفاً تمام بخش‌ها را کامل کنید و دوباره تلاش کنید.");
+  }
+
+  const commonBusinessInfo = {
+    brand_name: business.brandName,
+    field_of_work: business.fieldOfWork,
+    website_url: business.websiteUrl,
+  };
+
+  const base = {
+    balance: 0,
+    created_at: profile.createdAt ?? new Date().toISOString(),
+    id: profile.id,
+    is_active: profile.isActive ?? true,
+    name: profile.name,
+    type: isLegal ? "business" : "personal",
+    verification_status: profile.verificationStatus ?? "pending",
+  };
 
   if (isLegal) {
     return {
-      name: profile.name,
-      type: "business",
+      ...base,
       business_details: {
-        rep_first_name: personal?.firstName ?? "",
-        rep_last_name: personal?.lastName ?? "",
-        rep_national_id: personal?.nationalId ?? "",
-        rep_dob: normalizeDate(personal?.birthDate),
-        rep_mobile_number: personal?.phone ?? "",
-        ...(business?.businessNationalId
-          ? { business_national_id: business.businessNationalId }
-          : {}),
-        ...(commonBusinessInfo ? { business_info: commonBusinessInfo } : {}),
-        ...(location
-          ? {
-              location_info: {
-                address: location.address,
-                postal_code: location.postalCode,
-                city: location.city,
-                fixed_phone: location.fixedPhone,
-                plate_number: location.plateNumber,
-                province: location.province,
-                unit: location.unit,
-              },
-            }
-          : {}),
+        rep_first_name: personal.firstName,
+        rep_last_name: personal.lastName,
+        rep_national_id: personal.nationalId,
+        rep_dob: normalizeDate(personal.birthDate),
+        rep_mobile_number: personal.phone,
+        business_national_id: business.businessNationalId ?? "",
+        business_info: commonBusinessInfo,
+        location_info: {
+          address: location.address,
+          postal_code: location.postalCode,
+          city: location.city,
+          fixed_phone: location.fixedPhone,
+          plate_number: location.plateNumber,
+          province: location.province,
+          unit: location.unit,
+        },
       },
     };
   }
 
   return {
-    name: profile.name,
-    type: "personal",
+    ...base,
     person_details: {
-      first_name: personal?.firstName ?? "",
-      last_name: personal?.lastName ?? "",
-      national_id: personal?.nationalId ?? "",
-      dob: normalizeDate(personal?.birthDate),
-      mobile_number: personal?.phone ?? "",
-      ...(commonBusinessInfo ? { business_info: commonBusinessInfo } : {}),
-      ...(location
-        ? {
-            location_info: {
-              address: location.address,
-              city: location.city,
-              fixed_phone: location.fixedPhone,
-              plate_number: location.plateNumber,
-              postal_code: location.postalCode,
-              province: location.province,
-              unit: location.unit,
-            },
-          }
-        : {}),
+      first_name: personal.firstName,
+      last_name: personal.lastName,
+      national_id: personal.nationalId,
+      dob: normalizeDate(personal.birthDate),
+      mobile_number: personal.phone,
+      business_info: commonBusinessInfo,
+      location_info: {
+        address: location.address,
+        city: location.city,
+        fixed_phone: location.fixedPhone,
+        plate_number: location.plateNumber,
+        postal_code: location.postalCode,
+        province: location.province,
+        unit: location.unit,
+      },
     },
   };
 };

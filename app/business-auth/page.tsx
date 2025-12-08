@@ -26,6 +26,7 @@ import {
   submitBusinessProfile,
   type ProfileStep,
 } from "../../store/businessProfileSlice";
+import { getPhoneNumber } from "../../lib/auth-storage";
 import {
   AccountKind,
   BusinessInfoPayload,
@@ -35,7 +36,9 @@ import {
 
 type StepId = ProfileStep;
 const DEFAULT_ITEM_ID: StepId = "account-type";
-const PROFILE_STORAGE_KEY = "business-profile-id";
+const PROFILE_STORAGE_PREFIX = "business-profile-id";
+const getProfileStorageKey = (phone?: string | null) =>
+  phone ? `${PROFILE_STORAGE_PREFIX}-${phone}` : PROFILE_STORAGE_PREFIX;
 const STEP_STORAGE_PREFIX = "business-profile-step";
 const CONNECTION_ERROR_TEXT = "در برقراری ارتباط با سرور مشکلی پیش آمد. لطفاً بعداً دوباره تلاش کنید.";
 const VALID_STEPS: StepId[] = [
@@ -64,6 +67,7 @@ export default function Page() {
   const searchParams = useSearchParams();
   const urlProfileId = searchParams?.get("profileId") ?? searchParams?.get("id");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const phoneNumber = typeof window !== "undefined" ? getPhoneNumber() : null;
   const hasHydratedStep = useRef(false);
   const lastProfileId = useRef<string | null>(null);
 
@@ -78,13 +82,14 @@ export default function Page() {
   };
 
   useEffect(() => {
+    const profileStorageKey = getProfileStorageKey(phoneNumber);
     const storedId =
-      typeof window !== "undefined" ? window.localStorage.getItem(PROFILE_STORAGE_KEY) : null;
+      typeof window !== "undefined" ? window.localStorage.getItem(profileStorageKey) : null;
     const bootstrapId = urlProfileId ?? storedId;
     if (bootstrapId && !profileId && statuses.bootstrap === "idle") {
       dispatch(bootstrapBusinessProfile({ profileId: bootstrapId }));
     }
-  }, [dispatch, profileId, statuses.bootstrap, urlProfileId]);
+  }, [dispatch, phoneNumber, profileId, statuses.bootstrap, urlProfileId]);
 
   useEffect(() => {
     if (!profileId) {
@@ -110,9 +115,9 @@ export default function Page() {
 
   useEffect(() => {
     if (profileId && typeof window !== "undefined") {
-      window.localStorage.setItem(PROFILE_STORAGE_KEY, profileId);
+      window.localStorage.setItem(getProfileStorageKey(phoneNumber), profileId);
     }
-  }, [profileId]);
+  }, [phoneNumber, profileId]);
 
   useEffect(() => {
     if (profileId && isValidStep(activeItemId)) {
@@ -144,7 +149,7 @@ export default function Page() {
         createBusinessProfile({ accountType: selectedType, accountName: trimmedName }),
       ).unwrap();
       if (createdProfile?.id && typeof window !== "undefined") {
-        window.localStorage.setItem(PROFILE_STORAGE_KEY, createdProfile.id);
+        window.localStorage.setItem(getProfileStorageKey(phoneNumber), createdProfile.id);
       }
       setActiveStep("personal-info");
     } catch (error) {

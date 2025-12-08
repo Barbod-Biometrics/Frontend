@@ -4,6 +4,7 @@ export interface VerifyOtpResponse {
   access_token: string;
   refresh_token?: string;
   phone_number?: string;
+  is_admin?: boolean;
 }
 
 export function requestOtp(phoneNumber: string) {

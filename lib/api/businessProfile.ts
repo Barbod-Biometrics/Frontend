@@ -283,6 +283,10 @@ const toBackendLocation = (
   payload: LocationPayload,
   personal?: PersonalInfoPayload,
 ) => {
+  if (accountType === "legal" && !personal) {
+    throw new Error("Representative info missing. Please complete personal info first.");
+  }
+
   if (accountType !== "legal" && !personal) {
     throw new Error("Personal info missing. Please complete personal info first.");
   }
@@ -301,6 +305,11 @@ const toBackendLocation = (
     return {
       business_details: {
         location_info: location,
+        rep_first_name: personal!.firstName,
+        rep_last_name: personal!.lastName,
+        rep_national_id: personal!.nationalId,
+        rep_dob: normalizeDate(personal!.birthDate),
+        rep_mobile_number: personal!.phone,
       },
     };
   }
@@ -326,6 +335,47 @@ const buildSubmitPayload = (profile: BusinessProfile) => {
   if (!personal || !business || !location) {
     throw new Error("لطفاً تمام بخش‌ها را کامل کنید و دوباره تلاش کنید.");
   }
+
+  const ensureFilled = (fields: Record<string, string | undefined>, errorMessage: string) => {
+    const hasEmpty = Object.values(fields).some((value) => !(value ?? "").toString().trim());
+    if (hasEmpty) {
+      throw new Error(errorMessage);
+    }
+  };
+
+  ensureFilled(
+    {
+      first_name: personal.firstName,
+      last_name: personal.lastName,
+      national_id: personal.nationalId,
+      dob: personal.birthDate,
+      mobile: personal.phone,
+    },
+    "لطفاً اطلاعات شخصی را کامل وارد کنید.",
+  );
+
+  ensureFilled(
+    {
+      brand_name: business.brandName,
+      field_of_work: business.fieldOfWork,
+      website_url: business.websiteUrl,
+      business_national_id: isLegal ? business.businessNationalId : "skip",
+    },
+    "لطفاً اطلاعات کسب‌وکار را کامل وارد کنید.",
+  );
+
+  ensureFilled(
+    {
+      address: location.address,
+      city: location.city,
+      fixed_phone: location.fixedPhone,
+      plate_number: location.plateNumber,
+      postal_code: location.postalCode,
+      province: location.province,
+      unit: location.unit,
+    },
+    "لطفاً اطلاعات آدرس را کامل وارد کنید.",
+  );
 
   const commonBusinessInfo = {
     brand_name: business.brandName,

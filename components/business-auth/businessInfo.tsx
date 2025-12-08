@@ -33,6 +33,7 @@ export function BusinessInfo({
   initialData,
   isLoading,
 }: BusinessInfoProps) {
+  const isLegal = accountType === "legal";
   const [form, setForm] = useState<BusinessInfoForm>({
     brandName: "",
     fieldOfWork: "",
@@ -72,7 +73,9 @@ export function BusinessInfo({
     };
 
     const nextErrors: Partial<Record<keyof BusinessInfoForm, string>> = {};
-    (Object.keys(trimmed) as Array<keyof BusinessInfoForm>).forEach((key) => {
+    const requiredKeys: Array<keyof BusinessInfoForm> = ["brandName", "fieldOfWork", "websiteUrl"];
+    if (isLegal) requiredKeys.push("businessNationalId");
+    requiredKeys.forEach((key) => {
       if (!trimmed[key]) {
         nextErrors[key] = REQUIRED_FIELD_ERROR;
       }
@@ -123,23 +126,25 @@ export function BusinessInfo({
           )}
         </div>
 
-        <div className="space-y-2 text-right">
-          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-            شناسه / کد ملی کسب‌ و کار
-          </label>
-          <input
-            type="text"
-            value={form.businessNationalId ?? ""}
-            onChange={(event) => handleChange("businessNationalId", event.target.value)}
-            placeholder="10345678901"
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-          />
-          {errors.businessNationalId && (
-            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
-              {errors.businessNationalId}
-            </p>
-          )}
-        </div>
+        {isLegal && (
+          <div className="space-y-2 text-right">
+            <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+              شناسه / کد ملی کسب‌ و کار
+            </label>
+            <input
+              type="text"
+              value={form.businessNationalId ?? ""}
+              onChange={(event) => handleChange("businessNationalId", event.target.value)}
+              placeholder="10345678901"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            />
+            {errors.businessNationalId && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.businessNationalId}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="space-y-2 text-right">
           <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">

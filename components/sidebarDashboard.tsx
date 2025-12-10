@@ -1,10 +1,18 @@
 "use client";
 
-import { useMemo, useState, type ReactNode, type ReactElement } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type ReactElement,
+} from "react";
 import clsx from "clsx";
 import { Typography } from "./ui/Typography";
 import { Button } from "./ui/Button";
-import { ChevronDown, ScanFace, Fingerprint, FileText } from "lucide-react";
+import { ChevronDown, ChevronLeft, FileText, Fingerprint, PlusCircle, ScanFace } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type NavSubItem = {
   id: string;
@@ -29,6 +37,67 @@ type NavSection = {
 type IconProps = {
   className?: string;
 };
+
+type BusinessStatus = "draft" | "in-progress" | "submitted" | "approved" | "rejected";
+
+type BusinessProfileSummary = {
+  id: string;
+  title: string;
+  subtitle: string;
+  status: BusinessStatus;
+};
+
+const businessStatusStyles: Record<
+  BusinessStatus,
+  { label: string; badgeClass: string; dotClass: string }
+> = {
+  draft: {
+    label: "پیش‌نویس",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface-variant)] border-[color:var(--md-sys-color-outline-variant)]",
+    dotClass: "bg-[color:var(--md-sys-color-on-surface-variant)]",
+  },
+  "in-progress": {
+    label: "در حال تکمیل اطلاعات",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/30",
+    dotClass: "bg-[color:var(--md-sys-color-primary)]",
+  },
+  submitted: {
+    label: "در انتظار بررسی",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-primary)]/10 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/25",
+    dotClass: "bg-[color:var(--md-sys-color-primary)]",
+  },
+  approved: {
+    label: "تایید شده",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/30",
+    dotClass: "bg-[color:var(--md-sys-color-primary)]",
+  },
+  rejected: {
+    label: "رد شده",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-error)]/10 text-[color:var(--md-sys-color-error)] border-[color:var(--md-sys-color-error)]/30",
+    dotClass: "bg-[color:var(--md-sys-color-error)]",
+  },
+};
+
+function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
+  const meta = businessStatusStyles[status];
+
+  return (
+    <span
+      className={clsx(
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
+        meta.badgeClass,
+      )}
+    >
+      <span className={clsx("h-2 w-2 rounded-full", meta.dotClass)} />
+      {meta.label}
+    </span>
+  );
+}
 
 const BadgeIcon = ({ className }: IconProps) => (
   <svg
@@ -151,10 +220,33 @@ export function SidebarDashboard({
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
 }) {
+  const router = useRouter();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
+  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+  const businessProfiles = useMemo<BusinessProfileSummary[]>(
+    () => [
+      {
+        id: "legal-1",
+        title: "حساب حقوقی ۱",
+        subtitle: "پیش‌نویس مرچنت حقوقی",
+        status: "in-progress",
+      },
+      {
+        id: "personal-1",
+        title: "AminJanani",
+        subtitle: "پیش‌نویس مرچنت حقیقی",
+        status: "in-progress",
+      },
+    ],
+    [],
+  );
+  const [activeBusinessId, setActiveBusinessId] = useState<string | null>(
+    businessProfiles[0]?.id ?? null,
+  );
+  const switcherRef = useRef<HTMLDivElement | null>(null);
 
   const sections = useMemo<NavSection[]>(
     () => [
@@ -193,6 +285,38 @@ export function SidebarDashboard({
     [],
   );
 
+
+  useEffect(() => {
+    if (!isSwitcherOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!switcherRef.current) return;
+      if (!switcherRef.current.contains(event.target as Node)) {
+        setIsSwitcherOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSwitcherOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isSwitcherOpen]);
+
+  useEffect(() => {
+    if (isCollapsed && isSwitcherOpen) {
+      setIsSwitcherOpen(false);
+    }
+  }, [isCollapsed, isSwitcherOpen]);
+
   const toggleGroup = (id: string) => {
     setOpenGroups((prev) => {
       const next = new Set(prev);
@@ -206,36 +330,127 @@ export function SidebarDashboard({
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
+        "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
         isCollapsed ? "w-[70px]" : "w-[230px]",
       )}
     >
       <div className="relative flex flex-col h-full">
+        
         {/* Header row */}
-        <div
-          className={clsx(
-            "flex items-center gap-3 border-b px-4 pb-4 pt-5 justify-start flex-shrink-0",
-            "border-[color:var(--md-sys-color-outline-variant)]",
-          )}
-        >
-          <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
+        <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
             className={clsx(
-              "min-w-0 transition-all duration-200",
-              isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+              "relative flex items-center gap-3 border-b pb-4 pt-5 justify-start",
+              isCollapsed ? "px-4" : "pr-4 pl-12",
+              "border-[color:var(--md-sys-color-outline-variant)]",
             )}
           >
-            <Typography
-              variant="caption"
-              className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
-            >
-              کسب و کار
-            </Typography>
+            {!isCollapsed && (
+              <button
+                type="button"
+                aria-label="مشاهده فهرست کسب‌وکارها"
+                aria-expanded={isSwitcherOpen}
+                onClick={() => setIsSwitcherOpen((open) => !open)}
+                className={clsx(
+                  "absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
+                  "border-[color:var(--md-sys-color-outline-variant)]",
+                  "bg-[color:var(--md-sys-color-surface-container-high)]",
+                  "hover:text-[color:var(--md-sys-color-primary)] hover:border-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
+                )}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+            )}
+
+            <div className="flex items-center gap-3 min-w-0 flex-1 justify-start">
+              <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
+              <div
+                className={clsx(
+                  "min-w-0 transition-all duration-200",
+                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                <Typography
+                  variant="caption"
+                  className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                >
+                  کسب و کار
+                </Typography>
+              </div>
+            </div>
           </div>
+
+          {isSwitcherOpen && (
+            <div
+              className={clsx(
+                "absolute z-40 w-[290px] rounded-[18px] border bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] overflow-hidden",
+                "border-[color:var(--md-sys-color-outline-variant)]",
+                "right-[calc(100%+12px)] top-3",
+              )}
+            >
+              <div
+                className={clsx(
+                  "max-h-80 overflow-y-auto space-y-2 px-3 py-3",
+                  "[&::-webkit-scrollbar]:w-3",
+                  "[&::-webkit-scrollbar-track]:bg-transparent",
+                  "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
+                  "[&::-webkit-scrollbar-thumb]:rounded-[7px]",
+                  "[&::-webkit-scrollbar-thumb]:border-2",
+                  "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface)]",
+                )}
+              >
+                {businessProfiles.map((profile) => {
+                  const isActive = profile.id === activeBusinessId;
+                  return (
+                    <button
+                      type="button"
+                      key={profile.id}
+                      onClick={() => {
+                        setActiveBusinessId(profile.id);
+                        setIsSwitcherOpen(false);
+                      }}
+                      className={clsx(
+                        "w-full rounded-2xl border px-3 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",
+                        isActive
+                          ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/8 shadow-[var(--elevation-1)]"
+                          : "border-[color:var(--md-sys-color-outline-variant)] hover:border-[color:var(--md-sys-color-primary)]/50 hover:bg-[color:var(--md-sys-color-surface-container-high)]",
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex flex-col items-end text-right">
+                          <span className="text-sm font-semibold leading-6">
+                            {profile.title}
+                          </span>
+                          <span className="text-xs text-[color:var(--md-sys-color-on-surface-variant)]">
+                            {profile.subtitle}
+                          </span>
+                        </div>
+                        <BusinessStatusBadge status={profile.status} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="border-t border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSwitcherOpen(false);
+                    router.push("/business-auth");
+                  }}
+                  className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"
+                >
+                  <PlusCircle className="h-5 w-5" />
+                  ساخت کسب و کار جدید
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Items – scrollable with rounded scrollbar */}
+        {/* Items list scrollable with rounded scrollbar */}
         <div
           className={clsx(
             "flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2 py-4", // 👈 no horizontal scroll ever

@@ -13,6 +13,7 @@ import { Typography } from "./ui/Typography";
 import { Button } from "./ui/Button";
 import { ChevronDown, ChevronLeft, FileText, Fingerprint, PlusCircle, ScanFace } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { ProfileListItem } from "../lib/api/userProfiles";
 
 type NavSubItem = {
   id: string;
@@ -84,7 +85,7 @@ const businessStatusStyles: Record<
 };
 
 function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
-  const meta = businessStatusStyles[status];
+  const meta = businessStatusStyles[status] ?? businessStatusStyles.submitted;
 
   return (
     <span
@@ -98,6 +99,22 @@ function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
     </span>
   );
 }
+
+const normalizeBusinessStatus = (value?: string): BusinessStatus => {
+  const normalized = (value ?? "").toLowerCase();
+  if (normalized.includes("draft")) return "draft";
+  if (normalized.includes("progress") || normalized.includes("pending")) return "in-progress";
+  if (normalized.includes("approved") || normalized.includes("accept")) return "approved";
+  if (normalized.includes("reject")) return "rejected";
+  return "submitted";
+};
+
+const mapTypeLabel = (value?: string) => {
+  const t = (value ?? "").toLowerCase();
+  if (t.includes("real") || t.includes("personal") || t.includes("haghighi")) return "حساب حقیقی";
+  if (t.includes("legal") || t.includes("business") || t.includes("hoghooghi")) return "حساب حقوقی";
+  return value ?? "";
+};
 
 const BadgeIcon = ({ className }: IconProps) => (
   <svg
@@ -216,9 +233,11 @@ const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boo
 export function SidebarDashboard({
   collapsed: collapsedProp,
   onToggleAction,
+  businessProfiles: businessProfilesProp,
 }: {
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
+  businessProfiles?: ProfileListItem[];
 }) {
   const router = useRouter();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
@@ -226,26 +245,24 @@ export function SidebarDashboard({
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
-  const businessProfiles = useMemo<BusinessProfileSummary[]>(
-    () => [
-      {
-        id: "business-1",
-        title: "حساب حقوقی ۱",
-        subtitle: "پیش‌ نویس حقوقی",
-        status: "in-progress",
-      },
-      {
-        id: "personal-1",
-        title: "AminJanani",
-        subtitle: "پیش‌ نویس حقیقی",
-        status: "in-progress",
-      },
-    ],
-    [],
-  );
+  const businessProfiles = useMemo<BusinessProfileSummary[]>(() => {
+    if (businessProfilesProp?.length) {
+      return businessProfilesProp.map((item) => ({
+        id: item.id,
+        title: item.name,
+        subtitle: mapTypeLabel(item.type),
+        status: normalizeBusinessStatus(item.verification_status),
+      }));
+    }
+    return [];
+  }, [businessProfilesProp]);
   const [activeBusinessId, setActiveBusinessId] = useState<string | null>(
     businessProfiles[0]?.id ?? null,
   );
+  useEffect(() => {
+    if (!businessProfiles.length) return;
+    setActiveBusinessId((prev) => prev ?? businessProfiles[0]?.id ?? null);
+  }, [businessProfiles]);
   const switcherRef = useRef<HTMLDivElement | null>(null);
 
   const sections = useMemo<NavSection[]>(
@@ -400,6 +417,11 @@ export function SidebarDashboard({
                   "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface)]",
                 )}
               >
+                {businessProfiles.length === 0 && (
+                  <div className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-3 text-sm text-[color:var(--md-sys-color-on-surface-variant)] text-right">
+                    هیچ کسب‌وکاری یافت نشد.
+                  </div>
+                )}
                 {businessProfiles.map((profile) => {
                   const isActive = profile.id === activeBusinessId;
                   return (
@@ -419,7 +441,7 @@ export function SidebarDashboard({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex flex-col items-end text-right">
-                          <span className="text-base font-semibold leading-6">
+                          <span className="pr-0 text-base font-semibold leading-6">
                             {profile.title}
                           </span>
                           <span className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
@@ -438,7 +460,7 @@ export function SidebarDashboard({
                   type="button"
                   onClick={() => {
                     setIsSwitcherOpen(false);
-                    router.push("/business-auth");
+                    router.push("/business-auth?new=1");
                   }}
                   className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"
                 >

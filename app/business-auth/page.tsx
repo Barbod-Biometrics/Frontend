@@ -73,12 +73,26 @@ function LoadingFallback() {
 export default function Page() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <BusinessAuthPage />
+      <BusinessAuthPageWithParams />
     </Suspense>
   );
 }
 
-function BusinessAuthPage() {
+function BusinessAuthPageWithParams() {
+  const searchParams = useSearchParams();
+  const profileIdParam = searchParams.get("id");
+  const initialProfileId = profileIdParam?.trim() ? profileIdParam : undefined;
+  const forceNewProfile = searchParams.get("new") === "1";
+
+  return <BusinessAuthPage initialProfileId={initialProfileId} forceNewProfile={forceNewProfile} />;
+}
+
+type BusinessAuthPageProps = {
+  initialProfileId?: string | null;
+  forceNewProfile?: boolean;
+};
+
+function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: BusinessAuthPageProps = {}) {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectBusinessProfile);
   const statuses = useAppSelector(selectBusinessProfileStatuses);
@@ -87,8 +101,6 @@ function BusinessAuthPage() {
   const profileId = profile?.id;
   const [currentAccountType, setCurrentAccountType] = useState<AccountKind>("legal");
   const accountType = profile?.type;
-  const searchParams = useSearchParams();
-  const urlProfileId = searchParams?.get("profileId") ?? searchParams?.get("id");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const phoneNumber = typeof window !== "undefined" ? getPhoneNumber() : null;
   const hasHydratedStep = useRef(false);
@@ -106,13 +118,18 @@ function BusinessAuthPage() {
 
   useEffect(() => {
     const profileStorageKey = getProfileStorageKey(phoneNumber);
+    if (forceNewProfile && typeof window !== "undefined") {
+      window.localStorage.removeItem(profileStorageKey);
+    }
     const storedId =
-      typeof window !== "undefined" ? window.localStorage.getItem(profileStorageKey) : null;
-    const bootstrapId = urlProfileId ?? storedId;
+      !forceNewProfile && typeof window !== "undefined"
+        ? window.localStorage.getItem(profileStorageKey)
+        : null;
+    const bootstrapId = forceNewProfile ? initialProfileId ?? null : initialProfileId ?? storedId;
     if (bootstrapId && !profileId && statuses.bootstrap === "idle") {
       dispatch(bootstrapBusinessProfile({ profileId: bootstrapId }));
     }
-  }, [dispatch, phoneNumber, profileId, statuses.bootstrap, urlProfileId]);
+  }, [dispatch, phoneNumber, profileId, statuses.bootstrap, initialProfileId, forceNewProfile]);
 
   useEffect(() => {
     if (!profileId) {

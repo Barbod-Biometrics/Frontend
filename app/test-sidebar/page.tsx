@@ -5,23 +5,16 @@ import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { Header } from "./header";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 
-const TEMP_APPROVED_PROFILE: ProfileListItem = {
-  id: "temp-approved-profile",
-  name: "Temporary Approved Profile",
-  type: "legal",
-  verification_status: "approved",
-};
-
 export default function Page() {
   const [collapsed, setCollapsed] = useState(false);
-  const [profiles, setProfiles] = useState<ProfileListItem[]>([TEMP_APPROVED_PROFILE]);
+  const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       try {
         const result = await fetchUserProfiles();
-        if (mounted) setProfiles([...result, TEMP_APPROVED_PROFILE]);
+        if (mounted) setProfiles(result);
       } catch (error) {
         console.error("Failed to load profiles", error);
       }

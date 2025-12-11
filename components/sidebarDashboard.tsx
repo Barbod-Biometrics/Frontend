@@ -39,7 +39,7 @@ type IconProps = {
   className?: string;
 };
 
-type BusinessStatus = "draft" | "in-progress" | "submitted" | "approved" | "rejected";
+type BusinessStatus = "in-progress" | "pending" | "approved" | "rejected";
 
 type BusinessProfileSummary = {
   id: string;
@@ -52,29 +52,21 @@ const businessStatusStyles: Record<
   BusinessStatus,
   { label: string; badgeClass: string; dotClass: string }
 > = {
-  draft: {
-    label: "پیش‌نویس",
-    badgeClass:
-      "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface-variant)] border-[color:var(--md-sys-color-outline-variant)]",
-    dotClass: "bg-[color:var(--md-sys-color-on-surface-variant)]",
-  },
   "in-progress": {
     label: "در حال تکمیل اطلاعات",
     badgeClass:
       "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/30",
     dotClass: "bg-[color:var(--md-sys-color-primary)]",
   },
-  submitted: {
-    label: "در انتظار بررسی",
-    badgeClass:
-      "bg-[color:var(--md-sys-color-primary)]/10 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/25",
-    dotClass: "bg-[color:var(--md-sys-color-primary)]",
+  pending: {
+    label: "در انتظار تایید",
+    badgeClass: "bg-amber-100 text-amber-700 border-amber-200",
+    dotClass: "bg-amber-500",
   },
   approved: {
     label: "تایید شده",
-    badgeClass:
-      "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/30",
-    dotClass: "bg-[color:var(--md-sys-color-primary)]",
+    badgeClass: "bg-green-100 text-green-700 border-green-200",
+    dotClass: "bg-green-600",
   },
   rejected: {
     label: "رد شده",
@@ -85,7 +77,7 @@ const businessStatusStyles: Record<
 };
 
 function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
-  const meta = businessStatusStyles[status] ?? businessStatusStyles.submitted;
+  const meta = businessStatusStyles[status] ?? businessStatusStyles.pending;
 
   return (
     <span
@@ -102,11 +94,12 @@ function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
 
 const normalizeBusinessStatus = (value?: string): BusinessStatus => {
   const normalized = (value ?? "").toLowerCase();
-  if (normalized.includes("draft")) return "draft";
-  if (normalized.includes("progress") || normalized.includes("pending")) return "in-progress";
+  if (normalized.includes("progress") || normalized.includes("draft")) return "in-progress";
+  if (normalized.includes("pending") || normalized.includes("wait") || normalized.includes("review"))
+    return "pending";
   if (normalized.includes("approved") || normalized.includes("accept")) return "approved";
   if (normalized.includes("reject")) return "rejected";
-  return "submitted";
+  return "pending";
 };
 
 const mapTypeLabel = (value?: string) => {
@@ -353,7 +346,7 @@ export function SidebarDashboard({
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
+        "fixed right-0 top-14 z-30 h-[calc(108vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
         isCollapsed ? "w-[62px]" : "w-[200px]",
       )}
@@ -470,7 +463,7 @@ export function SidebarDashboard({
                       )}
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex flex-col items-end text-right">
+                        <div className="flex-col items-end text-right">
                           <span className="pr-0 text-base font-semibold leading-6">
                             {profile.title}
                           </span>

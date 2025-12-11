@@ -308,7 +308,7 @@ function BusinessAuthPage() {
           dir="rtl"
           className="font-vazirmatn flex h-full min-h-[420px] items-center justify-center rounded-[28px] border border-dashed border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface-variant)]"
         >
-          O"OñOUO OUOU+ O"OrO' O"UØ OýU^O_UO U?OñU. U.OrOæU^Oæ U+U.OUOO' O_OO_UØ U.UOƒ?OO'U^O_.
+          مرحله نامعتبر است.
         </div>
       );
   }

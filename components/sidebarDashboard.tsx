@@ -202,7 +202,7 @@ const SupportIcon = ({ className }: IconProps) => (
 const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boolean }) => (
   <span
     className={clsx(
-      "flex h-9 w-9 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
+      "flex h-10 w-10 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
       "border-[color:var(--md-sys-color-outline-variant)]",
       active
         ? "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)]"
@@ -229,15 +229,15 @@ export function SidebarDashboard({
   const businessProfiles = useMemo<BusinessProfileSummary[]>(
     () => [
       {
-        id: "legal-1",
+        id: "business-1",
         title: "حساب حقوقی ۱",
-        subtitle: "پیش‌نویس مرچنت حقوقی",
+        subtitle: "پیش‌ نویس حقوقی",
         status: "in-progress",
       },
       {
         id: "personal-1",
         title: "AminJanani",
-        subtitle: "پیش‌نویس مرچنت حقیقی",
+        subtitle: "پیش‌ نویس حقیقی",
         status: "in-progress",
       },
     ],
@@ -332,7 +332,7 @@ export function SidebarDashboard({
       className={clsx(
         "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[70px]" : "w-[230px]",
+        isCollapsed ? "w-[62px]" : "w-[200px]",
       )}
     >
       <div className="relative flex flex-col h-full">
@@ -349,7 +349,7 @@ export function SidebarDashboard({
             {!isCollapsed && (
               <button
                 type="button"
-                aria-label="مشاهده فهرست کسب‌وکارها"
+                aria-label="مشاهده فهرست کسب‌ و کارها"
                 aria-expanded={isSwitcherOpen}
                 onClick={() => setIsSwitcherOpen((open) => !open)}
                 className={clsx(
@@ -373,7 +373,7 @@ export function SidebarDashboard({
               >
                 <Typography
                   variant="caption"
-                  className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                  className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
                 >
                   کسب و کار
                 </Typography>
@@ -411,7 +411,7 @@ export function SidebarDashboard({
                         setIsSwitcherOpen(false);
                       }}
                       className={clsx(
-                        "w-full rounded-2xl border px-3 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",
+                        "w-full rounded-2xl border px-4 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",
                         isActive
                           ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/8 shadow-[var(--elevation-1)]"
                           : "border-[color:var(--md-sys-color-outline-variant)] hover:border-[color:var(--md-sys-color-primary)]/50 hover:bg-[color:var(--md-sys-color-surface-container-high)]",
@@ -419,10 +419,10 @@ export function SidebarDashboard({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex flex-col items-end text-right">
-                          <span className="text-sm font-semibold leading-6">
+                          <span className="text-base font-semibold leading-6">
                             {profile.title}
                           </span>
-                          <span className="text-xs text-[color:var(--md-sys-color-on-surface-variant)]">
+                          <span className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
                             {profile.subtitle}
                           </span>
                         </div>
@@ -467,7 +467,7 @@ export function SidebarDashboard({
               {!isCollapsed && (
                 <Typography
                   variant="caption"
-                  className="mb-2 px-2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                  className="mb-2 px-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
                 >
                   {section.title}
                 </Typography>
@@ -495,7 +495,7 @@ export function SidebarDashboard({
                           }
                         }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-2 py-2 text-xs transition-colors duration-200 justify-between gap-2",
+                          "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
                           isItemActive
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
@@ -545,7 +545,7 @@ export function SidebarDashboard({
                                   key={child.id}
                                   variant="ghost"
                                   onClick={() => setActiveItemId(child.id)}
-                                  className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-xs"
+                                  className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-sm"
                                 >
                                   <span
                                     className={clsx(

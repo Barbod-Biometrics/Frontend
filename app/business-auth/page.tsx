@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
 import { PersonalInfo } from "../../components/business-auth/personalInfo";
@@ -94,6 +94,7 @@ type BusinessAuthPageProps = {
 
 function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: BusinessAuthPageProps = {}) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const profile = useAppSelector(selectBusinessProfile);
   const statuses = useAppSelector(selectBusinessProfileStatuses);
   const completedSections = useAppSelector(selectCompletedSections);
@@ -233,6 +234,7 @@ function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: Busines
   const handleSubmitProfile = async () => {
     try {
       await dispatch(submitBusinessProfile()).unwrap();
+      router.push("/test-sidebar");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);

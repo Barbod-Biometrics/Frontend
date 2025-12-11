@@ -259,6 +259,12 @@ export function SidebarDashboard({
   const [activeBusinessId, setActiveBusinessId] = useState<string | null>(
     businessProfiles[0]?.id ?? null,
   );
+  const activeBusiness = useMemo(
+    () => businessProfiles.find((profile) => profile.id === activeBusinessId) ?? null,
+    [activeBusinessId, businessProfiles],
+  );
+  const showBusinessNameHeader = !isCollapsed && activeBusiness?.status === "approved";
+  const businessNameLabel = showBusinessNameHeader ? activeBusiness?.title ?? "" : "";
   useEffect(() => {
     if (!businessProfiles.length) return;
     setActiveBusinessId((prev) => prev ?? businessProfiles[0]?.id ?? null);
@@ -358,8 +364,8 @@ export function SidebarDashboard({
         <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
             className={clsx(
-              "relative flex items-center gap-3 border-b pb-4 pt-5 justify-start",
-              isCollapsed ? "px-4" : "pr-4 pl-12",
+              "relative flex items-center gap-3 pb-1 pt-7 justify-center",
+              isCollapsed ? "px-4" : "pr-4 pl-16",
               "border-[color:var(--md-sys-color-outline-variant)]",
             )}
           >
@@ -370,7 +376,7 @@ export function SidebarDashboard({
                 aria-expanded={isSwitcherOpen}
                 onClick={() => setIsSwitcherOpen((open) => !open)}
                 className={clsx(
-                  "absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
+                  "absolute left-3 top-4/6 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
                   "border-[color:var(--md-sys-color-outline-variant)]",
                   "bg-[color:var(--md-sys-color-surface-container-high)]",
                   "hover:text-[color:var(--md-sys-color-primary)] hover:border-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
@@ -384,7 +390,7 @@ export function SidebarDashboard({
               <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
               <div
                 className={clsx(
-                  "min-w-0 transition-all duration-200",
+                  "min-w-0 transition-all duration-200 text-right",
                   isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
                 )}
               >
@@ -396,6 +402,30 @@ export function SidebarDashboard({
                 </Typography>
               </div>
             </div>
+          </div>
+
+          {/* Business name header with toggle (separator always visible) */}
+          <div
+            className={clsx(
+              "flex items-center border-b border-[color:var(--md-sys-color-outline-variant)] transition-all duration-200",
+              isCollapsed ? "gap-0 px-0 py-0" : "gap-3 px-4 py-3",
+            )}
+          >
+            {showBusinessNameHeader && (
+              <div
+                className={clsx(
+                  "min-w-0 transition-all duration-200",
+                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                <Typography
+                  variant="caption"
+                  className="text-sm font-semibold text-[color:var(--md-sys-color-primary)]"
+                >
+                  {businessNameLabel}
+                </Typography>
+              </div>
+            )}
           </div>
 
           {isSwitcherOpen && (
@@ -419,7 +449,7 @@ export function SidebarDashboard({
               >
                 {businessProfiles.length === 0 && (
                   <div className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-3 text-sm text-[color:var(--md-sys-color-on-surface-variant)] text-right">
-                    هیچ کسب‌وکاری یافت نشد.
+                    هیچ کسب‌ و کاری یافت نشد.
                   </div>
                 )}
                 {businessProfiles.map((profile) => {
@@ -444,7 +474,7 @@ export function SidebarDashboard({
                           <span className="pr-0 text-base font-semibold leading-6">
                             {profile.title}
                           </span>
-                          <span className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                          <span className="block text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
                             {profile.subtitle}
                           </span>
                         </div>

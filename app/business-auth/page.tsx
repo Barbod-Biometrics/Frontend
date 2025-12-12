@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
 import { PersonalInfo } from "../../components/business-auth/personalInfo";
@@ -73,13 +73,28 @@ function LoadingFallback() {
 export default function Page() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <BusinessAuthPage />
+      <BusinessAuthPageWithParams />
     </Suspense>
   );
 }
 
-function BusinessAuthPage() {
+function BusinessAuthPageWithParams() {
+  const searchParams = useSearchParams();
+  const profileIdParam = searchParams.get("id");
+  const initialProfileId = profileIdParam?.trim() ? profileIdParam : undefined;
+  const forceNewProfile = searchParams.get("new") === "1";
+
+  return <BusinessAuthPage initialProfileId={initialProfileId} forceNewProfile={forceNewProfile} />;
+}
+
+type BusinessAuthPageProps = {
+  initialProfileId?: string | null;
+  forceNewProfile?: boolean;
+};
+
+function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: BusinessAuthPageProps = {}) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const profile = useAppSelector(selectBusinessProfile);
   const statuses = useAppSelector(selectBusinessProfileStatuses);
   const completedSections = useAppSelector(selectCompletedSections);
@@ -87,8 +102,6 @@ function BusinessAuthPage() {
   const profileId = profile?.id;
   const [currentAccountType, setCurrentAccountType] = useState<AccountKind>("legal");
   const accountType = profile?.type;
-  const searchParams = useSearchParams();
-  const urlProfileId = searchParams?.get("profileId") ?? searchParams?.get("id");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const phoneNumber = typeof window !== "undefined" ? getPhoneNumber() : null;
   const hasHydratedStep = useRef(false);
@@ -106,13 +119,18 @@ function BusinessAuthPage() {
 
   useEffect(() => {
     const profileStorageKey = getProfileStorageKey(phoneNumber);
+    if (forceNewProfile && typeof window !== "undefined") {
+      window.localStorage.removeItem(profileStorageKey);
+    }
     const storedId =
-      typeof window !== "undefined" ? window.localStorage.getItem(profileStorageKey) : null;
-    const bootstrapId = urlProfileId ?? storedId;
+      !forceNewProfile && typeof window !== "undefined"
+        ? window.localStorage.getItem(profileStorageKey)
+        : null;
+    const bootstrapId = forceNewProfile ? initialProfileId ?? null : initialProfileId ?? storedId;
     if (bootstrapId && !profileId && statuses.bootstrap === "idle") {
       dispatch(bootstrapBusinessProfile({ profileId: bootstrapId }));
     }
-  }, [dispatch, phoneNumber, profileId, statuses.bootstrap, urlProfileId]);
+  }, [dispatch, phoneNumber, profileId, statuses.bootstrap, initialProfileId, forceNewProfile]);
 
   useEffect(() => {
     if (!profileId) {
@@ -216,6 +234,7 @@ function BusinessAuthPage() {
   const handleSubmitProfile = async () => {
     try {
       await dispatch(submitBusinessProfile()).unwrap();
+      router.push("/test-sidebar");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);
@@ -308,7 +327,7 @@ function BusinessAuthPage() {
           dir="rtl"
           className="font-vazirmatn flex h-full min-h-[420px] items-center justify-center rounded-[28px] border border-dashed border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface-variant)]"
         >
-          O"OñOUO OUOU+ O"OrO' O"UØ OýU^O_UO U?OñU. U.OrOæU^Oæ U+U.OUOO' O_OO_UØ U.UOƒ?OO'U^O_.
+          مرحله نامعتبر است.
         </div>
       );
   }

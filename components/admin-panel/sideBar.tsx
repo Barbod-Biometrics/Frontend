@@ -115,14 +115,14 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
             "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface-container)]",
           )}
         >
-          <div className="mb-6">
+          <div className="mb-6 gap-3 flex flex-col">
             {!isCollapsed && (
               <p className="mb-2 px-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
                 مدیریت درخواست ها
               </p>
             )}
 
-            <div className="space-y-1.5">
+            <div className="space-y-0">
               {navItems.map((item) => {
                 const isActive = resolvedActive === item.id;
                 return (
@@ -133,8 +133,8 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
                     className={clsx(
                       "group flex w-full items-center rounded-[10px] text-sm transition-colors duration-200",
                       isCollapsed
-                        ? "justify-center gap-0 px-0 py-2 h-[52px]"
-                        : "justify-between gap-2 px-3 py-2.5 min-h-[56px]",
+                        ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
+                        : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
                       isActive
                         ? "text-[color:var(--md-sys-color-primary)]"
                         : "text-[color:var(--md-sys-color-on-surface)]",
@@ -147,7 +147,7 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
                       <div
                         className={clsx(
                           "min-w-0 truncate text-right font-medium transition-all duration-150",
-                          isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                          isCollapsed ? "opacity-0 w-auto pointer-events-none" : "opacity-100 w-auto",
                         )}
                       >
                         {item.label}

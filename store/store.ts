@@ -4,6 +4,7 @@ import themeReducer from './themeSlice';
 import walletReducer from './walletSlice';
 import loginReducer from './loginSlice';
 import businessProfileReducer from './businessProfileSlice';
+import userReducer from './userContactSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     businessProfile: businessProfileReducer,
   
     wallet: walletReducer,
+    user: userReducer,
     
   },
 

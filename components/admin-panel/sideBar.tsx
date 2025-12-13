@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import clsx from "clsx";
 import { Briefcase, PhoneCall } from "lucide-react";
 import { useState, type ReactElement, type ReactNode } from "react";
 import { Button } from "../ui/Button";
+import { Typography } from "../ui/Typography";
 
 type AdminNavItem = {
   id: "manageBusinessRequests" | "manageContactUsRequests";
@@ -60,9 +61,6 @@ const AdminShieldIcon = ({ className }: { className?: string }) => (
       d="M36 5.5 10 16.5v18.5C10 50 20 61.5 36 67c16-5.5 26-17 26-32V16.5L36 5.5Z"
       fill="url(#adminShieldGradient)"
     />
-    <circle cx="46" cy="46" r="11" fill="url(#adminShieldAccent)" />
-    <circle cx="46" cy="42" r="4.2" fill="url(#adminShieldGradient)" />
-    <rect x="39.5" y="47" width="13" height="6.5" rx="3.25" fill="url(#adminShieldGradient)" />
   </svg>
 );
 
@@ -83,24 +81,28 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
       className={clsx(
         "fixed right-0 top-14 z-30 h-[calc(108vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[62px]" : "w-[200px]",
+        isCollapsed ? "w-[57px]" : "w-[200px]",
       )}
     >
       <div className="relative flex flex-col h-full">
         <div className="flex flex-col items-stretch gap-3 border-b border-[color:var(--md-sys-color-outline-variant)] px-4 pb-4 pt-6">
-          <div dir="ltr" className="flex flex-row-reverse items-center justify-start gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1 justify-start">
             <ItemIconFrame active>
               <AdminShieldIcon />
             </ItemIconFrame>
-
-            <span
+            <div
               className={clsx(
-                "text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] transition-all duration-200",
-                isCollapsed ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100",
+                "min-w-0 transition-all duration-200 text-right",
+                isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
               )}
             >
-              ادمین
-            </span>
+              <Typography
+                variant="caption"
+                className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+              >
+                ادمین
+              </Typography>
+            </div>
           </div>
         </div>
 

@@ -46,7 +46,7 @@ const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boo
 );
 
 const AdminShieldIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 72 72" className={clsx("h-9 w-9", className)} fill="none">
+  <svg viewBox="0 0 72 72" className={clsx("h-7.5 w-7.5", className)} fill="none">
     <defs>
       <linearGradient id="adminShieldGradient" x1="0" x2="0" y1="0" y2="72" gradientUnits="userSpaceOnUse">
         <stop stopColor="#0f8bff" />

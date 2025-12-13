@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AdminSidebar } from "../../components/admin-panel/sideBar";
 import { Header } from "./header";
 
 export default function Page() {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState<"manageBusinessRequests" | "manageContactUsRequests">(
     "manageBusinessRequests",
@@ -17,6 +19,7 @@ export default function Page() {
         onToggleAction={() => setCollapsed((state) => !state)}
         isAdmin
         isInAdminPanel
+        onPanelSwitchAction={() => router.push("/test-sidebar?admin=1")}
       />
 
       <AdminSidebar

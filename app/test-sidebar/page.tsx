@@ -1,11 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { Header } from "./header";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 
 export default function Page() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isAdmin = searchParams.get("admin") === "1";
+
   const [collapsed, setCollapsed] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
 
@@ -27,7 +32,13 @@ export default function Page() {
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <Header collapsed={collapsed} onToggleAction={() => setCollapsed((s) => !s)} />
+      <Header
+        collapsed={collapsed}
+        onToggleAction={() => setCollapsed((s) => !s)}
+        isAdmin={isAdmin}
+        isInAdminPanel={false}
+        onPanelSwitchAction={() => router.push("/test-admin-panel")}
+      />
 
       <SidebarDashboard
         collapsed={collapsed}

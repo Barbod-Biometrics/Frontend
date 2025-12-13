@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo } from "react";
 import clsx from "clsx";
@@ -33,14 +33,7 @@ const CollapseIcon = ({ collapsed }: { collapsed: boolean }) =>
   ) : (
     <svg viewBox="0 0 64 64" className="h-6 w-6" fill="none">
       <defs>
-        <linearGradient
-          id="collapseGradient"
-          x1="0"
-          x2="0"
-          y1="0"
-          y2="64"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="collapseGradient" x1="0" x2="0" y1="0" y2="64" gradientUnits="userSpaceOnUse">
           <stop stopColor="#0f8bff" />
           <stop offset="1" stopColor="#2152ff" />
         </linearGradient>
@@ -52,36 +45,36 @@ const CollapseIcon = ({ collapsed }: { collapsed: boolean }) =>
     </svg>
   );
 
+const BusinessBadgeIcon = () => (
+  <svg viewBox="0 0 32 32" className="h-8 w-8 text-[color:var(--md-sys-color-primary)]" fill="none">
+    <rect x="4" y="4" width="24" height="24" rx="8" fill="currentColor" opacity="0.12" />
+    <rect x="9.5" y="10.5" width="13" height="11" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+    <path
+      d="M13.5 9.5C13.5 8.67157 14.1716 8 15 8H17C17.8284 8 18.5 8.67157 18.5 9.5V11.5H13.5V9.5Z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    <path d="M13 16.25H19M13 19H17.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  </svg>
+);
+
+const AdminShieldIcon = () => (
+  <svg viewBox="0 0 72 72" className="h-7 w-7" fill="none">
+    <defs>
+      <linearGradient id="adminShieldGradient" x1="0" x2="0" y1="0" y2="72" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#0f8bff" />
+        <stop offset="1" stopColor="#2152ff" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M36 5.5 10 16.5v18.5C10 50 20 61.5 36 67c16-5.5 26-17 26-32V16.5L36 5.5Z"
+      fill="url(#adminShieldGradient)"
+    />
+  </svg>
+);
+
 const AdminSwitchIcon = ({ isInAdmin }: { isInAdmin: boolean }) =>
-  isInAdmin ? (
-    <svg viewBox="0 0 64 64" className="h-7 w-7" fill="none">
-      <defs>
-        <linearGradient id="businessGradient" x1="0" x2="0" y1="0" y2="64" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0f8bff" />
-          <stop offset="1" stopColor="#2152ff" />
-        </linearGradient>
-      </defs>
-      <rect x="12" y="20" width="40" height="28" rx="6" fill="url(#businessGradient)" />
-      <rect x="24" y="14" width="16" height="8" rx="3" fill="url(#businessGradient)" />
-      <rect x="12" y="30" width="40" height="4" fill="rgba(255,255,255,0.4)" />
-      <circle cx="32" cy="32" r="3" fill="#fff" />
-    </svg>
-  ) : (
-    <svg viewBox="0 0 64 64" className="h-7 w-7" fill="none">
-      <defs>
-        <linearGradient id="adminGradient" x1="0" x2="0" y1="0" y2="64" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0f8bff" />
-          <stop offset="1" stopColor="#2152ff" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M32 6 12 14v16c0 11 7.6 21 20 26 12.4-5 20-15 20-26V14L32 6Z"
-        fill="url(#adminGradient)"
-      />
-      <circle cx="32" cy="30" r="8" fill="#fff" />
-      <rect x="26" y="38" width="12" height="8" rx="3" fill="#fff" />
-    </svg>
-  );
+  isInAdmin ? <BusinessBadgeIcon /> : <AdminShieldIcon />;
 
 export function Header({
   collapsed,
@@ -147,11 +140,7 @@ export function Header({
           <button
             type="button"
             onClick={onPanelSwitchAction}
-            aria-label={
-              isInAdminPanel
-                ? "OñU?O¦U+ O\"UØ U_U+U, UcO3O\"ƒ?O U^ UcOOñ"
-                : "OñU?O¦U+ O\"UØ U_U+U, OO_U.UOU+"
-            }
+            aria-label={isInAdminPanel ? "OñU?O¦U+ O\"UØ U_U+U, UcO3O\"ƒ?O U^ UcOOñ" : "OñU?O¦U+ O\"UØ U_U+U, OO_U.UOU+"}
             className={clsx(
               "flex h-10 w-10 items-center justify-center rounded-2xl border transition",
               "border-[color:var(--md-sys-color-outline-variant)]",

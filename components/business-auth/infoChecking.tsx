@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Pencil, AlertTriangle } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
@@ -12,9 +14,12 @@ interface InfoCheckingProps {
   completedSections?: Partial<Record<SectionId, boolean>>;
   onEditSection?: (section: SectionId) => void;
   onBack?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (isAdminFlow?: boolean) => void | Promise<void>;
   isSubmitting?: boolean;
 }
+
+const ADMIN_PANEL_RETURN_KEY = "admin-panel-return-view";
+const ADMIN_PANEL_BUSINESS_VIEW = "business";
 
 const getSectionCopy = (accountType: AccountKind): Record<SectionId, string> => ({
   personal: accountType === "legal" ? "اطلاعات نماینده شرکت" : "اطلاعات شخصی",
@@ -92,6 +97,21 @@ export function InfoChecking({
 }: InfoCheckingProps) {
   const sections: SectionId[] = ["personal", "business", "location"];
   const sectionCopy = getSectionCopy(accountType);
+  const searchParams = useSearchParams();
+
+  const isAdminFlow = useMemo(() => {
+    if (searchParams?.get("admin") === "1") return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(ADMIN_PANEL_RETURN_KEY) === ADMIN_PANEL_BUSINESS_VIEW;
+    } catch {
+      return false;
+    }
+  }, [searchParams]);
+
+  const handleSubmit = () => {
+    onSubmit?.(isAdminFlow);
+  };
 
   return (
     <section
@@ -136,7 +156,7 @@ export function InfoChecking({
           <Button
             type="button"
             className="min-w-[140px]"
-            onClick={onSubmit}
+            onClick={handleSubmit}
             disabled={isSubmitting}
           >
             تایید و ارسال

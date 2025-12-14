@@ -33,9 +33,6 @@ export default function Page() {
       <Header
         collapsed={collapsed}
         onToggleAction={() => setCollapsed((s) => !s)}
-        isAdmin
-        isInAdminPanel={false}
-        onPanelSwitchAction={() => router.push("/test-admin-panel")}
       />
 
       <SidebarDashboard

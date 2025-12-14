@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { Header } from "./header";
@@ -9,7 +9,10 @@ import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfi
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isAdmin = searchParams.get("admin") === "1";
+  const adminFromQuery = searchParams.get("admin") === "1";
+  const adminFlag =
+    typeof window !== "undefined" && window.localStorage.getItem("admin-return-to-business") === "1";
+  const isAdmin = useMemo(() => adminFromQuery || adminFlag, [adminFromQuery, adminFlag]);
 
   const [collapsed, setCollapsed] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
@@ -29,6 +32,12 @@ export default function Page() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!adminFromQuery && typeof window !== "undefined") {
+      window.localStorage.removeItem("admin-return-to-business");
+    }
+  }, [adminFromQuery]);
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">

@@ -83,7 +83,10 @@ function BusinessAuthPageWithParams() {
   const profileIdParam = searchParams.get("id");
   const initialProfileId = profileIdParam?.trim() ? profileIdParam : undefined;
   const forceNewProfile = searchParams.get("new") === "1";
-  const isAdminContext = searchParams.get("admin") === "1";
+  const adminFromQuery = searchParams.get("admin") === "1";
+  const adminFlag =
+    typeof window !== "undefined" && window.localStorage.getItem("admin-return-to-business") === "1";
+  const isAdminContext = adminFromQuery || adminFlag;
 
   return (
     <BusinessAuthPage
@@ -246,7 +249,13 @@ function BusinessAuthPage({
   const handleSubmitProfile = async () => {
     try {
       await dispatch(submitBusinessProfile()).unwrap();
+      if (isAdminContext && typeof window !== "undefined") {
+        window.localStorage.setItem("admin-return-to-business", "1");
+      }
       router.push(isAdminContext ? "/test-sidebar?admin=1" : "/test-sidebar");
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("admin-return-to-business");
+      }
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);

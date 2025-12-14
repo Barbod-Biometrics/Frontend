@@ -48,6 +48,8 @@ type BusinessProfileSummary = {
   status: BusinessStatus;
 };
 
+const ADMIN_RETURN_KEY = "admin-return-to-business";
+
 const businessStatusStyles: Record<
   BusinessStatus,
   { label: string; badgeClass: string; dotClass: string }
@@ -485,6 +487,11 @@ export function SidebarDashboard({
                   type="button"
                   onClick={() => {
                     setIsSwitcherOpen(false);
+                    try {
+                      if (isAdminView && typeof window !== "undefined") {
+                        window.localStorage.setItem(ADMIN_RETURN_KEY, "1");
+                      }
+                    } catch {}
                     router.push(isAdminView ? "/business-auth?new=1&admin=1" : "/business-auth?new=1");
                   }}
                   className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"

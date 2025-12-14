@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { Header } from "./header";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 
 export default function Page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isAdmin = searchParams.get("admin") === "1";
 
   const [collapsed, setCollapsed] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
@@ -33,7 +35,7 @@ export default function Page() {
       <Header
         collapsed={collapsed}
         onToggleAction={() => setCollapsed((s) => !s)}
-        isAdmin
+        isAdmin={isAdmin}
         isInAdminPanel={false}
         onPanelSwitchAction={() => router.push("/test-admin-panel")}
       />
@@ -42,6 +44,7 @@ export default function Page() {
         collapsed={collapsed}
         onToggleAction={(next) => setCollapsed(next)}
         businessProfiles={profiles}
+        isAdminView={isAdmin}
       />
     </main>
   );

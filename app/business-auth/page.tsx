@@ -83,16 +83,28 @@ function BusinessAuthPageWithParams() {
   const profileIdParam = searchParams.get("id");
   const initialProfileId = profileIdParam?.trim() ? profileIdParam : undefined;
   const forceNewProfile = searchParams.get("new") === "1";
+  const isAdminContext = searchParams.get("admin") === "1";
 
-  return <BusinessAuthPage initialProfileId={initialProfileId} forceNewProfile={forceNewProfile} />;
+  return (
+    <BusinessAuthPage
+      initialProfileId={initialProfileId}
+      forceNewProfile={forceNewProfile}
+      isAdminContext={isAdminContext}
+    />
+  );
 }
 
 type BusinessAuthPageProps = {
   initialProfileId?: string | null;
   forceNewProfile?: boolean;
+  isAdminContext?: boolean;
 };
 
-function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: BusinessAuthPageProps = {}) {
+function BusinessAuthPage({
+  initialProfileId,
+  forceNewProfile = false,
+  isAdminContext = false,
+}: BusinessAuthPageProps = {}) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const profile = useAppSelector(selectBusinessProfile);
@@ -234,7 +246,7 @@ function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: Busines
   const handleSubmitProfile = async () => {
     try {
       await dispatch(submitBusinessProfile()).unwrap();
-      router.push("/test-sidebar");
+      router.push(isAdminContext ? "/test-sidebar?admin=1" : "/test-sidebar");
     } catch (error) {
       console.error(error);
       setErrorMessage(CONNECTION_ERROR_TEXT);

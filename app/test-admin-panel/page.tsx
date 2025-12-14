@@ -19,7 +19,7 @@ export default function Page() {
         onToggleAction={() => setCollapsed((state) => !state)}
         isAdmin
         isInAdminPanel
-        onPanelSwitchAction={() => router.push("/test-sidebar")}
+        onPanelSwitchAction={() => router.push("/test-sidebar?admin=1")}
       />
 
       <AdminSidebar

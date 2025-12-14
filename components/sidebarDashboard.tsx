@@ -227,10 +227,12 @@ export function SidebarDashboard({
   collapsed: collapsedProp,
   onToggleAction,
   businessProfiles: businessProfilesProp,
+  isAdminView = false,
 }: {
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
   businessProfiles?: ProfileListItem[];
+  isAdminView?: boolean;
 }) {
   const router = useRouter();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
@@ -483,7 +485,7 @@ export function SidebarDashboard({
                   type="button"
                   onClick={() => {
                     setIsSwitcherOpen(false);
-                    router.push("/business-auth?new=1");
+                    router.push(isAdminView ? "/business-auth?new=1&admin=1" : "/business-auth?new=1");
                   }}
                   className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"
                 >

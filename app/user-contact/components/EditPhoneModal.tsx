@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Modal } from '../../../components/Modal';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/ui/Button';
@@ -24,6 +24,11 @@ export function EditPhoneModal({
 }: EditPhoneModalProps) {
   const [phone, setPhone] = useState(currentPhone);
   const [error, setError] = useState<string>('');
+
+ useEffect(() => {
+    setPhone(currentPhone); 
+    setError('');
+  }, [currentPhone]);
 
   const handleSubmit = async () => {
     const validationError = validatePhone(phone);

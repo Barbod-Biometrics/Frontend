@@ -51,6 +51,8 @@ type BusinessProfileSummary = {
   status: BusinessStatus;
 };
 
+const ADMIN_RETURN_KEY = "admin-return-to-business";
+
 const businessStatusStyles: Record<
   BusinessStatus,
   { label: string; badgeClass: string; dotClass: string }
@@ -231,10 +233,12 @@ export function SidebarDashboard({
   onToggleAction,
   businessProfiles: businessProfilesProp,
   isAdminView = false,
+  isAdminView = false,
 }: {
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
   businessProfiles?: ProfileListItem[];
+  isAdminView?: boolean;
   isAdminView?: boolean;
 }) {
   const router = useRouter();

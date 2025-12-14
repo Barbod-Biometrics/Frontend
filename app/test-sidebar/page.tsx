@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { Header } from "./header";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 
-export default function Page() {
+function PageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const adminFromQuery = searchParams.get("admin") === "1";
@@ -53,5 +53,13 @@ export default function Page() {
         isAdminView={isAdmin}
       />
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <PageContent />
+    </Suspense>
   );
 }

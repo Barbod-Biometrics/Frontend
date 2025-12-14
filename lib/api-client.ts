@@ -28,13 +28,33 @@ export async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
+  
+  // Get access token
+  const token = typeof window !== 'undefined' 
+    ? localStorage.getItem('barbod_access_token') 
+    : null;
+  
+  // Create headers object
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  
+  // Add custom headers from options
+  if (options.headers) {
+    Object.entries(options.headers as Record<string, string>).forEach(([key, value]) => {
+      headers[key] = value;
+    });
+  }
+  
+  // Add Authorization header if token exists and it's not an auth endpoint
+  const isAuthEndpoint = path.startsWith('/auth/');
+  if (token && !isAuthEndpoint) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers ?? {}),
-    },
     ...options,
+    headers,
   });
 
   const contentType = response.headers.get("content-type");

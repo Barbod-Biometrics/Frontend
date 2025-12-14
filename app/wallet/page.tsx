@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchWalletData } from '../../store/walletSlice';
+import { fetchWalletSummary, fetchWalletTransactions  } from '../../store/walletSlice';
 import { Container } from '../../components/ui/Container';
 import { Section } from '../../components/ui/Section';
 import { Typography } from '../..//components/ui/Typography';
@@ -18,13 +18,23 @@ export default function WalletPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { language } = useSelector((state: RootState) => state.language);
   const { theme } = useSelector((state: RootState) => state.theme);
-  const { loading } = useSelector((state: RootState) => state.wallet);
+   const { apiLoading } = useSelector((state: RootState) => state.wallet);
   
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchWalletData(language));
-  }, [dispatch, language]);
+   useEffect(() => {
+   
+    const loadWalletData = async () => {
+      try {
+        await dispatch(fetchWalletSummary()).unwrap();
+        await dispatch(fetchWalletTransactions({ page: 1, pageSize: 10 })).unwrap();
+      } catch (error) {
+        console.error('Failed to load wallet data:', error);
+      }
+    };
+    
+    loadWalletData();
+  }, [dispatch]);
 
   const translations = {
     pageTitle: {
@@ -81,7 +91,7 @@ export default function WalletPage() {
         </div>
 
         {/* Transactions Table */}
-        <TransactionsTable loading={loading} />
+        <TransactionsTable loading={apiLoading.transactions || apiLoading.summary} />
 
         {/* Deposit Modal */}
         <DepositModal

@@ -41,6 +41,9 @@ type IconProps = {
 
 type BusinessStatus = "in-progress" | "pending" | "approved" | "rejected";
 
+const ADMIN_PANEL_RETURN_KEY = "admin-panel-return-view";
+const ADMIN_PANEL_BUSINESS_VIEW = "business";
+
 type BusinessProfileSummary = {
   id: string;
   title: string;
@@ -227,10 +230,12 @@ export function SidebarDashboard({
   collapsed: collapsedProp,
   onToggleAction,
   businessProfiles: businessProfilesProp,
+  isAdminView = false,
 }: {
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
   businessProfiles?: ProfileListItem[];
+  isAdminView?: boolean;
 }) {
   const router = useRouter();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
@@ -483,6 +488,11 @@ export function SidebarDashboard({
                   type="button"
                   onClick={() => {
                     setIsSwitcherOpen(false);
+                    try {
+                      if (isAdminView && typeof window !== "undefined") {
+                        window.localStorage.setItem(ADMIN_PANEL_RETURN_KEY, ADMIN_PANEL_BUSINESS_VIEW);
+                      }
+                    } catch {}
                     router.push("/business-auth?new=1");
                   }}
                   className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"

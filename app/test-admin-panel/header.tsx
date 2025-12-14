@@ -140,7 +140,6 @@ export function Header({
           <button
             type="button"
             onClick={onPanelSwitchAction}
-            title={isInAdminPanel ? "پنل ادمین" : "پنل کسب و کار"}
             aria-label={isInAdminPanel ? "OñU?O¦U+ O\"UØ U_U+U, UcO3O\"ƒ?O U^ UcOOñ" : "OñU?O¦U+ O\"UØ U_U+U, OO_U.UOU+"}
             className={clsx(
               "flex h-10 w-10 items-center justify-center rounded-2xl border transition",

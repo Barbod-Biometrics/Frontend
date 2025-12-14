@@ -50,6 +50,9 @@ const VALID_STEPS: StepId[] = [
   "review-info",
 ];
 
+const ADMIN_PANEL_RETURN_KEY = "admin-panel-return-view";
+const ADMIN_PANEL_BUSINESS_VIEW = "business";
+
 const isValidStep = (value: string | null): value is StepId =>
   Boolean(value && VALID_STEPS.includes(value as StepId));
 
@@ -83,16 +86,28 @@ function BusinessAuthPageWithParams() {
   const profileIdParam = searchParams.get("id");
   const initialProfileId = profileIdParam?.trim() ? profileIdParam : undefined;
   const forceNewProfile = searchParams.get("new") === "1";
+  const isAdminCreationFlow = searchParams.get("admin") === "1";
 
-  return <BusinessAuthPage initialProfileId={initialProfileId} forceNewProfile={forceNewProfile} />;
+  return (
+    <BusinessAuthPage
+      initialProfileId={initialProfileId}
+      forceNewProfile={forceNewProfile}
+      isAdminCreationFlow={isAdminCreationFlow}
+    />
+  );
 }
 
 type BusinessAuthPageProps = {
   initialProfileId?: string | null;
   forceNewProfile?: boolean;
+  isAdminCreationFlow?: boolean;
 };
 
-function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: BusinessAuthPageProps = {}) {
+function BusinessAuthPage({
+  initialProfileId,
+  forceNewProfile = false,
+  isAdminCreationFlow = false,
+}: BusinessAuthPageProps = {}) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const profile = useAppSelector(selectBusinessProfile);
@@ -116,6 +131,17 @@ function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: Busines
     dispatch(setCurrentStep(step));
     persistStep(step, profileId);
   };
+
+  useEffect(() => {
+    if (!isAdminCreationFlow) return;
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(ADMIN_PANEL_RETURN_KEY, ADMIN_PANEL_BUSINESS_VIEW);
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, [isAdminCreationFlow]);
 
   useEffect(() => {
     const profileStorageKey = getProfileStorageKey(phoneNumber);
@@ -231,9 +257,20 @@ function BusinessAuthPage({ initialProfileId, forceNewProfile = false }: Busines
 
   const handleServiceContinue = () => setActiveStep("review-info");
 
-  const handleSubmitProfile = async () => {
+  const handleSubmitProfile = async (isAdminFlow?: boolean) => {
     try {
       await dispatch(submitBusinessProfile()).unwrap();
+      if (isAdminFlow) {
+        try {
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(ADMIN_PANEL_RETURN_KEY, ADMIN_PANEL_BUSINESS_VIEW);
+          }
+        } catch {
+          // ignore storage errors
+        }
+        router.push("/test-admin-panel");
+        return;
+      }
       router.push("/test-sidebar");
     } catch (error) {
       console.error(error);

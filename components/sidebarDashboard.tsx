@@ -14,6 +14,9 @@ import { Button } from "./ui/Button";
 import { ChevronDown, ChevronLeft, FileText, Fingerprint, PlusCircle, ScanFace } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ProfileListItem } from "../lib/api/userProfiles";
+import { useDispatch, useSelector } from "react-redux"; 
+import { setCurrentProfile, selectProfileById } from "../store/selectedProfileSlice";
+import { resetWalletForProfileChange } from "../store/walletSlice";
 
 type NavSubItem = {
   id: string;
@@ -238,11 +241,13 @@ export function SidebarDashboard({
   isAdminView?: boolean;
 }) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+   const currentProfile = useSelector((state: any) => state.selectedProfile?.currentProfile);
   const businessProfiles = useMemo<BusinessProfileSummary[]>(() => {
     if (businessProfilesProp?.length) {
       return businessProfilesProp.map((item) => ({
@@ -263,6 +268,18 @@ export function SidebarDashboard({
   );
   const showBusinessNameHeader = !isCollapsed && activeBusiness?.status === "approved";
   const businessNameLabel = showBusinessNameHeader ? activeBusiness?.title ?? "" : "";
+   useEffect(() => {
+    if (!businessProfiles.length) return;
+    
+    
+    if (currentProfile?.id) {
+      setActiveBusinessId(currentProfile.id);
+    } else {
+      
+      setActiveBusinessId(businessProfiles[0]?.id ?? null);
+    }
+  }, [businessProfiles, currentProfile]);
+
   useEffect(() => {
     if (!businessProfiles.length) return;
     setActiveBusinessId((prev) => prev ?? businessProfiles[0]?.id ?? null);
@@ -457,8 +474,21 @@ export function SidebarDashboard({
                       type="button"
                       key={profile.id}
                       onClick={() => {
-                        setActiveBusinessId(profile.id);
-                        setIsSwitcherOpen(false);
+                        dispatch(selectProfileById(profile.id));
+                          
+                        
+                          dispatch(resetWalletForProfileChange());
+                          
+                          setActiveBusinessId(profile.id);
+                          setIsSwitcherOpen(false);
+                      
+                          const event = new CustomEvent('profile-changed', {
+                            detail: {
+                              profileId: profile.id,
+                              profileName: profile.title
+                            }
+                          });
+                          window.dispatchEvent(event);
                       }}
                       className={clsx(
                         "w-full rounded-2xl border px-4 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",

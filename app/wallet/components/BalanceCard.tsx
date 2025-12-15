@@ -1,7 +1,6 @@
 
 "use client";
 
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
 import { Language, Theme } from '../../../types';
@@ -12,9 +11,10 @@ import { ArrowUpRight, Sparkles, Shield, Zap } from 'lucide-react';
 
 interface BalanceCardProps {
   onDepositClick: () => void;
+   disabled?: boolean;
 }
 
-export default function BalanceCard({ onDepositClick }: BalanceCardProps) {
+export default function BalanceCard({ onDepositClick ,disabled = false}: BalanceCardProps) {
   const language = useSelector((state: RootState) => state.language.language);
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { balance, lastUpdated } = useSelector((state: RootState) => state.wallet);
@@ -178,6 +178,7 @@ export default function BalanceCard({ onDepositClick }: BalanceCardProps) {
             size="lg"
             iconLeading={<ArrowUpRight className="w-5 h-5" />}
             onClick={onDepositClick}
+            disabled={disabled}
             className={`w-full justify-center py-5 text-lg font-bold rounded-xl 
                       bg-gradient-to-r from-blue-600 to-indigo-600 
                       hover:from-blue-700 hover:to-indigo-700 

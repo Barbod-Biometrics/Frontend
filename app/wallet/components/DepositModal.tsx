@@ -13,10 +13,11 @@ import { Language } from '../../../types';
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDepositSuccess?: () => void;
+  onDepositSuccess?: (message: string, type: 'success' | 'error') => void; 
+  profileId?: string;
 }
 
-export default function DepositModal({ isOpen, onClose, onDepositSuccess }: DepositModalProps) {
+export default function DepositModal({ isOpen, onClose, onDepositSuccess, profileId }: DepositModalProps) {
   const dispatch = useDispatch<AppDispatch>();
   const language = useSelector((state: RootState) => state.language.language);
   const { apiLoading } = useSelector((state: RootState) => state.wallet);
@@ -69,16 +70,33 @@ export default function DepositModal({ isOpen, onClose, onDepositSuccess }: Depo
     errorMinAmount: {
       en: 'Minimum amount is 1,000 Toman',
       fa: 'حداقل مبلغ ۱,۰۰۰ تومان است'
+    },
+    noProfileError: {
+      en: 'Please select a business profile first',
+      fa: 'لطفاً ابتدا یک کسب‌وکار انتخاب کنید'
+    },
+    depositSuccess: {
+      en: 'Deposit was successful! Your balance has been updated.',
+      fa: 'واریز با موفقیت انجام شد! موجودی شما به‌روزرسانی شد.'
+    },
+    depositFailed: {
+      en: 'Deposit failed. Please try again.',
+      fa: 'واریز ناموفق بود. لطفاً دوباره تلاش کنید.'
     }
-  };
+  } as const;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
+    if (!profileId) {
+      setError(translations.noProfileError[language]);
+      return;
+    }
+
     const amountNum = parseInt(amount);
     
-    if (!amount || amountNum <= 0) {
+    if (isNaN(amountNum) || amountNum <= 0) {
       setError(translations.errorMinAmount[language]);
       return;
     }
@@ -89,20 +107,31 @@ export default function DepositModal({ isOpen, onClose, onDepositSuccess }: Depo
     }
 
     try {
-      await dispatch(createDeposit({ 
+      const result = await dispatch(createDeposit({ 
         amount: amountNum, 
-        description: description || undefined 
+        description: description || undefined,
+        profileId
       })).unwrap();
       
+     
       setAmount('');
       setDescription('');
+      
+
       onClose();
       
       if (onDepositSuccess) {
-        onDepositSuccess();
+        onDepositSuccess(translations.depositSuccess[language], 'success');
       }
+      
     } catch (error: any) {
-      setError(error || 'An error occurred');
+      const errorMsg = error || (language === Language.FA ? 'خطایی رخ داده است' : 'An error occurred');
+      setError(errorMsg);
+      
+      
+      if (onDepositSuccess) {
+        onDepositSuccess(translations.depositFailed[language], 'error');
+      }
     }
   };
 

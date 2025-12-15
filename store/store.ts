@@ -5,6 +5,7 @@ import walletReducer from './walletSlice';
 import loginReducer from './loginSlice';
 import businessProfileReducer from './businessProfileSlice';
 import userReducer from './userContactSlice';
+import selectedProfileReducer from './selectedProfileSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,19 +13,11 @@ export const store = configureStore({
     theme: themeReducer,
     login: loginReducer,
     businessProfile: businessProfileReducer,
-  
     wallet: walletReducer,
     user: userReducer,
+    selectedProfile: selectedProfileReducer,
     
   },
-
-    middleware: (getDefaultMiddleware) => 
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['wallet/fetchData/pending', 'wallet/fetchData/fulfilled', 'wallet/fetchData/rejected'],
-        ignoredPaths: ['wallet.transactions'],
-      },
-    }),
 
 });
 

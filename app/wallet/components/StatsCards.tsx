@@ -1,7 +1,6 @@
-// app/wallet/components/StatsCards.tsx
+
 "use client";
 
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
 import { Language } from '../../../types';
@@ -22,7 +21,7 @@ export default function StatsCards() {
     },
     totalWithdrawals: {
       en: 'Total Withdrawals',
-      fa: 'مجموع برداشت‌ها'
+      fa: 'مجموع هزینه ها'
     },
     transactionCount: {
       en: 'Transaction Count',

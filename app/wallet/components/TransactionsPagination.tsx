@@ -1,7 +1,6 @@
 
 "use client";
 
-import React from 'react';
 import { Typography } from '../../../components/ui/Typography';
 import { Button } from '../../../components/ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -20,7 +19,7 @@ interface TransactionsPaginationProps {
 }
 
 export default function TransactionsPagination({
-  currentPage,
+   currentPage,
   totalPages,
   startIndex,
   endIndex,
@@ -53,7 +52,7 @@ export default function TransactionsPagination({
     },
     to: {
       en: '-',
-      fa: '-'
+      fa:'الی'
     },
     ofItems: {
       en: 'of',
@@ -71,10 +70,9 @@ export default function TransactionsPagination({
         {/* Showing info */}
         <div>
           <Typography variant="body-sm" className="text-muted">
-            {translations.showing[language]} {startIndex + 1} {translations.to[language]} {Math.min(endIndex, totalItems)} {translations.ofItems[language]} {totalItems} {translations.items[language]}
+            {translations.showing[language]} {startIndex } {translations.to[language]} {endIndex} {translations.ofItems[language]} {totalItems} {translations.items[language]}
           </Typography>
         </div>
-        
         {/* Pagination controls */}
         <div className="flex items-center gap-2">
           {/* Previous button */}

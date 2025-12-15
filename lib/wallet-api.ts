@@ -1,8 +1,6 @@
+
 import { apiFetch } from './api-client';
 
-const PROFILE_ID = "1";
-
-// Types
 interface DepositResponse {
   data: { 
     message: string; 
@@ -43,51 +41,91 @@ interface TransactionsResponse {
   success: boolean;
 }
 
-// Currency utilities
+
 export const currencyUtils = {
   rialToToman: (rial: number) => Math.floor(rial / 10),
   tomanToRial: (toman: number) => toman * 10,
 };
 
-// API Functions
-export async function walletDeposit(amount: number, description?: string): Promise<DepositResponse> {
-  return apiFetch<DepositResponse>(`/profiles/${PROFILE_ID}/wallet/deposit`, {
+
+async function getProfileId(profileId?: string): Promise<string> {
+ 
+  if (profileId) return profileId;
+  
+ 
+  if (typeof window !== 'undefined') {
+    const savedId = localStorage.getItem('selected_profile_id');
+    if (savedId) return savedId;
+  }
+  
+ 
+  return "1";
+}
+
+export async function walletDeposit(
+  amount: number, 
+  description?: string,
+  profileId?: string
+): Promise<DepositResponse> {
+  const finalProfileId = await getProfileId(profileId);
+  return apiFetch<DepositResponse>(`/profiles/${finalProfileId}/wallet/deposit`, {
     method: 'POST',
     body: JSON.stringify({ 
       amount: currencyUtils.tomanToRial(amount), 
-      description: description || 'Deposit' 
+      description: description || 'واریز' 
     })
   });
 }
 
-export async function getWalletSummary(): Promise<SummaryResponse> {
-  const response = await apiFetch<SummaryResponse>(`/profiles/${PROFILE_ID}/wallet/summary`);
+export async function getWalletSummary(profileId?: string): Promise<SummaryResponse> {
+  const finalProfileId = await getProfileId(profileId);
+  const response = await apiFetch<SummaryResponse>(`/profiles/${finalProfileId}/wallet/summary`);
   if (!response.success) {
     throw new Error('Failed to get wallet summary');
   }
   return response;
 }
 
-export async function getWalletTransactions(page = 1, pageSize = 10): Promise<TransactionsResponse> {
+export async function getWalletTransactions(
+  page = 1, 
+  pageSize = 10,
+  profileId?: string
+): Promise<TransactionsResponse> {
+  const finalProfileId = await getProfileId(profileId);
   const params = new URLSearchParams({ 
     page: page.toString(), 
     page_size: pageSize.toString() 
   });
-  const response = await apiFetch<TransactionsResponse>(`/profiles/${PROFILE_ID}/wallet/transactions?${params}`);
+  const response = await apiFetch<TransactionsResponse>(
+    `/profiles/${finalProfileId}/wallet/transactions?${params}`
+  );
   if (!response.success) {
     throw new Error('Failed to get transactions');
   }
   return response;
 }
 
-// Map API transaction to local format
+
 export function mapTransaction(tx: ApiTransaction) {
   return {
     id: tx.id,
-    type: (tx.type.toLowerCase() === 'deposit' ? 'deposit' : 'withdrawal') as 'deposit' | 'withdrawal',
+    type:'deposit' as const,
     amount: currencyUtils.rialToToman(tx.amount),
     date: tx.date.split('T')[0],
     description: tx.description,
     status: tx.status.toLowerCase() as 'completed' | 'pending' | 'failed'
   };
+}
+
+
+export async function walletDepositLegacy(amount: number, description?: string): Promise<DepositResponse> {
+  return walletDeposit(amount, description, "1");
+}
+
+export async function getWalletSummaryLegacy(): Promise<SummaryResponse> {
+  return getWalletSummary("1");
+}
+
+export async function getWalletTransactionsLegacy(page = 1, pageSize = 10): Promise<TransactionsResponse> {
+  return getWalletTransactions(page, pageSize, "1");
 }

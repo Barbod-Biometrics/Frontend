@@ -1,41 +1,61 @@
 
 "use client";
 
-import React from 'react';
+import  { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../store/store';
-import { 
-  setCurrentPage, 
-  goToNextPage, 
-  goToPrevPage 
-} from '../../../store/walletSlice';
+import {  setCurrentPage,  goToNextPage,  goToPrevPage, fetchWalletTransactions} from '../../../store/walletSlice';
 import { Language } from '../../../types';
 import { Card } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import TransactionsPagination from './TransactionsPagination';
 
 interface TransactionsTableProps {
   loading: boolean;
 }
 
-export default function TransactionsTable({ loading }: TransactionsTableProps) {
+export default function TransactionsTable({ loading: propLoading }: TransactionsTableProps) {
   const dispatch = useDispatch<AppDispatch>();
   const language = useSelector((state: RootState) => state.language.language);
   const { 
     transactions, 
     currentPage, 
     itemsPerPage, 
-    totalPages 
+    totalPages,
+    transactionCount,
+    currentProfileId,
+    apiLoading
   } = useSelector((state: RootState) => state.wallet);
   
-  // Calculate current page transactions
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentTransactions = transactions.slice(startIndex, endIndex);
+  const [prevProfileId, setPrevProfileId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+  if (!currentProfileId) {
+    return;
+  }
+  
+  
+  dispatch(fetchWalletTransactions({ 
+    page: currentPage, 
+    pageSize: itemsPerPage,
+    profileId: currentProfileId,
+    reset: currentPage === 1 
+  }));
+  
+}, [dispatch, currentPage, currentProfileId, itemsPerPage]);
+
+  
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, transactionCount);
+  
+ 
+  const displayTransactions = transactions.length > 0 ? transactions : [];
+  
+ 
+  const isLoading = propLoading || apiLoading.transactions;
 
   const translations = {
-    transactions: {
+     transactions: {
       en: 'Recent Transactions',
       fa: 'تراکنش‌های اخیر'
     },
@@ -58,18 +78,6 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
     status: {
       en: 'Status',
       fa: 'وضعیت'
-    },
-    type: {
-      en: 'Type',
-      fa: 'نوع'
-    },
-    depositType: {
-      en: 'Deposit',
-      fa: 'واریز'
-    },
-    withdrawalType: {
-      en: 'Withdrawal',
-      fa: 'برداشت'
     },
     completed: {
       en: 'Completed',
@@ -98,11 +106,15 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    if (language === Language.FA) {
-      return date.toLocaleDateString('fa-IR');
+    try {
+      const date = new Date(dateString);
+      if (language === Language.FA) {
+        return date.toLocaleDateString('fa-IR');
+      }
+      return date.toLocaleDateString('en-US');
+    } catch {
+      return dateString;
     }
-    return date.toLocaleDateString('en-US');
   };
 
   const handlePageChange = (page: number) => {
@@ -110,11 +122,15 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
   };
 
   const handlePrevPage = () => {
-    dispatch(goToPrevPage());
+    if (currentPage > 1) {
+      dispatch(goToPrevPage());
+    }
   };
 
   const handleNextPage = () => {
-    dispatch(goToNextPage());
+    if (currentPage < totalPages) {
+      dispatch(goToNextPage());
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -134,13 +150,13 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
         </Typography>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="p-8 text-center">
           <Typography variant="body-md" className="text-muted">
             {translations.loading[language]}
           </Typography>
         </div>
-      ) : transactions.length === 0 ? (
+      ) : displayTransactions.length === 0 ? (
         <div className="p-8 text-center">
           <Typography variant="body-md" className="text-muted">
             {translations.noTransactions[language]}
@@ -157,11 +173,7 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
                       {translations.description[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4">
-                    <Typography variant="body-md" className="text-muted font-normal">
-                      {translations.type[language]}
-                    </Typography>
-                  </th>
+                 
                   <th className="text-right p-4">
                     <Typography variant="body-md" className="text-muted font-normal">
                       {translations.amount[language]}
@@ -180,7 +192,7 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
                 </tr>
               </thead>
               <tbody>
-                {currentTransactions.map((transaction) => {
+                {displayTransactions.map((transaction) => {
                   const statusColors = getStatusColor(transaction.status);
                   return (
                     <tr
@@ -192,24 +204,7 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
                           {transaction.description}
                         </Typography>
                       </td>
-                      <td className="p-4">
-                        <div className={`inline-flex items-center gap-1 px-4 py-1 rounded-full ${
-                          transaction.type === 'deposit'
-                            ? 'bg-green-500/10 text-green-600'
-                            : 'bg-red-500/10 text-red-600'
-                        }`}>
-                          {transaction.type === 'deposit' ? (
-                            <ArrowUpRight className="w-3 h-3" />
-                          ) : (
-                            <ArrowDownRight className="w-3 h-3" />
-                          )}
-                          <Typography variant="caption">
-                            {transaction.type === 'deposit'
-                              ? translations.depositType[language]
-                              : translations.withdrawalType[language]}
-                          </Typography>
-                        </div>
-                      </td>
+                      
                       <td className="p-4">
                         <Typography
                           variant="body-md"
@@ -247,13 +242,13 @@ export default function TransactionsTable({ loading }: TransactionsTableProps) {
           </div>
 
           {/* Pagination Component */}
-          {totalPages > 1 && (
+          {totalPages > 1 && transactionCount > 0 && (
             <TransactionsPagination
               currentPage={currentPage}
               totalPages={totalPages}
               startIndex={startIndex}
               endIndex={endIndex}
-              totalItems={transactions.length}
+              totalItems={transactionCount}
               onPageChange={handlePageChange}
               onPrevPage={handlePrevPage}
               onNextPage={handleNextPage}

@@ -24,8 +24,8 @@ export default function Home() {
 
       <main className="flex-1">
         <Hero language={language} theme={theme} dir={dir} />
-        <ServicesSection />
         <StatsSection />
+        <ServicesSection />
         <Section dir={dir}>
           <Container>
             <SalesConnector />

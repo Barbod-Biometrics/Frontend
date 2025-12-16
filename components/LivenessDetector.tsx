@@ -10,7 +10,8 @@ import {
     Sparkles,
 } from "lucide-react";
 import { useFaceLiveness } from "../lib/useFaceLiveness";
-import { Button, cn } from "./ui/Button";
+import { cn } from "../lib/utils";
+import { Button } from "./ui/Button";
 
 type ChallengeType = "blink" | "turn-left" | "turn-right" | "smile";
 

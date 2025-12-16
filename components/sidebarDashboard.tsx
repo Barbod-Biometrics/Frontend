@@ -1,10 +1,22 @@
 "use client";
 
-import { useMemo, useState, type ReactNode, type ReactElement } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type ReactElement,
+} from "react";
 import clsx from "clsx";
 import { Typography } from "./ui/Typography";
 import { Button } from "./ui/Button";
-import { ChevronDown, ScanFace, Fingerprint, FileText } from "lucide-react";
+import { ChevronDown, ChevronLeft, FileText, Fingerprint, PlusCircle, ScanFace } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type { ProfileListItem } from "../lib/api/userProfiles";
+import { useDispatch, useSelector } from "react-redux"; 
+import { setCurrentProfile, selectProfileById } from "../store/selectedProfileSlice";
+import { resetWalletForProfileChange } from "../store/walletSlice";
 
 type NavSubItem = {
   id: string;
@@ -28,6 +40,79 @@ type NavSection = {
 
 type IconProps = {
   className?: string;
+};
+
+type BusinessStatus = "in-progress" | "pending" | "approved" | "rejected";
+
+const ADMIN_PANEL_RETURN_KEY = "admin-panel-return-view";
+const ADMIN_PANEL_BUSINESS_VIEW = "business";
+
+type BusinessProfileSummary = {
+  id: string;
+  title: string;
+  subtitle: string;
+  status: BusinessStatus;
+};
+
+const businessStatusStyles: Record<
+  BusinessStatus,
+  { label: string; badgeClass: string; dotClass: string }
+> = {
+  "in-progress": {
+    label: "در حال تکمیل اطلاعات",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] border-[color:var(--md-sys-color-primary)]/30",
+    dotClass: "bg-[color:var(--md-sys-color-primary)]",
+  },
+  pending: {
+    label: "در انتظار تایید",
+    badgeClass: "bg-amber-100 text-amber-700 border-amber-200",
+    dotClass: "bg-amber-500",
+  },
+  approved: {
+    label: "تایید شده",
+    badgeClass: "bg-green-100 text-green-700 border-green-200",
+    dotClass: "bg-green-600",
+  },
+  rejected: {
+    label: "رد شده",
+    badgeClass:
+      "bg-[color:var(--md-sys-color-error)]/10 text-[color:var(--md-sys-color-error)] border-[color:var(--md-sys-color-error)]/30",
+    dotClass: "bg-[color:var(--md-sys-color-error)]",
+  },
+};
+
+function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
+  const meta = businessStatusStyles[status] ?? businessStatusStyles.pending;
+
+  return (
+    <span
+      className={clsx(
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
+        meta.badgeClass,
+      )}
+    >
+      <span className={clsx("h-2 w-2 rounded-full", meta.dotClass)} />
+      {meta.label}
+    </span>
+  );
+}
+
+const normalizeBusinessStatus = (value?: string): BusinessStatus => {
+  const normalized = (value ?? "").toLowerCase();
+  if (normalized.includes("progress") || normalized.includes("draft")) return "in-progress";
+  if (normalized.includes("pending") || normalized.includes("wait") || normalized.includes("review"))
+    return "pending";
+  if (normalized.includes("approved") || normalized.includes("accept")) return "approved";
+  if (normalized.includes("reject")) return "rejected";
+  return "pending";
+};
+
+const mapTypeLabel = (value?: string) => {
+  const t = (value ?? "").toLowerCase();
+  if (t.includes("real") || t.includes("personal") || t.includes("haghighi")) return "حساب حقیقی";
+  if (t.includes("legal") || t.includes("business") || t.includes("hoghooghi")) return "حساب حقوقی";
+  return value ?? "";
 };
 
 const BadgeIcon = ({ className }: IconProps) => (
@@ -133,7 +218,7 @@ const SupportIcon = ({ className }: IconProps) => (
 const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boolean }) => (
   <span
     className={clsx(
-      "flex h-9 w-9 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
+      "flex h-10 w-10 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
       "border-[color:var(--md-sys-color-outline-variant)]",
       active
         ? "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)]"
@@ -147,14 +232,59 @@ const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boo
 export function SidebarDashboard({
   collapsed: collapsedProp,
   onToggleAction,
+  businessProfiles: businessProfilesProp,
+  isAdminView = false,
 }: {
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
+  businessProfiles?: ProfileListItem[];
+  isAdminView?: boolean;
 }) {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
+  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
+   const currentProfile = useSelector((state: any) => state.selectedProfile?.currentProfile);
+  const businessProfiles = useMemo<BusinessProfileSummary[]>(() => {
+    if (businessProfilesProp?.length) {
+      return businessProfilesProp.map((item) => ({
+        id: item.id,
+        title: item.name,
+        subtitle: mapTypeLabel(item.type),
+        status: normalizeBusinessStatus(item.verification_status),
+      }));
+    }
+    return [];
+  }, [businessProfilesProp]);
+  const [activeBusinessId, setActiveBusinessId] = useState<string | null>(
+    businessProfiles[0]?.id ?? null,
+  );
+  const activeBusiness = useMemo(
+    () => businessProfiles.find((profile) => profile.id === activeBusinessId) ?? null,
+    [activeBusinessId, businessProfiles],
+  );
+  const showBusinessNameHeader = !isCollapsed && activeBusiness?.status === "approved";
+  const businessNameLabel = showBusinessNameHeader ? activeBusiness?.title ?? "" : "";
+   useEffect(() => {
+    if (!businessProfiles.length) return;
+    
+    
+    if (currentProfile?.id) {
+      setActiveBusinessId(currentProfile.id);
+    } else {
+      
+      setActiveBusinessId(businessProfiles[0]?.id ?? null);
+    }
+  }, [businessProfiles, currentProfile]);
+
+  useEffect(() => {
+    if (!businessProfiles.length) return;
+    setActiveBusinessId((prev) => prev ?? businessProfiles[0]?.id ?? null);
+  }, [businessProfiles]);
+  const switcherRef = useRef<HTMLDivElement | null>(null);
 
   const sections = useMemo<NavSection[]>(
     () => [
@@ -193,6 +323,38 @@ export function SidebarDashboard({
     [],
   );
 
+
+  useEffect(() => {
+    if (!isSwitcherOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!switcherRef.current) return;
+      if (!switcherRef.current.contains(event.target as Node)) {
+        setIsSwitcherOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSwitcherOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isSwitcherOpen]);
+
+  useEffect(() => {
+    if (isCollapsed && isSwitcherOpen) {
+      setIsSwitcherOpen(false);
+    }
+  }, [isCollapsed, isSwitcherOpen]);
+
   const toggleGroup = (id: string) => {
     setOpenGroups((prev) => {
       const next = new Set(prev);
@@ -206,36 +368,174 @@ export function SidebarDashboard({
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 z-30 h-[calc(110vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-hidden",
+        "fixed right-0 top-14 z-30 h-[calc(108vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[70px]" : "w-[230px]",
+        isCollapsed ? "w-[62px]" : "w-[200px]",
       )}
     >
       <div className="relative flex flex-col h-full">
+        
         {/* Header row */}
-        <div
-          className={clsx(
-            "flex items-center gap-3 border-b px-4 pb-4 pt-5 justify-start flex-shrink-0",
-            "border-[color:var(--md-sys-color-outline-variant)]",
-          )}
-        >
-          <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
+        <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
             className={clsx(
-              "min-w-0 transition-all duration-200",
-              isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+              "relative flex items-center gap-3 pb-1 pt-7 justify-center",
+              isCollapsed ? "px-4" : "pr-4 pl-16",
+              "border-[color:var(--md-sys-color-outline-variant)]",
             )}
           >
-            <Typography
-              variant="caption"
-              className="text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
-            >
-              کسب و کار
-            </Typography>
+            {!isCollapsed && (
+              <button
+                type="button"
+                aria-label="مشاهده فهرست کسب‌ و کارها"
+                aria-expanded={isSwitcherOpen}
+                onClick={() => setIsSwitcherOpen((open) => !open)}
+                className={clsx(
+                  "absolute left-3 top-4/6 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
+                  "border-[color:var(--md-sys-color-outline-variant)]",
+                  "bg-[color:var(--md-sys-color-surface-container-high)]",
+                  "hover:text-[color:var(--md-sys-color-primary)] hover:border-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
+                )}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+            )}
+
+            <div className="flex items-center gap-3 min-w-0 flex-1 justify-start">
+              <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
+              <div
+                className={clsx(
+                  "min-w-0 transition-all duration-200 text-right",
+                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                <Typography
+                  variant="caption"
+                  className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                >
+                  کسب و کار
+                </Typography>
+              </div>
+            </div>
           </div>
+
+          {/* Business name header with toggle (separator always visible) */}
+          <div
+            className={clsx(
+              "flex items-center border-b border-[color:var(--md-sys-color-outline-variant)] transition-all duration-200",
+              isCollapsed ? "gap-0 px-0 py-0" : "gap-3 px-4 py-3",
+            )}
+          >
+            {showBusinessNameHeader && (
+              <div
+                className={clsx(
+                  "min-w-0 transition-all duration-200",
+                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                <Typography
+                  variant="caption"
+                  className="text-sm font-semibold text-[color:var(--md-sys-color-primary)]"
+                >
+                  {businessNameLabel}
+                </Typography>
+              </div>
+            )}
+          </div>
+
+          {isSwitcherOpen && (
+            <div
+              className={clsx(
+                "absolute z-40 w-[290px] rounded-[18px] border bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] overflow-hidden",
+                "border-[color:var(--md-sys-color-outline-variant)]",
+                "right-[calc(100%+12px)] top-3",
+              )}
+            >
+              <div
+                className={clsx(
+                  "max-h-80 overflow-y-auto space-y-2 px-3 py-3",
+                  "[&::-webkit-scrollbar]:w-3",
+                  "[&::-webkit-scrollbar-track]:bg-transparent",
+                  "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
+                  "[&::-webkit-scrollbar-thumb]:rounded-[7px]",
+                  "[&::-webkit-scrollbar-thumb]:border-2",
+                  "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface)]",
+                )}
+              >
+                {businessProfiles.length === 0 && (
+                  <div className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-3 text-sm text-[color:var(--md-sys-color-on-surface-variant)] text-right">
+                    هیچ کسب‌ و کاری یافت نشد.
+                  </div>
+                )}
+                {businessProfiles.map((profile) => {
+                  const isActive = profile.id === activeBusinessId;
+                  return (
+                    <button
+                      type="button"
+                      key={profile.id}
+                      onClick={() => {
+                        dispatch(selectProfileById(profile.id));
+                          
+                        
+                          dispatch(resetWalletForProfileChange());
+                          
+                          setActiveBusinessId(profile.id);
+                          setIsSwitcherOpen(false);
+                      
+                          const event = new CustomEvent('profile-changed', {
+                            detail: {
+                              profileId: profile.id,
+                              profileName: profile.title
+                            }
+                          });
+                          window.dispatchEvent(event);
+                      }}
+                      className={clsx(
+                        "w-full rounded-2xl border px-4 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",
+                        isActive
+                          ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/8 shadow-[var(--elevation-1)]"
+                          : "border-[color:var(--md-sys-color-outline-variant)] hover:border-[color:var(--md-sys-color-primary)]/50 hover:bg-[color:var(--md-sys-color-surface-container-high)]",
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-col items-end text-right">
+                          <span className="pr-0 text-base font-semibold leading-6">
+                            {profile.title}
+                          </span>
+                          <span className="block text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                            {profile.subtitle}
+                          </span>
+                        </div>
+                        <BusinessStatusBadge status={profile.status} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="border-t border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSwitcherOpen(false);
+                    try {
+                      if (isAdminView && typeof window !== "undefined") {
+                        window.localStorage.setItem(ADMIN_PANEL_RETURN_KEY, ADMIN_PANEL_BUSINESS_VIEW);
+                      }
+                    } catch {}
+                    router.push("/business-auth?new=1");
+                  }}
+                  className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"
+                >
+                  <PlusCircle className="h-5 w-5" />
+                  ساخت کسب و کار جدید
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Items – scrollable with rounded scrollbar */}
+        {/* Items list scrollable with rounded scrollbar */}
         <div
           className={clsx(
             "flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2 py-4", // 👈 no horizontal scroll ever
@@ -252,7 +552,7 @@ export function SidebarDashboard({
               {!isCollapsed && (
                 <Typography
                   variant="caption"
-                  className="mb-2 px-2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                  className="mb-2 px-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
                 >
                   {section.title}
                 </Typography>
@@ -280,7 +580,7 @@ export function SidebarDashboard({
                           }
                         }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-2 py-2 text-xs transition-colors duration-200 justify-between gap-2",
+                          "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
                           isItemActive
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
@@ -330,7 +630,7 @@ export function SidebarDashboard({
                                   key={child.id}
                                   variant="ghost"
                                   onClick={() => setActiveItemId(child.id)}
-                                  className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-xs"
+                                  className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-sm"
                                 >
                                   <span
                                     className={clsx(

@@ -19,7 +19,7 @@ export default function TermsPage() {
 
   const terms = [
     {
-      icon: <ShieldCheck className="w-5 h-5 text-[color:var(--brand-azure)]" />,
+      icon: <ShieldCheck className="w-7 h-7 text-[color:var(--brand-azure)]" />,
       titleFA: "امنیت و حریم خصوصی",
       titleEN: "Security & Privacy",
       descFA:
@@ -28,7 +28,7 @@ export default function TermsPage() {
         "All your biometric information is encrypted and stored using top security standards. We are committed to protecting your privacy.",
     },
     {
-      icon: <FileText className="w-5 h-5 text-[color:var(--brand-azure)]" />,
+      icon: <FileText className="w-7 h-7 text-[color:var(--brand-azure)]" />,
       titleFA: "شرایط استفاده از سرویس",
       titleEN: "Terms of Service",
       descFA:
@@ -37,7 +37,7 @@ export default function TermsPage() {
         "Using this service means you agree to all defined terms. Please read all points carefully before continuing.",
     },
     {
-      icon: <Fingerprint className="w-5 h-5 text-[color:var(--brand-azure)]" />,
+      icon: <Fingerprint className="w-7 h-7 text-[color:var(--brand-azure)]" />,
       titleFA: "احراز هویت بیومتریک",
       titleEN: "Biometric Verification",
       descFA:
@@ -46,7 +46,7 @@ export default function TermsPage() {
         "Our verification uses advanced AI technology. Your biometric data is used only for identity confirmation and is never shared with third parties.",
     },
     {
-      icon: <Lock className="w-5 h-5 text-[color:var(--brand-azure)]" />,
+      icon: <Lock className="w-7 h-7 text-[color:var(--brand-azure)]" />,
       titleFA: "محرمانگی اطلاعات",
       titleEN: "Data Confidentiality",
       descFA:
@@ -55,7 +55,7 @@ export default function TermsPage() {
         "Your personal and biometric information is strictly confidential and will never be shared without your consent.",
     },
     {
-      icon: <UserCheck className="w-5 h-5 text-[color:var(--brand-azure)]" />,
+      icon: <UserCheck className="w-7 h-7 text-[color:var(--brand-azure)]" />,
       titleFA: "مسئولیت کاربر",
       titleEN: "User Responsibility",
       descFA:
@@ -68,13 +68,13 @@ export default function TermsPage() {
   return (
     <>
     <Navbar />
-    <Section spacing="md" className="min-h-screen" dir={dir}>
-      <Container size="md" className="flex flex-col gap-10">
-        <Typography variant="h3" className="font-bold text-center  text-[color:var(--brand-azure)]">
+    <Section spacing="lg" className="min-h-screen" dir={dir}>
+      <Container size="lg" className="flex flex-col gap-10">
+        <Typography variant="h2" className="font-bold text-center  text-[color:var(--brand-azure)]">
           {isFA ? "قوانین و مقررات" : "Terms & Conditions"}
         </Typography>
 
-        <Typography variant="body-md" className="text-center text-[color:var(--md-sys-color-on-surface-variant)]">
+        <Typography variant="body-lg" className="text-center text-[color:var(--md-sys-color-on-surface-variant)]">
           {isFA
             ? "لطفاً قوانین زیر را با دقت مطالعه کرده و در صورت موافقت، تایید نمایید."
             : "Please read the terms below carefully and confirm if you agree."}
@@ -87,12 +87,12 @@ export default function TermsPage() {
               variant="filled"
               className="p-6 bg-[color:var(--md-sys-color-surface-container-low)]"
             >
-              <Typography variant="h5" className="font-semibold mb-2 flex items-center gap-2">
+              <Typography variant="h4" className="font-semibold mb-2 flex items-center gap-2">
                 {item.icon}
                 {isFA ? item.titleFA : item.titleEN}
               </Typography>
 
-              <Typography variant="body-md">
+              <Typography variant="body-lg">
                 {isFA ? item.descFA : item.descEN}
               </Typography>
             </Card>
@@ -114,12 +114,12 @@ export default function TermsPage() {
               checked={accepted}
               onChange={(e) => setAccepted(e.target.checked)}
             />
-            <Typography variant="body-md" className="font-medium">
+            <Typography variant="body-lg" className="font-medium">
               {isFA ? "شرایط را می‌پذیرم" : "I agree to the terms"}
             </Typography>
           </label>
 
-          <Button size="md" variant="primary" disabled={!accepted}  onClick={() => router.push("/")}>
+          <Button size="lg" variant="primary" disabled={!accepted}  onClick={() => router.push("/")}>
             {isFA ? "ادامه" : "Continue"}
           </Button>
         </div>

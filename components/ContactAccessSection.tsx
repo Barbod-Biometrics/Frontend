@@ -226,8 +226,10 @@ function ContactRow({
         </div>
       </div>
       {copyable ? (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={async () => {
             try {
               await navigator.clipboard.writeText(value);
@@ -237,10 +239,10 @@ function ContactRow({
               setCopied(false);
             }
           }}
-          className="text-xs font-semibold text-[color:var(--brand-cyan)]"
+          className="h-auto min-w-0 p-0 text-xs font-semibold text-[color:var(--brand-cyan)] hover:bg-transparent hover:text-[color:var(--brand-cyan)]"
         >
           {copied ? c.copied : c.copyText}
-        </button>
+        </Button>
       ) : null}
     </>
   );

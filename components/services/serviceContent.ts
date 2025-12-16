@@ -37,12 +37,12 @@ export type ServiceContent = {
   };
   features: FeatureCard[];
   steps: StepSection[];
-  pricing: {
+  pricing?: {
     title: LocalizedString;
     note: LocalizedString;
     plans: PricingPlan[];
   };
-  finalCta: {
+  finalCta?: {
     title: LocalizedString;
     description: LocalizedString;
     primary: LocalizedString;
@@ -165,109 +165,75 @@ export const servicesContent: Record<string, ServiceContent> = {
     slug: "face-recognition",
     accent: { from: "#0ea5e9", to: "#6366f1" },
     hero: {
-      eyebrow: t("1:1 & 1:N matching", "تطبیق ۱:۱ و ۱:N"),
-      title: t("Face Match & Verification", "تطبیق چهره"),
+      title: t("Face Liveness Detection", "تشخیص زنده‌بودن چهره"),
       description: t(
-        "Deep-learning matching with anti-spoof and age/pose robustness. Ideal for account recovery, re-auth, and secure logins.",
-        "تطبیق چهره با الگوریتم‌های عمیق و مقاوم در برابر تغییر سن و زاویه؛ مناسب ورود امن، بازیابی حساب و تأیید مجدد."
+        "AI-powered face liveness that blocks photo, video, and mask attacks so only real users pass your checks. Built for secure onboarding and high-risk journeys.",
+        "این سرویس با استفاده از الگوریتم‌های عمیق پردازش تصویر و هوش مصنوعی، زنده‌بودن چهره کاربر را تشخیص می‌دهد و از حملات جعل هویتی مانند نمایش تصویر، ویدئو یا ماسک جلوگیری می‌کند. این سرویس امنیت احراز هویت دیجیتال را چندین برابر کرده و برای ثبت‌نام، ورود و فرآیندهای حساس اجباری است."
       ),
       primaryCta: t("Request service", "درخواست سرویس"),
-      secondaryCta: t("Run a test", "تست سرویس"),
-      visual: "match",
+      secondaryCta: t("Run a test", "اجرای تست"),
+      visual: "liveness",
     },
     features: [
       {
-        icon: "shield",
-        title: t("Strong security", "امنیت قوی"),
+        icon: "chart",
+        title: t("High accuracy", "دقت بالا"),
         description: t(
-          "Built-in anti-spoofing and compliance-grade protections.",
-          "محافظت ضدجعل و استانداردهای امنیتی در هسته سیستم تعبیه شده است."
-        ),
-      },
-      {
-        icon: "bolt",
-        title: t("Rapid processing", "پردازش سریع"),
-        description: t(
-          "Sub-500ms average match times for high-volume flows.",
-          "میانگین زمان پاسخ کمتر از ۵۰۰ میلی‌ثانیه برای تراکنش‌های حجیم."
+          "Deep-learning models deliver 99%+ liveness precision and minimize spoof risk.",
+          "استفاده از مدل‌های به‌روز یادگیری عمیق، دقت تشخیص زنده‌بودن را به بیش از ۹۹٪ رسانده و احتمال خطای انسانی یا حملات جعلی را به حداقل می‌رساند."
         ),
       },
       {
         icon: "user",
-        title: t("High success", "احراز هویت‌های موفق"),
+        title: t("Proven at scale", "احراز هویت های موفق"),
         description: t(
-          "High acceptance built on production-scale transactions.",
-          "نرخ موفقیت بالا مبتنی بر تراکنش‌های واقعی در مقیاس بزرگ."
+          "80,000+ successful live authentications validate reliability in production.",
+          "تاکنون بیش از ۸۰,۰۰۰ احراز هویت زنده‌بودن توسط سرویس با موفقیت انجام شده است. این تعداد بالای تراکنش‌های موفق، اعتماد به دقت و پایداری سرویس را تضمین می‌کند."
         ),
       },
       {
-        icon: "chart",
-        title: t("Top accuracy", "دقت بالا"),
+        icon: "bolt",
+        title: t("Under 1 second response", "نرخ پاسخ‌دهی"),
         description: t(
-          "99.9% match precision with verified reference data.",
-          "دقت ۹۹.۹٪ در تطبیق با داده‌های مرجع معتبر.",
+          "Median decision times under one second keep high-volume funnels smooth.",
+          "میانگین زمان پردازش و تشخیص زنده‌بودن کمتر از یک ثانیه بوده و برای کاربردهای پرترافیک و سرویس‌های سازمانی کاملاً مناسب است."
+        ),
+      },
+      {
+        icon: "shield",
+        title: t("Attack resistance", "مقاومت در برابر حملات"),
+        description: t(
+          "Detects display, print, and mask attacks with robust anti-spoof defenses.",
+          "سیستم توانایی شناسایی انواع حملات از جمله Display Attack ، Print Attack و Mask Attack را داشته و امنیت لایه بیومتریک را به‌طور قابل‌توجهی افزایش می‌دهد."
         ),
       },
     ],
     steps: [
       {
-        title: t("Feature analysis", "تحلیل ویژگی‌های چهره"),
+        title: t("Live-face analysis", "تحلیل زنده‌بودن چهره"),
         description: t(
-          "Extracts embeddings resilient to lighting, pose, and accessories.",
-          "ویژگی‌های مقاوم نسبت به نور، زاویه و اکسسوری استخراج می‌شود."
+          "Examines light patterns, facial texture, and natural micro-movements to ensure the subject is real.",
+          "سرویس ابتدا تصویر کاربر را دریافت کرده و با استفاده از مدل‌های یادگیری عمیق، الگوهای نوری، بافت چهره و حرکات طبیعی را بررسی می‌کند. این مرحله تعیین می‌کند که آیا چهره واقعی است یا خیر."
         ),
         visual: "analysis",
       },
       {
-        title: t("Precise comparison", "تطبیق دقیق چهره"),
+        title: t("Spoof attack detection", "شناسایی و جلوگیری از حملات جعل"),
         description: t(
-          "Compares against reference with calibrated thresholds and confidence scoring.",
-          "با آستانه‌های کالیبره شده و امتیاز اطمینان، با مرجع مقایسه می‌کند."
+          "Identifies print, display, and mask artifacts with dedicated anti-spoofing models.",
+          "در مرحله بعد، سیستم انواع حملات جعل مانند Print Attack، Display Attack و Mask Attack را بررسی می‌کند. الگوریتم‌های ضدجعل با دقت بالا رفتارهای غیرطبیعی، انعکاس‌های ساختگی و تلاش‌های تقلیدی را شناسایی کرده و درخواست غیرواقعی را رد می‌کنند."
         ),
-        visual: "compare",
+        visual: "shield",
       },
       {
-        title: t("Verified decision", "استعلام برخط و تأیید هویت"),
+        title: t("Real-time identity check", "استعلام برخط و تأیید هویت"),
         description: t(
-          "Returns a real-time decision with audit-ready logs.",
-          "تصمیم برخط همراه با لاگ‌های قابل استناد ارائه می‌شود."
+          "Matches extracted data against official sources in real time for instant verification.",
+          "در مرحله نهایی، داده‌های استخراج‌شده به‌صورت برخط با پایگاه‌های رسمی تطبیق داده می‌شوند تا صحت هویت کاربر تأیید شود و نتیجه به‌صورت لحظه‌ای ارائه گردد."
         ),
         visual: "scan",
       },
     ],
-    pricing: {
-      title: t("Face match pricing", "تعرفه‌های سرویس تطبیق چهره"),
-      note: t("10% VAT applies to all plans.", "۱۰٪ مالیات بر ارزش افزوده به مبالغ اضافه می‌گردد."),
-      plans: [
-        {
-          name: t("Starter", "پایه"),
-          requests: t("Up to 1,000 / month", "تا ۱,۰۰۰ درخواست ماهانه"),
-          price: t("6,000 IRR per request", "۶,۰۰۰ ریال به ازای هر درخواست"),
-          features: t("Face match and verification, instant checks.", "تطبیق و استعلام لحظه‌ای چهره."),
-        },
-        {
-          name: t("Pro", "حرفه‌ای"),
-          requests: t("Up to 10,000 / month", "تا ۱۰,۰۰۰ درخواست ماهانه"),
-          price: t("5,500 IRR per request", "۵,۵۰۰ ریال به ازای هر درخواست"),
-          features: t("Match + liveness + API access.", "تطبیق، زنده‌بودن و دسترسی API."),
-        },
-        {
-          name: t("Enterprise", "سازمانی"),
-          requests: t("Up to 50,000 / month", "تا ۵۰,۰۰۰ درخواست ماهانه"),
-          price: t("5,000 IRR per request", "۵,۰۰۰ ریال به ازای هر درخواست"),
-          features: t("Priority SLAs, dashboards, detailed reports.", "پشتیبانی اولویت‌دار، داشبورد و گزارش‌های دقیق."),
-        },
-      ],
-    },
-    finalCta: {
-      title: t("Authenticate with confidence", "با اطمینان تطبیق دهید"),
-      description: t(
-        "Integrate the SDK and ship secure login, recovery, and KYC flows fast.",
-        "SDK را اضافه کنید و ورود امن، بازیابی حساب و KYC سریع را پیاده‌سازی کنید."
-      ),
-      primary: t("Integrate now", "همین حالا پیاده‌سازی کنید"),
-      secondary: t("Contact sales", "تماس با تیم فروش"),
-    },
   },
   ocr: {
     slug: "ocr",

@@ -180,10 +180,13 @@ export function ServicesSection() {
           {services.map((service) => {
             const isActive = activeId === service.id;
             return (
-              <button
+              <Button
                 key={service.id}
+                type="button"
+                variant="ghost"
+                size="md"
                 onClick={() => handleTabClick(service.id)}
-                className={`relative group min-w-[220px] flex-1 px-8 py-6 rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left
+                className={`relative group min-w-[220px] flex-1 h-auto px-8 py-6 whitespace-normal rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left justify-start hover:bg-transparent
                   ${isActive
                     ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
                     : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
@@ -218,7 +221,7 @@ export function ServicesSection() {
                     }}
                   />
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>

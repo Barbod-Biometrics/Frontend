@@ -124,12 +124,15 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
         <Container className={`${isScrolled ? 'py-3.5' : 'py-5'}`}>
           <div className="flex items-center justify-between gap-8">
             <div className="flex items-center gap-10">
-              <button
-                onClick={() => handleNavClick('home')}
-                className="flex-shrink-0 rounded-full p-2 transition-colors hover:bg-[color:var(--md-sys-color-surface-variant)]/10"
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleNavClick("home")}
+                className="flex-shrink-0 h-auto w-auto rounded-full p-2 hover:bg-[color:var(--md-sys-color-surface-variant)]/10"
+                aria-label="Home"
               >
                 <Logo size="medium" />
-              </button>
+              </Button>
 
               <div className="hidden items-center gap-1 md:flex">
                 {navItems.map((item) => (
@@ -165,10 +168,12 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                           >
                             <div className="p-2">
                               {item.children.map((child) => (
-                                <button
+                                <Button
                                   key={child.label}
+                                  variant="ghost"
+                                  size="sm"
                                   onClick={() => handleNavClick(child.href)}
-                                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-sm font-medium text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] transition-all group text-start"
+                                  className="w-full h-auto min-w-0 justify-start gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-sm text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] group text-start"
                                 >
                                   {child.icon && (
                                     <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-black/20 border border-white/10 shadow-inner">
@@ -181,7 +186,7 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                                     </div>
                                   )}
                                   <span>{child.label}</span>
-                                </button>
+                                </Button>
                               ))}
                             </div>
                           </motion.div>

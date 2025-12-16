@@ -87,13 +87,15 @@ export function DemoModal({ onClose }: DemoModalProps) {
                     dir="rtl"
                 >
                     {/* Close button */}
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={onClose}
-                        className="absolute top-4 left-4 z-10 p-2 rounded-full bg-[color:var(--md-sys-color-surface-container-high)] hover:bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)] transition-colors"
+                        className="absolute top-4 left-4 z-10 h-auto w-auto p-2 rounded-full bg-[color:var(--md-sys-color-surface-container-high)] hover:bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)]"
                         aria-label="بستن"
                     >
                         <X size={20} />
-                    </button>
+                    </Button>
 
                     {/* Phase 1: Permission Request */}
                     {phase === "permission" && (

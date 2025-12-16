@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { useLanguage } from "../lib/useLanguage";
 import { Language } from "../types";
+import { Button } from "./ui/Button";
 
 const copy: Record<
   Language,
@@ -33,6 +34,7 @@ export function SalesConnector() {
   const { language, dir } = useLanguage();
   const c = copy[language];
   const isFa = language === Language.FA;
+  const ctaIcon = dir === "rtl" ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />;
 
   return (
     <section className="rounded-[24px] border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)] shadow-[var(--shadow-lg)]">
@@ -49,11 +51,10 @@ export function SalesConnector() {
         </div>
 
         <div className={`flex ${isFa ? "justify-start" : "justify-end"}`}>
-          <Link href="/contact/sales">
-            <button className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[color:var(--brand-azure)] to-[color:var(--brand-cyan)] px-5 py-3 text-sm font-semibold text-white shadow-[var(--shadow-md)] transition hover:brightness-110">
+          <Link href="/contact-sales">
+            <Button size="md" className="rounded-full" iconTrailing={ctaIcon}>
               {c.button}
-              <ArrowLeft className="h-4 w-4" />
-            </button>
+            </Button>
           </Link>
         </div>
       </div>

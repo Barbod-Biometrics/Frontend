@@ -33,12 +33,16 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
   const theme = useSelector((state: RootState) => state.theme.theme);
   const { hero, features, steps, pricing, finalCta, accent } = content;
   const isFa = language === Language.FA;
+  const isNeutral = content.slug === "face-recognition";
 
   const ctaIcon = dir === "rtl" ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />;
+  const accentIconColor = isNeutral
+    ? "text-[color:var(--md-sys-color-secondary)]"
+    : "text-[color:var(--md-sys-color-primary)]";
 
   const renderIcon = (name: keyof typeof iconMap) => {
     const Icon = iconMap[name];
-    return <Icon className="w-6 h-6 text-[color:var(--md-sys-color-primary)]" />;
+    return <Icon className={`w-6 h-6 ${accentIconColor}`} />;
   };
 
   const accentShadow = useMemo(
@@ -49,9 +53,15 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
   );
 
   return (
-    <div className={`${isFa ? "font-vazirmatn" : ""}`}>
+      <div className={`${isFa ? "font-vazirmatn" : ""}`}>
       {/* Hero */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-[color:var(--md-sys-color-surface)] via-[color:var(--md-sys-color-surface)] to-[color:var(--md-sys-color-surface-container)]">
+      <section
+        className={`py-16 md:py-24 ${
+          isNeutral
+            ? "bg-[color:var(--md-sys-color-surface)]"
+            : "bg-gradient-to-b from-[color:var(--md-sys-color-surface)] via-[color:var(--md-sys-color-surface)] to-[color:var(--md-sys-color-surface-container)]"
+        }`}
+      >
         <Container>
           <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center`} dir={dir}>
             <div className={`flex flex-col gap-6 ${dir === "rtl" ? "lg:order-2" : ""}`}>
@@ -59,7 +69,7 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
                 <span
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[color:var(--md-sys-color-surface-container-high)] shadow-[var(--elevation-1)] w-fit"
                 >
-                  <Sparkles className="w-4 h-4 text-[color:var(--md-sys-color-primary)]" />
+                  <Sparkles className={`w-4 h-4 ${accentIconColor}`} />
                   {resolveCopy(hero.eyebrow, language)}
                 </span>
               )}
@@ -93,7 +103,11 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
       </section>
 
       {/* Feature cards */}
-      <section className="py-16 md:py-22 bg-[color:var(--md-sys-color-surface-container)]">
+      <section
+        className={`py-16 md:py-22 ${
+          isNeutral ? "bg-[color:var(--md-sys-color-surface)]" : "bg-[color:var(--md-sys-color-surface-container)]"
+        }`}
+      >
         <Container>
           <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-4`}>
             {features.map((feature, idx) => (
@@ -135,7 +149,13 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
                 >
                   <div className={swap ? "md:order-2" : ""}>
                     <div className="inline-flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-full bg-[color:var(--md-sys-color-primary)]/10 flex items-center justify-center text-[color:var(--md-sys-color-primary)]">
+                      <div
+                        className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                          isNeutral
+                            ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-secondary)] border border-[color:var(--md-sys-color-outline-variant)]/40"
+                            : "bg-[color:var(--md-sys-color-primary)]/10 text-[color:var(--md-sys-color-primary)]"
+                        }`}
+                      >
                         <Check className="w-5 h-5" />
                       </div>
                       <Typography variant="h4" className="leading-tight">
@@ -158,7 +178,8 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
       </section>
 
       {/* Pricing */}
-      <section className="py-18 md:py-24 bg-[color:var(--md-sys-color-surface-container)]">
+      {pricing && content.slug !== "face-recognition" && (
+        <section className="py-18 md:py-24 bg-[color:var(--md-sys-color-surface-container)]">
         <Container>
           <div className="text-center mb-12" dir={dir}>
             <Typography variant="h3" className="mb-3">
@@ -199,36 +220,39 @@ export function ServicePageTemplate({ content, language, dir }: ServicePageTempl
             </div>
           </div>
         </Container>
-      </section>
+        </section>
+      )}
 
       {/* Final CTA */}
-      <section className="py-16 md:py-22 bg-[color:var(--md-sys-color-surface)]">
-        <Container>
-          <Card
-            className="p-10 md:p-12 rounded-[28px] shadow-[var(--elevation-3)] bg-[color:var(--md-sys-color-surface-container-high)] border border-[color:var(--md-sys-color-outline-variant)]/30"
-            style={accentShadow}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-6" dir={dir}>
-              <div className="md:col-span-2 space-y-3">
-                <Typography variant="h4">{resolveCopy(finalCta.title, language)}</Typography>
-                <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7">
-                  {resolveCopy(finalCta.description, language)}
-                </Typography>
-              </div>
-              <div className={`flex gap-3 ${dir === "rtl" ? "justify-start" : "justify-end"}`}>
-                <Button size="lg" className="h-12 rounded-full px-8 shadow-[var(--elevation-2)]">
-                  {resolveCopy(finalCta.primary, language)}
-                </Button>
-                {finalCta.secondary && (
-                  <Button variant="secondary" size="lg" className="h-12 rounded-full px-7 border border-[color:var(--md-sys-color-outline-variant)]/40">
-                    {resolveCopy(finalCta.secondary, language)}
+      {finalCta && (
+        <section className="py-16 md:py-22 bg-[color:var(--md-sys-color-surface)]">
+          <Container>
+            <Card
+              className="p-10 md:p-12 rounded-[28px] shadow-[var(--elevation-3)] bg-[color:var(--md-sys-color-surface-container-high)] border border-[color:var(--md-sys-color-outline-variant)]/30"
+              style={accentShadow}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-6" dir={dir}>
+                <div className="md:col-span-2 space-y-3">
+                  <Typography variant="h4">{resolveCopy(finalCta.title, language)}</Typography>
+                  <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7">
+                    {resolveCopy(finalCta.description, language)}
+                  </Typography>
+                </div>
+                <div className={`flex gap-3 ${dir === "rtl" ? "justify-start" : "justify-end"}`}>
+                  <Button size="lg" className="h-12 rounded-full px-8 shadow-[var(--elevation-2)]">
+                    {resolveCopy(finalCta.primary, language)}
                   </Button>
-                )}
+                  {finalCta.secondary && (
+                    <Button variant="secondary" size="lg" className="h-12 rounded-full px-7 border border-[color:var(--md-sys-color-outline-variant)]/40">
+                      {resolveCopy(finalCta.secondary, language)}
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          </Card>
-        </Container>
-      </section>
+            </Card>
+          </Container>
+        </section>
+      )}
     </div>
   );
 }

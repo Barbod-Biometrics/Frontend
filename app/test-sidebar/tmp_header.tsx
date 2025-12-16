@@ -3,6 +3,7 @@
 import React from "react";
 import clsx from "clsx";
 import { Menu } from "lucide-react";
+import { Button } from "../../components/ui/Button";
 
 export function TmpHeader({ collapsed, onToggleAction }: { collapsed: boolean; onToggleAction: () => void }) {
   return (
@@ -12,13 +13,15 @@ export function TmpHeader({ collapsed, onToggleAction }: { collapsed: boolean; o
         "bg-[color:var(--md-sys-color-surface-container)] border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-1)]",
       )}
     >
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         aria-label={collapsed ? "باز کردن سایدبار" : "بستن سایدبار"}
         onClick={onToggleAction}
-        className="flex items-center justify-center h-8 w-8 rounded-md text-[color:var(--md-sys-color-on-surface-variant)]"
+        className="h-8 w-8 rounded-md p-0 text-[color:var(--md-sys-color-on-surface-variant)]"
       >
         <Menu className="h-5 w-5" />
-      </button>
+      </Button>
 
       <div className="text-sm font-medium">نوار ابزار تست</div>
     </header>

@@ -19,11 +19,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', iconLeading, iconTrailing, children, ...props }, ref) => {
 
     const variants = {
-      primary: 'bg-[color:var(--brand-azure)] text-white hover:brightness-110 border-transparent shadow-[var(--elevation-1)] hover:shadow-[var(--elevation-2)]',
-      secondary: 'bg-transparent border border-[color:var(--md-sys-color-outline)] text-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-primary)]/10 hover:border-[color:var(--md-sys-color-primary)]',
-      ghost: 'bg-transparent text-[color:var(--text-primary)] hover:bg-[color:var(--surface-card)] border-transparent',
-      outline: 'bg-transparent border border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] hover:bg-[color:var(--surface-card)]',
-      link: 'bg-transparent text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] underline-offset-4 hover:underline border-transparent p-0 h-auto',
+      primary:
+        'bg-[color:var(--md-sys-color-secondary)] text-[color:var(--md-sys-color-on-secondary)] hover:opacity-90 border-transparent shadow-[var(--elevation-1)] hover:shadow-[var(--elevation-2)]',
+      secondary:
+        'bg-[color:var(--md-sys-color-surface-container)] border border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-surface-container-high)] shadow-[var(--elevation-1)]',
+      ghost:
+        'bg-transparent text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-surface-container)] border-transparent',
+      outline:
+        'bg-transparent border border-[color:var(--md-sys-color-outline)] text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-surface-container)]',
+      link:
+        'bg-transparent text-[color:var(--md-sys-color-on-surface-variant)] hover:text-[color:var(--md-sys-color-on-surface)] underline-offset-4 hover:underline border-transparent p-0 h-auto',
     };
 
     const sizes = {
@@ -37,7 +42,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center text-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+          'inline-flex cursor-pointer items-center justify-center text-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]',
           variants[variant],
           size !== 'icon' && sizes[size], // Apply size classes only if not icon (icon has its own fixed size)
           size === 'icon' && sizes.icon,

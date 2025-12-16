@@ -85,7 +85,14 @@ export function Hero({ language, theme, dir }: HeroProps) {
               <span className="text-brand-gradient">{copy.headingHighlight}</span>
             </Typography>
 
-            <Typography variant="body-lg" className="max-w-3xl text-center opacity-90">
+            <Typography
+              variant="body-lg"
+              className={`max-w-3xl text-center ${
+                theme === Theme.LIGHT
+                  ? "text-[color:var(--md-sys-color-on-surface)] opacity-85"
+                  : "opacity-90"
+              }`}
+            >
               {copy.description}
             </Typography>
           </div>

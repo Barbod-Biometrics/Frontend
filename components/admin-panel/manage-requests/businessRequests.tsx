@@ -78,7 +78,7 @@ export default function BusinessRequests() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 md:flex-nowrap md:justify-start md:gap-2 md:flex-[1.2]">
+          <div className="flex flex-wrap items-center gap-2 md:flex-nowrap md:justify-start md:gap-5 md:flex-[1.2]">
             <FilterPill label="وضعیت کسب و کار" />
             <FilterPill label="نتایج هر صفحه" />
             <FilterPill label="مرتب سازی بر اساس" />
@@ -100,10 +100,11 @@ export default function BusinessRequests() {
                       {request.initials}
                     </div>
                     <div className="flex flex-col gap-2 text-right">
-                      <p className="text-base font-semibold text-[color:var(--md-sys-color-on-surface)]">
-                        {request.name}
-                      </p>
-                      <div className="flex flex-wrap md:flex-nowrap items-center gap-4 md:gap-6 text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                      
+                      <div className="flex flex-wrap md:flex-nowrap items-center gap-7 md:gap-20 text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                        <p className="text-base font-semibold text-[color:var(--md-sys-color-on-surface)]">
+                          {request.name}
+                        </p>
                         <span className="flex items-center gap-1 whitespace-nowrap">
                           نوع کسب و کار:{" "}
                           <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
@@ -111,10 +112,6 @@ export default function BusinessRequests() {
                         <span className="flex items-center gap-1 whitespace-nowrap">
                           آدرس:{" "}
                           <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.address}</span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-[color:var(--md-sys-color-primary)]" />
-                          <Mail className="h-4 w-4 text-[color:var(--md-sys-color-primary)]" />
                         </span>
                       </div>
                     </div>
@@ -133,7 +130,7 @@ export default function BusinessRequests() {
                     </div>
                     <Button
                       variant="primary"
-                      className="min-w-[140px] rounded-xl bg-[linear-gradient(135deg,#0f8bff,#2152ff)] text-base font-semibold shadow-[var(--elevation-2)] hover:brightness-110"
+                      className="min-w-[120px] rounded-xl bg-[linear-gradient(135deg,#0f8bff,#2152ff)] text-base font-semibold shadow-[var(--elevation-2)] hover:brightness-110"
                     >
                       مشاهده جزئیات
                     </Button>

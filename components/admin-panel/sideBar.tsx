@@ -85,23 +85,36 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
       )}
     >
       <div className="relative flex flex-col h-full">
-        <div className="flex flex-col items-stretch gap-3 border-b border-[color:var(--md-sys-color-outline-variant)] px-4 pb-4 pt-6">
-          <div className="flex items-center gap-3 min-w-0 flex-1 justify-start">
-            <ItemIconFrame active>
+        <div
+          className={clsx(
+            "flex flex-col px-4 items-stretch gap-3 border-b border-[color:var(--md-sys-color-outline-variant)] pb-4 pt-6",
+          )}
+        >
+          <div
+            className={clsx(
+              "flex items-center min-w-0 flex-1 justify-start",
+              isCollapsed ? "gap-2" : "gap-3",
+            )}
+          >
+            <span className="flex-shrink-0">
+              <ItemIconFrame active>
               <AdminShieldIcon />
             </ItemIconFrame>
+            </span>
             <div
               className={clsx(
                 "min-w-0 transition-all duration-200 text-right",
                 isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
               )}
             >
-              <Typography
-                variant="caption"
-                className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
-              >
+              {!isCollapsed && (
+                <Typography
+                  variant="caption"
+                  className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                >
                 ادمین
               </Typography>
+              )}
             </div>
           </div>
         </div>

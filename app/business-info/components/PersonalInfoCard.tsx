@@ -1,0 +1,104 @@
+
+"use client";
+
+import { Card } from '../../..//components/ui/Card';
+import { Typography } from '../../..//components/ui/Typography';
+import { User, Hash, Calendar, Phone } from 'lucide-react';
+
+interface PersonalInfoCardProps {
+  firstName: string;
+  lastName: string;
+  nationalId: string;
+  dob: string;
+  mobileNumber: string;
+  isBusinessAccount?: boolean;
+}
+
+export function PersonalInfoCard({
+  firstName,
+  lastName,
+  nationalId,
+  dob,
+  mobileNumber,
+  isBusinessAccount = false
+}: PersonalInfoCardProps) {
+  const title = isBusinessAccount ? 'اطلاعات نماینده' : 'اطلاعات شخصی';
+
+  return (
+    <Card variant="filled" hover className="p-6">
+     
+      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[color:var(--outline-variant)]">
+        <div className={`p-2 rounded-lg ${isBusinessAccount ? 'bg-purple-500/10' : 'bg-teal-500/10'}`}>
+          <User className={`w-5 h-5 ${isBusinessAccount ? 'text-purple-500' : 'text-teal-500'}`} />
+        </div>
+        <Typography variant="h5" className="text-[color:var(--text-primary)] font-semibold">
+          {title}
+        </Typography>
+      </div>
+      
+      
+      <div className="space-y-6">
+       
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Typography variant="caption" className="text-[color:var(--text-secondary)] block mb-2">
+              نام
+            </Typography>
+            <Typography variant="body-md" className="text-[color:var(--text-primary)] font-medium">
+              {firstName}
+            </Typography>
+          </div>
+          
+          <div>
+            <Typography variant="caption" className="text-[color:var(--text-secondary)] block mb-2">
+              نام خانوادگی
+            </Typography>
+            <Typography variant="body-md" className="text-[color:var(--text-primary)] font-medium">
+              {lastName}
+            </Typography>
+          </div>
+        </div>
+        
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Hash className="w-4 h-4 text-[color:var(--text-secondary)]" />
+              <Typography variant="caption" className="text-[color:var(--text-secondary)]">
+                کد ملی
+              </Typography>
+            </div>
+            <Typography variant="body-md" className="font-mono text-[color:var(--text-primary)] font-medium">
+              {nationalId}
+            </Typography>
+          </div>
+          
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Calendar className="w-4 h-4 text-[color:var(--text-secondary)]" />
+              <Typography variant="caption" className="text-[color:var(--text-secondary)]">
+                تاریخ تولد
+            </Typography>
+            </div>
+            <Typography variant="body-md" className="text-[color:var(--text-primary)] font-medium">
+              {dob}
+            </Typography>
+          </div>
+        </div>
+        
+      
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Phone className="w-4 h-4 text-blue-500" />
+            <Typography variant="caption" className="text-[color:var(--text-secondary)]">
+              شماره تماس
+            </Typography>
+          </div>
+          <Typography variant="body-lg" className="text-blue-500 font-medium">
+            {mobileNumber}
+          </Typography>
+        </div>
+      </div>
+    </Card>
+  );
+}

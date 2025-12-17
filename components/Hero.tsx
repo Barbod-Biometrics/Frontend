@@ -65,7 +65,11 @@ export function Hero({ language, theme, dir }: HeroProps) {
   const isFa = language === Language.FA;
 
   return (
-    <Section spacing="lg" className={isFa ? "font-vazirmatn" : ""} dir={contentDir}>
+    <Section
+      spacing="lg"
+      className={isFa ? "font-vazirmatn" : ""}
+      dir={contentDir}
+    >
       <Container className="relative z-10 flex min-h-[800px] flex-col items-center overflow-visible text-center">
         <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
           <div className="h-[1100px] w-[220%] max-w-none -translate-y-32 opacity-85 md:h-[1400px] md:-translate-y-48">
@@ -82,7 +86,9 @@ export function Hero({ language, theme, dir }: HeroProps) {
           <div className="flex flex-grow flex-col items-center justify-center space-y-8 lg:space-y-10">
             <Typography variant="h1" component="h1">
               <span className="mb-2 block lg:mb-4">{copy.headingTop}</span>
-              <span className="text-brand-gradient">{copy.headingHighlight}</span>
+              <span className="text-brand-gradient">
+                {copy.headingHighlight}
+              </span>
             </Typography>
 
             <Typography
@@ -100,6 +106,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
           <div className="mt-auto flex w-full flex-col items-center pt-12 lg:pt-20">
             <div className="flex flex-col gap-6 pb-12 sm:flex-row sm:justify-center lg:pb-16">
               <Button
+                variant="gradient"
                 size="lg"
                 className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-1 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
                 onClick={() => router.push("/login")}
@@ -118,7 +125,10 @@ export function Hero({ language, theme, dir }: HeroProps) {
 
             <div className="grid w-full max-w-5xl grid-cols-3 gap-8 lg:gap-12">
               {copy.stats.map((stat) => (
-                <div key={stat.label} className="group cursor-default text-center">
+                <div
+                  key={stat.label}
+                  className="group cursor-default text-center"
+                >
                   <div className="mb-2 text-3xl font-bold tracking-tight text-[color:var(--md-sys-color-on-surface)] transition-colors group-hover:text-[color:var(--md-sys-color-primary)] sm:text-4xl lg:text-5xl">
                     {stat.value}
                   </div>

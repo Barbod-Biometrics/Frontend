@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
-import { Button } from './ui/Button';
-import { Logo } from './Logo';
-import { Container } from './ui/Container';
-import { Typography } from './ui/Typography';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RootState } from '../store/store';
-import { setTheme } from '../store/themeSlice';
-import { Theme, Language } from '../types';
-import { LanguageSwitcher } from './LanguageSwitcher';
-import { useLanguage } from '../lib/useLanguage';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
+import { Button } from "./ui/Button";
+import { Logo } from "./Logo";
+import { Container } from "./ui/Container";
+import { Typography } from "./ui/Typography";
+import { motion, AnimatePresence } from "framer-motion";
+import { RootState } from "../store/store";
+import { setTheme } from "../store/themeSlice";
+import { Theme, Language } from "../types";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useLanguage } from "../lib/useLanguage";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 interface NavbarProps {
   onNavigate?: (section: string) => void;
@@ -41,30 +41,30 @@ const navCopy: Record<
   }
 > = {
   [Language.EN]: {
-    search: 'Search',
-    signup: 'Get started',
-    themeToggle: 'Toggle theme',
-    services: 'Services',
-    docs: 'Docs',
-    status: 'Status',
-    faceRecognition: 'Face Recognition',
-    livenessDetection: 'Liveness Detection',
-    ocr: 'OCR',
+    search: "Search",
+    signup: "Get started",
+    themeToggle: "Toggle theme",
+    services: "Services",
+    docs: "Docs",
+    status: "Status",
+    faceRecognition: "Face Recognition",
+    livenessDetection: "Liveness Detection",
+    ocr: "OCR",
   },
   [Language.FA]: {
-    search: 'جستجو',
-    signup: 'شروع کنید',
-    themeToggle: 'تغییر تم',
-    services: 'سرویس‌ها',
-    docs: 'مستندات',
-    status: 'وضعیت',
-    faceRecognition: 'تشخیص چهره',
-    livenessDetection: 'تشخیص زنده‌بودن',
-    ocr: 'تشخیص نوشتار',
+    search: "جستجو",
+    signup: "شروع کنید",
+    themeToggle: "تغییر تم",
+    services: "سرویس‌ها",
+    docs: "مستندات",
+    status: "وضعیت",
+    faceRecognition: "تشخیص چهره",
+    livenessDetection: "تشخیص زنده‌بودن",
+    ocr: "تشخیص نوشتار",
   },
 };
 
-export function Navbar({ onNavigate = () => { } }: NavbarProps) {
+export function Navbar({ onNavigate = () => {} }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -77,19 +77,22 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
   const navItems: NavItem[] = [
     {
       label: copy.services,
-      href: 'services',
+      href: "services",
       children: [
-        { label: copy.faceRecognition, href: '/services/face-recognition' },
-        { label: copy.livenessDetection, href: '/services/liveness' },
-        { label: copy.ocr, href: '/services/ocr' },
+        { label: copy.faceRecognition, href: "/services/face-recognition" },
+        { label: copy.livenessDetection, href: "/services/liveness" },
+        { label: copy.ocr, href: "/services/ocr" },
       ],
     },
-    { label: copy.docs, href: 'docs' },
-    { label: language === Language.FA ? 'تماس با تیم فروش' : 'Contact sales', href: '/contact-sales' },
+    { label: copy.docs, href: "docs" },
+    {
+      label: language === Language.FA ? "تماس با تیم فروش" : "Contact sales",
+      href: "/contact-sales",
+    },
   ];
 
   const handleNavClick = (href: string) => {
-    if (href.startsWith('/')) {
+    if (href.startsWith("/")) {
       window.location.assign(href);
     } else {
       onNavigate(href);
@@ -105,23 +108,25 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const surfaceClass = isScrolled
-    ? 'bg-[color:var(--md-sys-color-surface-container)]/80 backdrop-blur-md shadow-[var(--elevation-2)] rounded-full mx-4 mt-4 top-4 border border-[color:var(--md-sys-color-outline-variant)]'
-    : 'bg-transparent border-b border-transparent';
+    ? "bg-[color:var(--md-sys-color-surface-container)]/80 backdrop-blur-md shadow-[var(--elevation-2)] rounded-full mx-4 mt-4 top-4 border border-[color:var(--md-sys-color-outline-variant)]"
+    : "bg-transparent border-b border-transparent";
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`sticky z-50 transition-all duration-300 ${surfaceClass} ${isFa ? 'font-vazirmatn' : ''}`}
+      className={`sticky z-50 transition-all duration-300 ${surfaceClass} ${
+        isFa ? "font-vazirmatn" : ""
+      }`}
       dir={dir}
     >
       <div className="relative">
-        <Container className={`${isScrolled ? 'py-3.5' : 'py-5'}`}>
+        <Container className={`${isScrolled ? "py-3.5" : "py-5"}`}>
           <div className="flex items-center justify-between gap-8">
             <div className="flex items-center gap-10">
               <Button
@@ -139,18 +144,26 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                   <div
                     key={item.label}
                     className="relative"
-                    onMouseEnter={() => item.children && setActiveDropdown(item.label)}
+                    onMouseEnter={() =>
+                      item.children && setActiveDropdown(item.label)
+                    }
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
                     <Button
                       variant="ghost"
-                      onClick={() => !item.children && handleNavClick(item.href)}
+                      onClick={() =>
+                        !item.children && handleNavClick(item.href)
+                      }
                       className="rounded-full px-6 py-3 text-base font-medium text-[color:var(--md-sys-color-on-surface-variant)] hover:text-[color:var(--md-sys-color-on-surface)]"
-                      iconTrailing={item.children && (
-                        <ChevronDown
-                          className={`h-4 w-4 transition-transform duration-200 ${activeDropdown === item.label ? 'rotate-180' : ''}`}
-                        />
-                      )}
+                      iconTrailing={
+                        item.children && (
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                              activeDropdown === item.label ? "rotate-180" : ""
+                            }`}
+                          />
+                        )
+                      }
                     >
                       {item.label}
                     </Button>
@@ -164,7 +177,7 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
                             className="absolute top-full mt-2 min-w-[280px] rounded-[var(--radius-lg)] bg-[color:var(--md-sys-color-surface-container)]/95 backdrop-blur-xl border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-3)] overflow-hidden"
-                            style={{ [dir === 'rtl' ? 'right' : 'left']: 0 }}
+                            style={{ [dir === "rtl" ? "right" : "left"]: 0 }}
                           >
                             <div className="p-2">
                               {item.children.map((child) => (
@@ -208,14 +221,19 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                 className="rounded-full border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface-variant)]"
                 aria-label={copy.themeToggle}
               >
-                {theme === Theme.DARK ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                {theme === Theme.DARK ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
               </Button>
 
               <div className="hidden items-center gap-2 md:flex">
                 <Button
+                  variant="gradient"
                   size="lg"
                   className="h-12 rounded-full px-9 text-base"
-                  onClick={() => handleNavClick('/login')}
+                  onClick={() => handleNavClick("/login")}
                 >
                   {copy.signup}
                 </Button>
@@ -227,7 +245,11 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="rounded-full border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface-variant)] md:hidden"
               >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {mobileMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
               </Button>
             </div>
           </div>
@@ -238,7 +260,7 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t border-[color:var(--border-hairline)] bg-[color:var(--surface-elevated)] shadow-[var(--shadow-md)] overflow-hidden"
           >
@@ -270,9 +292,10 @@ export function Navbar({ onNavigate = () => { } }: NavbarProps) {
               ))}
               <div className="grid gap-2 pt-2">
                 <Button
+                  variant="gradient"
                   size="lg"
                   className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
-                  onClick={() => handleNavClick('/login')}
+                  onClick={() => handleNavClick("/login")}
                 >
                   {copy.signup}
                 </Button>

@@ -96,6 +96,7 @@ html {
   --elevation-3: 0px 8px 16px 4px rgba(255, 255, 255, 0.05);
 
   --brand-gradient: linear-gradient(135deg, #ffffff, var(--md-sys-color-primary));
+  --button-gradient: var(--brand-gradient);
   color-scheme: dark;
 }
 
@@ -157,6 +158,7 @@ html {
   --elevation-3: 0px 8px 16px 4px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.05);
 
   --brand-gradient: linear-gradient(135deg, #000000, var(--md-sys-color-primary));
+  --button-gradient: var(--md-sys-color-secondary);
   color-scheme: light;
 }
 

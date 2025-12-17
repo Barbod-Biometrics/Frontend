@@ -29,6 +29,7 @@ type NavItem = {
   label: string;
   icon: ReactElement;
   children?: NavSubItem[];
+  onClick?: () => void;
 };
 
 type NavSection = {
@@ -297,11 +298,13 @@ export function SidebarDashboard({
             id: "business-info",
             label: "اطلاعات کسب و کار",
             icon: <HomeIcon />,
+             onClick: () => router.push('/business-info')
           },
           {
             id: "transactions",
             label: "کیف پول",
             icon: <TransferIcon />,
+             onClick: () => router.push('/wallet')
           },
         ],
       },
@@ -320,7 +323,7 @@ export function SidebarDashboard({
         items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon /> }],
       },
     ],
-    [],
+    [router],
   );
 
 
@@ -572,7 +575,9 @@ export function SidebarDashboard({
                       <Button
                         variant="ghost"
                         onClick={() => {
-                          if (hasChildren) {
+                         if (item.onClick) {
+                            item.onClick();
+                          } else if (hasChildren) {
                             toggleGroup(item.id);
                             setActiveItemId(item.id);
                           } else {

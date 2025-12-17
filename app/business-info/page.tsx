@@ -13,7 +13,7 @@ import { PersonalInfoCard } from './components/PersonalInfoCard';
 import { BusinessDetailsCard } from './components/BusinessDetailsCard';
 import { AddressCard } from './components/AddressCard';
 import { DashboardLayout } from '../..//components//DashboardLayout';
-import { useSelectedProfile } from '../..//store//useSelectedProfile';
+import { useSelectedProfile } from '../../lib/useSelectedProfile';
 
 export default function BusinessInfoPage() {
   const { loadProfiles } = useSelectedProfile();

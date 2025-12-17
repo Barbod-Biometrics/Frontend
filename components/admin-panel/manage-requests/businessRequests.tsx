@@ -4,16 +4,19 @@ import { useEffect, useMemo, useState } from "react";
 import { Mail, Phone, Search, ChevronDown, Filter } from "lucide-react";
 import { Button } from "../../ui/Button";
 import clsx from "clsx";
+import type { BusinessProfile } from "../../../types/businessProfile";
+import { DetailsDialog } from "./detailsDialogue";
 
 type BusinessStatus = "verified" | "pending" | "rejected" | "draft";
 
 type BusinessRequest = {
   id: string;
   name: string;
-  type: "حقیقی" | "حقوقی";
-  address: "دارد" | "ندارد";
+  type: string;
+  address: string;
   status: BusinessStatus;
   initials: string;
+  profileDetails: BusinessProfile;
 };
 
 const statusMeta: Record<
@@ -43,11 +46,184 @@ const statusMeta: Record<
 };
 
 const businessRequests: BusinessRequest[] = [
-  { id: "1", name: "تجارتی لاج و برادران", type: "حقوقی", address: "دارد", status: "rejected", initials: "ا" },
-  { id: "2", name: "تجارتی صالح و برادران", type: "حقیقی", address: "دارد", status: "pending", initials: "ص" },
-  { id: "3", name: "تجارتی رضا و برادران", type: "حقوقی", address: "دارد", status: "verified", initials: "ر" },
-  { id: "4", name: "تجارتی پاسا و برادران", type: "حقوقی", address: "دارد", status: "rejected", initials: "س" },
-  { id: "5", name: "تجارتی وحید و برادران", type: "حقوقی", address: "دارد", status: "pending", initials: "و" },
+  {
+    id: "1",
+    name: "شرکت آینده سازان",
+    type: "شخص حقوقی",
+    address: "تهران، سعادت‌آباد",
+    status: "rejected",
+    initials: "ش",
+    profileDetails: {
+      id: "req-1",
+      name: "شرکت آینده سازان",
+      type: "legal",
+      verificationStatus: "rejected",
+      personalInfo: {
+        firstName: "حمید",
+        lastName: "مظفری",
+        nationalId: "0123456789",
+        birthDate: "1985-03-14",
+        phone: "09123456789",
+      },
+      businessInfo: {
+        brandName: "آینده سازان",
+        legalName: "شرکت توسعه آینده سازان",
+        fieldOfWork: "راهکارهای ابری",
+        websiteUrl: "https://ayandeh.co",
+      },
+      locationInfo: {
+        address: "تهران، سعادت‌آباد، خیابان سرو، پلاک ۱۲، واحد ۳",
+        province: "تهران",
+        city: "تهران",
+        fixedPhone: "02122334455",
+        postalCode: "1998712345",
+        plateNumber: "12",
+        unit: "3",
+      },
+    },
+  },
+  {
+    id: "2",
+    name: "بازرگانی صالح",
+    type: "شخص حقیقی",
+    address: "اصفهان، میدان نقش جهان",
+    status: "pending",
+    initials: "ب",
+    profileDetails: {
+      id: "req-2",
+      name: "بازرگانی صالح",
+      type: "real",
+      verificationStatus: "pending",
+      personalInfo: {
+        firstName: "صالح",
+        lastName: "موسوی",
+        nationalId: "0654321987",
+        birthDate: "1990-07-22",
+        phone: "09135556677",
+      },
+      businessInfo: {
+        brandName: "بازرگانی صالح",
+        fieldOfWork: "توزیع مواد غذایی",
+        websiteUrl: "https://salehtrade.ir",
+      },
+      locationInfo: {
+        address: "اصفهان، میدان نقش جهان، کوچه آذین، پلاک ۸، واحد ۱",
+        province: "اصفهان",
+        city: "اصفهان",
+        fixedPhone: "03133778899",
+        postalCode: "8156712345",
+        plateNumber: "8",
+        unit: "1",
+      },
+    },
+  },
+  {
+    id: "3",
+    name: "هولدینگ پارسا",
+    type: "شخص حقوقی",
+    address: "شیراز، بلوار چمران",
+    status: "verified",
+    initials: "ه",
+    profileDetails: {
+      id: "req-3",
+      name: "هولدینگ پارسا",
+      type: "legal",
+      verificationStatus: "verified",
+      personalInfo: {
+        firstName: "فرشاد",
+        lastName: "پارسایی",
+        nationalId: "0789012345",
+        birthDate: "1982-11-09",
+        phone: "09172223344",
+      },
+      businessInfo: {
+        brandName: "پارسا",
+        legalName: "هولدینگ پارسا",
+        fieldOfWork: "خدمات هوش مصنوعی",
+        websiteUrl: "https://parsa.ai",
+      },
+      locationInfo: {
+        address: "شیراز، بلوار چمران، خیابان دنا، پلاک ۴۵، واحد ۶",
+        province: "فارس",
+        city: "شیراز",
+        fixedPhone: "07132221100",
+        postalCode: "7199812345",
+        plateNumber: "45",
+        unit: "6",
+      },
+    },
+  },
+  {
+    id: "4",
+    name: "گروه صنعتی نیکان",
+    type: "شخص حقوقی",
+    address: "تبریز، خیابان ولیعصر",
+    status: "rejected",
+    initials: "گ",
+    profileDetails: {
+      id: "req-4",
+      name: "گروه صنعتی نیکان",
+      type: "legal",
+      verificationStatus: "rejected",
+      personalInfo: {
+        firstName: "نادر",
+        lastName: "فرهادی",
+        nationalId: "0332211456",
+        birthDate: "1978-02-01",
+        phone: "09149998877",
+      },
+      businessInfo: {
+        brandName: "نیکان",
+        legalName: "گروه صنعتی نیکان",
+        fieldOfWork: "قطعات خودرو",
+        websiteUrl: "https://nikanparts.com",
+      },
+      locationInfo: {
+        address: "تبریز، خیابان ولیعصر، کوچه یاس، پلاک ۹، واحد ۲",
+        province: "آذربایجان شرقی",
+        city: "تبریز",
+        fixedPhone: "04135557788",
+        postalCode: "5136812345",
+        plateNumber: "9",
+        unit: "2",
+      },
+    },
+  },
+  {
+    id: "5",
+    name: "موسسه مشاوره رهام",
+    type: "شخص حقیقی",
+    address: "مشهد، احمدآباد",
+    status: "pending",
+    initials: "م",
+    profileDetails: {
+      id: "req-5",
+      name: "موسسه مشاوره رهام",
+      type: "real",
+      verificationStatus: "pending",
+      personalInfo: {
+        firstName: "رهام",
+        lastName: "سالاری",
+        nationalId: "0456321879",
+        birthDate: "1995-09-17",
+        phone: "09153054050",
+      },
+      businessInfo: {
+        brandName: "رهام",
+        fieldOfWork: "مشاوره مدیریت",
+        websiteUrl: "https://rohamconsult.ir",
+      },
+      locationInfo: {
+        address: "مشهد، احمدآباد، خیابان راهنمایی، پلاک ۱۲، واحد ۵",
+        province: "خراسان رضوی",
+        city: "مشهد",
+        fixedPhone: "05137654321",
+        postalCode: "9188812345",
+        plateNumber: "12",
+        unit: "5",
+      },
+    },
+  },
 ];
 
 const total_pages = businessRequests.length;
@@ -115,6 +291,12 @@ export default function BusinessRequests() {
   const [sortDir, setSortDir] = useState("");
   const [pageSizeInput, setPageSizeInput] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setSelectedProfile(null);
+  };
 
   useEffect(() => {
     if (!toast) return;
@@ -273,6 +455,10 @@ export default function BusinessRequests() {
                     <Button
                       variant="primary"
                       className="min-w-[140px] rounded-xl bg-[linear-gradient(135deg,#0f8bff,#2152ff)] text-base font-semibold shadow-[var(--elevation-2)] hover:brightness-110"
+                      onClick={() => {
+                        setSelectedProfile(request.profileDetails);
+                        setDialogOpen(true);
+                      }}
                     >
                       مشاهده جزئیات
                     </Button>
@@ -288,6 +474,19 @@ export default function BusinessRequests() {
         <div className="fixed left-4 bottom-6 z-50 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 shadow-lg">
           {toast}
         </div>
+      )}
+
+      {selectedProfile && (
+        <DetailsDialog
+          open={dialogOpen}
+          onCloseAction={closeDialog}
+          profile={selectedProfile}
+          footerActions={[
+            { id: "reject", label: "رد کردن", tone: "danger", onClick: closeDialog },
+            { id: "suspend", label: "معلق کردن", tone: "warning", onClick: closeDialog },
+            { id: "approve", label: "قبول کردن", tone: "success", onClick: closeDialog },
+          ]}
+        />
       )}
     </section>
   );

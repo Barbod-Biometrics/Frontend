@@ -108,7 +108,7 @@ export function Header({
       <div className="flex items-center gap-5">
         <button
           type="button"
-          onClick={onAvatarClickAction}
+          onClick={() => window.location.href = '/user-contact'}
           aria-label="???? ??????"
           className={clsx(
             "flex h-10 w-10 items-center justify-center rounded-full border transition",

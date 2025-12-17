@@ -22,7 +22,7 @@ export function AccountInfoCard({
   const getStatusConfig = () => {
     const status = verificationStatus.toLowerCase();
     
-    if (status.includes('تأیید') || status.includes('verified') || status === 'verified') {
+    if (status.includes('تأیید') || status.includes('verified') || status === 'approved') {
       return {
         color: 'text-emerald-500',
         icon: <CircleCheck className="w-4 h-4" />,
@@ -34,7 +34,7 @@ export function AccountInfoCard({
       return {
         color: 'text-amber-500',
         icon: <AlertCircle className="w-4 h-4" />,
-        text: 'در حال بررسی'
+        text: 'در انتظار تایید'
       };
     }
     

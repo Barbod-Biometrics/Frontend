@@ -123,13 +123,15 @@ export default function LivenessCheckPage() {
             dir="rtl"
         >
             {/* Close/Back button */}
-            <button
+            <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => router.push("/")}
-                className="fixed top-4 left-4 z-10 p-2 rounded-full bg-[color:var(--md-sys-color-surface-container-high)] hover:bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)] transition-colors"
+                className="fixed top-4 left-4 z-10 h-auto w-auto p-2 rounded-full bg-[color:var(--md-sys-color-surface-container-high)] hover:bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)]"
                 aria-label="بازگشت"
             >
                 <ArrowRight size={24} />
-            </button>
+            </Button>
 
             <AnimatePresence mode="wait">
                 {/* Phase 1: Permission Request */}

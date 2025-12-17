@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { cn } from './ui/Button';
+import { cn } from '../lib/utils';
 
 interface NotificationProps {
   message: string;

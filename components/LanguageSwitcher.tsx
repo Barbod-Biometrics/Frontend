@@ -35,23 +35,26 @@ export function LanguageSwitcher() {
         >
           <div className="py-1">
             <div className={`px-4 py-2 text-sm text-[color:var(--text-secondary)] border-b border-[color:var(--border-hairline)] ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
-              {'\u0632\u0628\u0627\u0646'} / Language
+            {'\u0632\u0628\u0627\u0646'} / Language
             </div>
             {languageOptions.map((option) => (
-              <button
+              <Button
                 key={option.value}
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                     setLanguage(option.value);
                     setIsOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)] ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}
+                className={`w-full h-auto min-w-0 justify-between px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)] ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}
               >
                 <div className={`flex flex-col ${dir === 'rtl' ? 'items-end' : 'items-start'}`}>
                   <span className="font-medium">{option.label}</span>
                   <span className="text-xs text-[color:var(--text-secondary)]">{option.helper}</span>
                 </div>
                 {language === option.value && <Check className="h-4 w-4 text-[color:var(--brand-azure)]" />}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

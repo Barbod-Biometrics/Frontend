@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { cn } from './Button';
+import { cn } from '../../lib/utils';
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body-lg' | 'body-md' | 'body-sm' | 'caption';
 
@@ -23,7 +23,7 @@ export function Typography({
         (variant.startsWith('h') ? (variant as React.ElementType) : 'p');
 
     const styles = {
-        h1: 'text-display-large text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]',
+        h1: 'text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05]',
         h2: 'text-4xl md:text-5xl font-bold tracking-tight',
         h3: 'text-3xl md:text-4xl font-bold tracking-tight',
         h4: 'text-2xl md:text-3xl font-bold tracking-tight',
@@ -36,8 +36,8 @@ export function Typography({
     };
 
     const colors = {
-        default: 'text-[color:var(--md-sys-color-on-surface)]',
-        muted: 'text-[color:var(--md-sys-color-on-surface-variant)]',
+        default: 'text-foreground',
+        muted: 'text-muted-foreground',
     };
 
     // Default color logic: Headings are default, body is often muted but let's stick to default for now and let className override

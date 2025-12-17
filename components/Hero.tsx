@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+
 import { Button } from "./ui/Button";
 import { Section } from "./ui/Section";
 import { Container } from "./ui/Container";
@@ -36,17 +37,17 @@ const heroCopy: Record<Language, HeroCopy> = {
     ],
   },
   [Language.FA]: {
-    badge: "بدون بار عملیاتی",
-    headingTop: "مقیاس‌دهی آنبوردینگ بیومتریک",
-    headingHighlight: "بدون بار عملیاتی",
+    badge: "احراز هویت دیجیتال",
+    headingTop: "احراز هویت دیجیتال",
+    headingHighlight: "سریع، امن و هوشمند",
     description:
-      "باربد تشخیص چهره، تست زنده‌بودن، OCR اسناد و بیومتریک صوتی را در یک SDK واحد یکپارچه می‌کند. سفرهای کاربری مطابق مقررات بسازید، بررسی پرونده‌ها را خودکار کنید و سریع‌تر از کنار هم چیدن ابزارهای جداگانه، آن را به سیستم‌های اصلی پیوند دهید.",
-    primaryCta: "شروع سریع",
+      "پلتفرم ما با ترکیب فناوری تشخیص چهره، تحلیل مدارک هویتی و هوش مصنوعی، فرآیند احراز هویت کاربران را برای کسب‌وکارها ساده، امن و مقیاس‌پذیر می‌سازد.",
+    primaryCta: "شروع کنید",
     secondaryCta: "مشاهده دمو",
     stats: [
-      { value: "۱٫۶میلیون+", label: "چک روزانه" },
-      { value: "<۳۰ثانیه", label: "زمان احراز هویت" },
-      { value: "۹۹٫۹٪", label: "دقت شناسایی" },
+      { value: "1.6M+", label: "بررسی روزانه" },
+      { value: "<30s", label: "زمان احراز هویت" },
+      { value: "99.9%", label: "پایداری سرویس" },
     ],
   },
 };
@@ -64,14 +65,10 @@ export function Hero({ language, theme, dir }: HeroProps) {
   const isFa = language === Language.FA;
 
   return (
-    <Section
-      spacing="lg"
-      className={`${isFa ? "font-vazirmatn" : ""}`}
-      dir={contentDir}
-    >
-      <Container className="flex flex-col items-center text-center overflow-visible relative z-10 min-h-[800px]">
-        <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
-          <div className="w-[220%] max-w-none h-[1100px] md:h-[1400px] opacity-85 -translate-y-32 md:-translate-y-48">
+    <Section spacing="lg" className={isFa ? "font-vazirmatn" : ""} dir={contentDir}>
+      <Container className="relative z-10 flex min-h-[800px] flex-col items-center overflow-visible text-center">
+        <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
+          <div className="h-[1100px] w-[220%] max-w-none -translate-y-32 opacity-85 md:h-[1400px] md:-translate-y-48">
             <TopologicalFace theme={theme} />
           </div>
         </div>
@@ -80,26 +77,31 @@ export function Hero({ language, theme, dir }: HeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative flex flex-col flex-grow w-full"
+          className="relative flex w-full flex-grow flex-col"
         >
-          {/* Centered Content: Title & Description */}
-          <div className="flex-grow flex flex-col justify-center items-center space-y-8 lg:space-y-10">
+          <div className="flex flex-grow flex-col items-center justify-center space-y-8 lg:space-y-10">
             <Typography variant="h1" component="h1">
-              <span className="block mb-2 lg:mb-4">{copy.headingTop}</span>
+              <span className="mb-2 block lg:mb-4">{copy.headingTop}</span>
               <span className="text-brand-gradient">{copy.headingHighlight}</span>
             </Typography>
 
-            <Typography variant="body-lg" className="max-w-3xl text-center opacity-90">
+            <Typography
+              variant="body-lg"
+              className={`max-w-3xl text-center ${
+                theme === Theme.LIGHT
+                  ? "text-[color:var(--md-sys-color-on-surface)] opacity-85"
+                  : "opacity-90"
+              }`}
+            >
               {copy.description}
             </Typography>
           </div>
 
-          {/* Bottom Content: Buttons & Stats */}
-          <div className="mt-auto flex flex-col items-center w-full pt-12 lg:pt-20">
-            <div className="flex flex-col sm:flex-row sm:justify-center gap-6 pb-12 lg:pb-16">
+          <div className="mt-auto flex w-full flex-col items-center pt-12 lg:pt-20">
+            <div className="flex flex-col gap-6 pb-12 sm:flex-row sm:justify-center lg:pb-16">
               <Button
                 size="lg"
-                className="h-14 lg:h-16 px-12 lg:px-16 text-lg rounded-full shadow-[var(--elevation-2)] hover:shadow-[var(--elevation-3)] transition-all hover:-translate-y-1 min-w-[180px]"
+                className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-1 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
                 onClick={() => router.push("/login")}
               >
                 {copy.primaryCta}
@@ -107,18 +109,22 @@ export function Hero({ language, theme, dir }: HeroProps) {
               <Button
                 variant="secondary"
                 size="lg"
-                className="h-14 lg:h-16 px-12 lg:px-16 text-lg rounded-full transition-all min-w-[180px]"
+                className="h-14 min-w-[180px] rounded-full px-12 text-lg transition-all lg:h-16 lg:px-16"
                 onClick={() => router.push("/liveness-check")}
               >
                 {copy.secondaryCta}
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-8 lg:gap-12 w-full max-w-5xl">
+            <div className="grid w-full max-w-5xl grid-cols-3 gap-8 lg:gap-12">
               {copy.stats.map((stat) => (
-                <div key={stat.label} className="text-center group cursor-default">
-                  <div className="mb-2 text-3xl sm:text-4xl lg:text-5xl font-bold text-[color:var(--md-sys-color-on-surface)] tracking-tight transition-colors group-hover:text-[color:var(--md-sys-color-primary)]">{stat.value}</div>
-                  <div className="text-xs sm:text-sm lg:text-base font-medium text-[color:var(--md-sys-color-on-surface-variant)] uppercase tracking-wider">{stat.label}</div>
+                <div key={stat.label} className="group cursor-default text-center">
+                  <div className="mb-2 text-3xl font-bold tracking-tight text-[color:var(--md-sys-color-on-surface)] transition-colors group-hover:text-[color:var(--md-sys-color-primary)] sm:text-4xl lg:text-5xl">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs font-medium uppercase tracking-wider text-[color:var(--md-sys-color-on-surface-variant)] sm:text-sm lg:text-base">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>

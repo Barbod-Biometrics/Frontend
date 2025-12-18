@@ -6,6 +6,7 @@ import { Button } from "../../ui/Button";
 import clsx from "clsx";
 import type { BusinessProfile } from "../../../types/businessProfile";
 import { DetailsDialog } from "./detailsDialogue";
+import { fetchAdminProfiles, type AdminProfileSummary } from "../../../lib/api/adminProfiles";
 
 type BusinessStatus = "verified" | "pending" | "rejected" | "draft";
 
@@ -43,6 +44,75 @@ const statusMeta: Record<
     dotClass: "bg-[#0f8bff]",
     textClass: "text-[#0f8bff]",
   },
+};
+
+const mapProfileType = (raw?: string): BusinessProfile["type"] => {
+  const normalized = (raw ?? "").toLowerCase();
+  if (normalized === "business") return "legal";
+  if (normalized === "personal") return "real";
+  return "real";
+};
+
+const mapStatus = (raw?: string): BusinessStatus => {
+  const normalized = (raw ?? "").toLowerCase();
+  if (normalized === "verified") return "verified";
+  if (normalized === "rejected") return "rejected";
+  if (normalized === "draft") return "draft";
+  return "pending";
+};
+
+const mapAdminProfileToRequest = (profile: AdminProfileSummary): BusinessRequest => {
+  const type = mapProfileType(profile.profile_type);
+  const name = profile.profile_name || profile.owner_name || "";
+  const initials = (name.trim() || "?").slice(0, 1);
+  const status = mapStatus(profile.verification_status);
+
+  return {
+    id: profile.id.toString(),
+    name,
+    type: type === "legal" ? "حقوقی" : "حقیقی",
+    address: "",
+    status,
+    initials,
+    profileDetails: {
+      id: profile.id.toString(),
+      name,
+      type,
+      verificationStatus: profile.verification_status,
+      isActive: profile.is_active,
+      createdAt: profile.created_at,
+      personalInfo: {
+        firstName: profile.owner_name || "",
+        lastName: "",
+        nationalId: profile.national_id || "",
+        birthDate: "",
+        phone: profile.mobile_number || "",
+      },
+      businessInfo:
+        type === "legal"
+          ? {
+              brandName: name,
+              legalName: name,
+              fieldOfWork: "",
+              websiteUrl: "",
+              businessNationalId: "",
+            }
+          : {
+              brandName: name,
+              fieldOfWork: "",
+              websiteUrl: "",
+            },
+      locationInfo: {
+        address: "",
+        province: "",
+        city: "",
+        fixedPhone: "",
+        postalCode: "",
+        plateNumber: "",
+        unit: "",
+      },
+    },
+  };
 };
 
 const businessRequests: BusinessRequest[] = [
@@ -230,8 +300,6 @@ const businessRequests: BusinessRequest[] = [
   },
 ];
 
-const total_pages = businessRequests.length;
-
 const SelectPill = ({
   value,
   onChange,
@@ -290,10 +358,12 @@ const SelectPill = ({
 
 export default function BusinessRequests() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<BusinessStatus | "">("");
   const [sortBy, setSortBy] = useState("");
   const [sortDir, setSortDir] = useState("");
-  const [pageSizeInput, setPageSizeInput] = useState("");
+  const [pageSizeInput, setPageSizeInput] = useState("1");
+  const [requests, setRequests] = useState<BusinessRequest[]>(businessRequests);
+  const [totalPages, setTotalPages] = useState<number>(Math.max(businessRequests.length, 1));
   const [toast, setToast] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
@@ -308,46 +378,63 @@ export default function BusinessRequests() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const filteredRequests = useMemo(() => {
-    let data = [...businessRequests];
+  useEffect(() => {
+    let cancelled = false;
 
-    if (searchTerm.trim()) {
-      const q = searchTerm.trim().toLowerCase();
-      data = data.filter(
-        (item) =>
-          item.name.toLowerCase().includes(q) ||
-          item.type.toLowerCase().includes(q) ||
-          item.address.toLowerCase().includes(q),
-      );
-    }
+    const fetchData = async () => {
+      const pageNumber = pageSizeInput.trim() ? Number(pageSizeInput) : 1;
 
-    if (statusFilter) {
-      data = data.filter((item) => item.status === statusFilter);
-    }
-
-    if (sortBy) {
-      const dir = sortDir === "desc" ? -1 : 1;
-      data.sort((a, b) => {
-        const nameCompare = a.name.localeCompare(b.name);
-        return nameCompare * dir;
-      });
-    }
-
-    const pageSizeNumber = pageSizeInput.trim() ? Number(pageSizeInput) : null;
-    if (pageSizeNumber !== null) {
-      if (!Number.isFinite(pageSizeNumber) || pageSizeNumber <= 0 || pageSizeNumber > total_pages) {
-        setToast("لطفا یک عدد وارد مثبت وارد کنید");
-        return [];
+      if (!Number.isFinite(pageNumber) || pageNumber <= 0) {
+        setToast("U,OúU?Oŕ UOUc O1O_O_ U^OŕOñO_ U.O®O\"O¦ U^OŕOñO_ UcU+UOO_");
+        setRequests([]);
+        return;
       }
-      data = data.slice(0, pageSizeNumber);
-    }
 
-    return data;
+      try {
+        const response = await fetchAdminProfiles({
+          page: pageNumber,
+          status: statusFilter || undefined,
+          search: searchTerm.trim() || undefined,
+          sortBy: sortBy || undefined,
+          sortOrder: sortDir || undefined,
+        });
+
+        if (cancelled) return;
+
+        const total = response?.total_pages ?? Math.max(businessRequests.length, 1);
+        if (total && pageNumber > total) {
+          setToast("U,OúU?O UOUc O1O_O_ U^OOñO_ U.O®O\"O¦ U^OOñO_ UcU+UOO_");
+          setRequests([]);
+          setTotalPages(total);
+          return;
+        }
+
+        const mapped = (response?.profiles ?? []).map(mapAdminProfileToRequest);
+        setRequests(mapped.length ? mapped : businessRequests);
+        setTotalPages(total);
+      } catch (error) {
+        if (cancelled) return;
+        console.warn("businessRequests fetch failed", error);
+        setRequests(businessRequests);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      cancelled = true;
+    };
   }, [searchTerm, statusFilter, sortBy, sortDir, pageSizeInput]);
 
+  const filteredRequests = useMemo(() => requests, [requests]);
+
   const pageSizeOptions = useMemo(
-    () => Array.from({ length: total_pages }, (_, idx) => ({ label: String(idx + 1), value: String(idx + 1) })),
-    [],
+    () =>
+      Array.from({ length: Math.max(totalPages, 1) }, (_, idx) => ({
+        label: String(idx + 1),
+        value: String(idx + 1),
+      })),
+    [totalPages],
   );
 
   return (

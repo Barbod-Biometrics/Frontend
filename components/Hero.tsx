@@ -108,7 +108,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
               <Button
                 variant="gradient"
                 size="lg"
-                className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-1 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
+                className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-0 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
                 onClick={() => router.push("/login")}
               >
                 {copy.primaryCta}

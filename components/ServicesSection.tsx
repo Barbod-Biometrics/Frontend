@@ -46,7 +46,7 @@ function ComingSoonBadge({
     <span
       dir={dir}
       className={`pointer-events-none absolute -top-4 ${
-        dir === "rtl" ? "right-6" : "left-6"
+        dir === "rtl" ? "left-6" : "right-6"
       } inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold tracking-wide backdrop-blur-md`}
       style={{
         background,

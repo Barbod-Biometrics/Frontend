@@ -230,7 +230,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
 
               <div className="hidden items-center gap-2 md:flex">
                 <Button
-                  variant="gradient"
+                  variant="monochrome"
                   size="lg"
                   className="h-12 rounded-full px-9 text-base"
                   onClick={() => handleNavClick("/login")}
@@ -292,7 +292,6 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
               ))}
               <div className="grid gap-2 pt-2">
                 <Button
-                  variant="gradient"
                   size="lg"
                   className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
                   onClick={() => handleNavClick("/login")}

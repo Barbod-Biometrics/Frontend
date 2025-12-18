@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import { AccountKind, BusinessProfile } from "../../../types/businessProfile";
+import { Button } from "../../ui/Button";
 
 type ProfileDetailsDialogProps = {
   open: boolean;
@@ -153,6 +154,11 @@ export function DetailsDialog({ open, onCloseAction, profile, footerActions }: P
           {business && (
             <SectionCard title="اطلاعات کسب و کار">
               <FieldRow icon={<Building2 className="h-4 w-4" />} label="نام برند" value={business.brandName ?? business.legalName} />
+              <FieldRow
+                icon={<IdCard className="h-4 w-4" />}
+                label="شناسه ملی کسب و کار"
+                value={profile.type === "legal" ? business.businessNationalId ?? "-" : undefined}
+              />
               <FieldRow icon={<BriefcaseBusiness className="h-4 w-4" />} label="زمینه فعالیت" value={business.fieldOfWork} />
               <FieldRow icon={<Globe className="h-4 w-4" />} label="آدرس وب‌سایت" value={business.websiteUrl} />
             </SectionCard>
@@ -166,7 +172,7 @@ export function DetailsDialog({ open, onCloseAction, profile, footerActions }: P
                 <FieldRow icon={<MapPin className="h-4 w-4" />} label="آدرس کامل" value={location.address} />
                 <FieldRow icon={<Phone className="h-4 w-4" />} label={isBusinessAccount ? "تلفن ثابت" : "شماره تماس" } value={location.fixedPhone} />
                 <FieldRow icon={<MapPin className="h-4 w-4" />} label="کد پستی" value={location.postalCode} />
-                {isBusinessAccount && (
+                {(isBusinessAccount || profile.type === "real") && (
                   <>
                     <FieldRow icon={<MapPin className="h-4 w-4" />} label="پلاک" value={location.plateNumber} />
                     <FieldRow icon={<MapPin className="h-4 w-4" />} label="واحد" value={location.unit} />
@@ -184,17 +190,18 @@ export function DetailsDialog({ open, onCloseAction, profile, footerActions }: P
             <Divider />
             <footer className="flex flex-wrap items-center justify-end gap-2 px-6 py-4">
               {footerActions.map((action) => (
-                <button
+                <Button
                   key={action.id}
                   type="button"
                   onClick={action.onClick}
+                  variant="primary"
                   className={clsx(
                     "rounded-full px-4 py-2 text-sm font-semibold shadow-[var(--elevation-1)] transition hover:brightness-105",
                     toneStyles[action.tone ?? "neutral"],
                   )}
                 >
                   {action.label}
-                </button>
+                </Button>
               ))}
             </footer>
           </>

@@ -70,6 +70,7 @@ const businessRequests: BusinessRequest[] = [
         legalName: "شرکت توسعه آینده سازان",
         fieldOfWork: "راهکارهای ابری",
         websiteUrl: "https://ayandeh.co",
+        businessNationalId: "10345678901",
       },
       locationInfo: {
         address: "تهران، سعادت‌آباد، خیابان سرو، پلاک ۱۲، واحد ۳",
@@ -105,6 +106,7 @@ const businessRequests: BusinessRequest[] = [
         brandName: "بازرگانی صالح",
         fieldOfWork: "توزیع مواد غذایی",
         websiteUrl: "https://salehtrade.ir",
+        businessNationalId: "10223334455",
       },
       locationInfo: {
         address: "اصفهان، میدان نقش جهان، کوچه آذین، پلاک ۸، واحد ۱",
@@ -141,6 +143,7 @@ const businessRequests: BusinessRequest[] = [
         legalName: "هولدینگ پارسا",
         fieldOfWork: "خدمات هوش مصنوعی",
         websiteUrl: "https://parsa.ai",
+        businessNationalId: "10998887766",
       },
       locationInfo: {
         address: "شیراز، بلوار چمران، خیابان دنا، پلاک ۴۵، واحد ۶",
@@ -177,6 +180,7 @@ const businessRequests: BusinessRequest[] = [
         legalName: "گروه صنعتی نیکان",
         fieldOfWork: "قطعات خودرو",
         websiteUrl: "https://nikanparts.com",
+        businessNationalId: "10011223344",
       },
       locationInfo: {
         address: "تبریز، خیابان ولیعصر، کوچه یاس، پلاک ۹، واحد ۲",

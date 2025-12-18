@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileText, Fingerprint, Mic, ScanFace } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { useLanguage } from "../lib/useLanguage";
 import { Language } from "../types";
@@ -12,8 +13,56 @@ import { Typography } from "./ui/Typography";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
 
+type ServiceId = "face" | "liveness" | "ocr" | "voice";
+
+function hexToRgb(hexColor: string): { r: number; g: number; b: number } | null {
+  const normalized = hexColor.replace("#", "").trim();
+  if (normalized.length !== 6) return null;
+
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null;
+  return { r, g, b };
+}
+
+function ComingSoonBadge({
+  label,
+  accentHex,
+  dir,
+}: {
+  label: string;
+  accentHex: string;
+  dir: "rtl" | "ltr";
+}) {
+  const rgb = hexToRgb(accentHex) ?? { r: 255, g: 255, b: 255 };
+  const accent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+  const border = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.34)`;
+  const background = `linear-gradient(135deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.22) 0%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08) 100%)`;
+  const glow = `0 10px 28px rgba(0,0,0,0.18)`;
+
+  return (
+    <span
+      dir={dir}
+      className={`pointer-events-none absolute -top-4 ${
+        dir === "rtl" ? "left-6" : "right-6"
+      } inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold tracking-wide backdrop-blur-md`}
+      style={{
+        background,
+        border: `1px solid ${border}`,
+        color: accent,
+        boxShadow: glow,
+      }}
+    >
+      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent }} />
+      <span className="leading-none">{label}</span>
+    </span>
+  );
+}
+
 interface Service {
-  id: string;
+  id: ServiceId;
   title: string;
   description: string;
   imageGradient: string;
@@ -129,11 +178,18 @@ const PROGRESS_DURATION = 5000; // 5 seconds per slide
 
 export function ServicesSection() {
   const { language, dir } = useLanguage();
+  const router = useRouter();
   const services = servicesData[language];
   const copy = titles[language];
 
-  const [activeId, setActiveId] = useState(services[0].id);
+  const [activeId, setActiveId] = useState<ServiceId>(services[0].id);
   const timeoutRef = useRef<number | null>(null);
+
+  const serviceHref: Partial<Record<ServiceId, string>> = {
+    face: "/services/face-recognition",
+    liveness: "/services/liveness",
+    ocr: "/services/ocr",
+  };
 
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -148,14 +204,19 @@ export function ServicesSection() {
     };
   }, [activeId, services]);
 
-  const handleTabClick = (id: string) => {
+  const handleTabClick = (id: ServiceId) => {
     setActiveId(id);
   };
 
   const currentService = services.find((s) => s.id === activeId) || services[0];
+  const learnMoreHref = serviceHref[currentService.id];
+  const isComingSoonService = currentService.id === "voice";
+  const comingSoonLabel = language === Language.FA ? "به زودی" : "Coming soon!";
 
   const iconColor = (service: Service, isActive: boolean) =>
     isActive ? service.colorTo : "var(--text-secondary)";
+
+  const ctaArrow = dir === "rtl" ? "←" : "→";
 
   return (
     <Section dir={dir}>
@@ -282,7 +343,11 @@ export function ServicesSection() {
 
                   <Button
                     variant="secondary"
-                    className="px-10 py-4 rounded-full text-base font-medium group h-12"
+                    className="relative px-10 py-4 rounded-full text-base font-medium group h-12"
+                    disabled={isComingSoonService || !learnMoreHref}
+                    onClick={() => {
+                      if (learnMoreHref) router.push(learnMoreHref);
+                    }}
                     iconTrailing={
                       <span
                         className={`transition-transform duration-200 ${
@@ -291,11 +356,18 @@ export function ServicesSection() {
                             : "group-hover:translate-x-1"
                         }`}
                       >
-                        {dir === "rtl" ? "←" : "→"}
+                        {ctaArrow}
                       </span>
                     }
                   >
                     {copy.button}
+                    {isComingSoonService ? (
+                      <ComingSoonBadge
+                        label={comingSoonLabel}
+                        accentHex={currentService.colorFrom}
+                        dir={dir}
+                      />
+                    ) : null}
                   </Button>
                 </motion.div>
               </AnimatePresence>

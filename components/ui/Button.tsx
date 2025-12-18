@@ -12,7 +12,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
+          "bg-primary text-primary-foreground shadow-[var(--elevation-1)] hover:opacity-90 hover:shadow-[var(--elevation-2)]",
+        monochrome:
           "bg-secondary text-secondary-foreground shadow-[var(--elevation-1)] hover:opacity-90 hover:shadow-[var(--elevation-2)]",
+        gradient:
+          "[background:var(--button-gradient)] text-[color:var(--md-sys-color-on-secondary)] shadow-[var(--elevation-1)] hover:opacity-90 hover:shadow-[var(--elevation-2)]",
         secondary:
           "bg-card text-card-foreground border border-border/30 shadow-[var(--elevation-1)] hover:bg-muted",
         ghost: "bg-transparent text-foreground hover:bg-muted",

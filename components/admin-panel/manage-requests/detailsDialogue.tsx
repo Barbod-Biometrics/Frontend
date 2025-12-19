@@ -86,13 +86,7 @@ const humanizeAccountType = (type: AccountKind) =>
 
 const formatDate = (input?: string | null) => {
   if (!input) return "";
-  try {
-    const date = new Date(input);
-    if (Number.isNaN(date.getTime())) return input;
-    return date.toLocaleDateString("fa-IR");
-  } catch {
-    return input;
-  }
+  return input;
 };
 
 export function DetailsDialog({ open, onCloseAction, profile, footerActions }: ProfileDetailsDialogProps) {

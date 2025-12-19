@@ -6,7 +6,11 @@ import { Button } from "../../ui/Button";
 import clsx from "clsx";
 import type { BusinessProfile } from "../../../types/businessProfile";
 import { DetailsDialog } from "./detailsDialogue";
-import { fetchAdminProfiles, type AdminProfileSummary } from "../../../lib/api/adminProfiles";
+import {
+  fetchAdminProfiles,
+  fetchAdminProfileDetails,
+  type AdminProfileSummary,
+} from "../../../lib/api/adminProfiles";
 
 type BusinessStatus = "verified" | "pending" | "rejected" | "draft";
 
@@ -546,9 +550,17 @@ export default function BusinessRequests() {
                     <Button
                       variant="primary"
                       className="min-w-[140px] rounded-xl bg-[linear-gradient(135deg,#0f8bff,#2152ff)] text-base font-semibold shadow-[var(--elevation-2)] hover:brightness-110"
-                      onClick={() => {
-                        setSelectedProfile(request.profileDetails);
-                        setDialogOpen(true);
+                      onClick={async () => {
+                        try {
+                          const details = await fetchAdminProfileDetails(request.id);
+                          const profile = details ?? request.profileDetails;
+                          setSelectedProfile(profile);
+                          setDialogOpen(Boolean(profile));
+                        } catch (error) {
+                          console.warn("fetchAdminProfileDetails failed", error);
+                          setSelectedProfile(request.profileDetails);
+                          setDialogOpen(true);
+                        }
                       }}
                     >
                       مشاهده جزئیات

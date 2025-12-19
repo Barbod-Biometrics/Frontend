@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
 import { Button } from "./ui/Button";
 import { Logo } from "./Logo";
@@ -13,6 +14,7 @@ import { setTheme } from "../store/themeSlice";
 import { Theme, Language } from "../types";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "../lib/useLanguage";
+import { selectIsAdmin, selectIsAuthenticated } from "../store/loginSlice";
 
 import Image from "next/image";
 
@@ -69,7 +71,10 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const dispatch = useDispatch();
+  const router = useRouter();
   const theme = useSelector((state: RootState) => state.theme.theme);
+  const isAdmin = useSelector(selectIsAdmin);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const { language, dir } = useLanguage();
   const copy = navCopy[language];
   const isFa = language === Language.FA;
@@ -103,6 +108,19 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
 
   const handleThemeToggle = () => {
     dispatch(setTheme(theme === Theme.DARK ? Theme.LIGHT : Theme.DARK));
+  };
+
+  const handleLoginClick = () => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
+    if (isAdmin) {
+      router.push("/admin/test-admin-panel");
+    } else {
+      router.push("/user/test-sidebar");
+    }
   };
 
   useEffect(() => {
@@ -233,7 +251,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
                   variant="monochrome"
                   size="lg"
                   className="h-12 rounded-full px-9 text-base"
-                  onClick={() => handleNavClick("/login")}
+                  onClick={handleLoginClick}
                 >
                   {copy.signup}
                 </Button>
@@ -294,7 +312,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
                 <Button
                   size="lg"
                   className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
-                  onClick={() => handleNavClick("/login")}
+                  onClick={handleLoginClick}
                 >
                   {copy.signup}
                 </Button>

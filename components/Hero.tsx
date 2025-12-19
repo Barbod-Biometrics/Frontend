@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 import { Button } from "./ui/Button";
 import { Section } from "./ui/Section";
@@ -10,6 +11,8 @@ import { Container } from "./ui/Container";
 import { Typography } from "./ui/Typography";
 import TopologicalFace from "./TopologicalFace";
 import { Theme, Language } from "../types";
+import { selectIsAdmin, selectIsAuthenticated } from "../store/loginSlice";
+import type { RootState } from "../store/store";
 
 type HeroCopy = {
   badge: string;
@@ -60,9 +63,26 @@ interface HeroProps {
 
 export function Hero({ language, theme, dir }: HeroProps) {
   const router = useRouter();
+  const isAdmin = useSelector(selectIsAdmin);
+  const isAuthenticated = useSelector((state: RootState) =>
+    selectIsAuthenticated(state)
+  );
   const contentDir = dir ?? (language === Language.FA ? "rtl" : "ltr");
   const copy = heroCopy[language];
   const isFa = language === Language.FA;
+
+  const handlePrimaryClick = () => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
+    if (isAdmin) {
+      router.push("/admin/test-admin-panel");
+    } else {
+      router.push("/user/test-sidebar");
+    }
+  };
 
   return (
     <Section
@@ -109,7 +129,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
                 variant="gradient"
                 size="lg"
                 className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-0 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
-                onClick={() => router.push("/login")}
+                onClick={handlePrimaryClick}
               >
                 {copy.primaryCta}
               </Button>

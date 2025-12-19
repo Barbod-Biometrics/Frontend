@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { requestOtp, verifyOtp, VerifyOtpResponse } from "../lib/auth-api";
-import { saveAuth } from "../lib/auth-storage";
+import { getIsAdmin, saveAuth } from "../lib/auth-storage";
 import type { RootState } from "./store";
 
 type Step = "login" | "otp";
@@ -101,6 +101,14 @@ const loginSlice = createSlice({
     setIsHovered(state, action: PayloadAction<boolean>) {
       state.isHovered = action.payload;
     },
+    hydrateFromStorage(state) {
+      if (typeof window === "undefined") return;
+      const isAdmin = getIsAdmin();
+      if (typeof isAdmin === "boolean") {
+        state.isAdmin = isAdmin;
+        state.step = "otp";
+      }
+    },
     resetLogin(state) {
       state.step = "login";
       state.phoneNumber = "";
@@ -164,12 +172,15 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setIsHovered, resetLogin } = loginSlice.actions;
+export const { setIsHovered, resetLogin, hydrateFromStorage } =
+  loginSlice.actions;
 
 export const selectLogin = (state: RootState) => state.login;
 export const selectMaskedPhone = (state: RootState) =>
   maskPhoneNumber(state.login.phoneNumber);
 
 export const selectIsAdmin = (state: RootState) => state.login.isAdmin;
+export const selectIsAuthenticated = (state: RootState) =>
+  typeof state.login.isAdmin !== "undefined";
 
 export default loginSlice.reducer;

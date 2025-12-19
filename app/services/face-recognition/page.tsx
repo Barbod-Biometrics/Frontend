@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, CheckCircle, Shield, Users, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Footer } from "../../../components/Footer";
 import { Navbar } from "../../../components/Navbar";
@@ -82,6 +83,8 @@ const highlights: Highlight[] = [
 ];
 
 export default function FaceRecognitionPage() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] font-vazirmatn" dir="rtl">
       <Navbar />
@@ -97,9 +100,6 @@ export default function FaceRecognitionPage() {
                 transition={{ duration: 0.6 }}
                 className="text-right space-y-6"
               >
-                <span className="inline-flex items-center rounded-full border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-primary)]/10 px-4 py-2 text-xs font-semibold text-[color:var(--md-sys-color-primary)]">
-                  سرویس‌ها / تطبیق چهره
-                </span>
                 <Typography variant="h2" className="text-5xl font-bold leading-tight">
                   تطبیق چهره
                 </Typography>
@@ -109,13 +109,19 @@ export default function FaceRecognitionPage() {
                   طیف گسترده‌ای از سناریوهای هویت و تمامی فرآیندهای حساس هویتی قابل استفاده است.
                 </Typography>
                 <div className="flex flex-wrap gap-4 justify-end lg:justify-center">
-                  <Button size="lg" variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
+                  <Button
+                    size="lg"
+                    variant="monochrome"
+                    className="rounded-full px-10 shadow-[var(--elevation-2)]"
+                    onClick={() => router.push("/login")}
+                  >
                     درخواست سرویس
                   </Button>
                   <Button
                     size="lg"
                     variant="secondary"
                     className="rounded-full px-10"
+                    onClick={() => router.push("/liveness-check")}
                     iconTrailing={<ArrowLeft className="h-4 w-4" />}
                   >
                     تست سرویس
@@ -129,14 +135,14 @@ export default function FaceRecognitionPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="relative"
               >
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-[color:var(--md-sys-color-surface-container-high)] p-8">
+                <div className="relative rounded-3xl overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/50 bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] p-4">
                   <img
-                    src="/assets/images/face-recognition-1.jpg"
+                    src="/assets/images/face-reconition-4.jpg"
                     alt="تطبیق چهره"
-                    className="w-full h-auto rounded-2xl opacity-90"
+                    className="w-full h-auto rounded-2xl object-cover"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
                 </div>
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[color:var(--md-sys-color-primary)]/35 rounded-full blur-3xl opacity-60" />
                 <div className="absolute -top-6 -left-6 w-32 h-32 bg-[color:var(--md-sys-color-tertiary)]/35 rounded-full blur-3xl opacity-60" />
@@ -150,9 +156,6 @@ export default function FaceRecognitionPage() {
             <div className="pointer-events-none absolute inset-0 opacity-60 blur-3xl [background:radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(99,102,241,0.14),transparent_45%)]" />
 
             <div className="relative max-w-3xl space-y-3 text-right">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--md-sys-color-on-surface-variant)]">
-                ویژگی‌های کلیدی
-              </span>
               <Typography variant="h3" className="leading-tight">
                 قابلیت‌های پیشرفته برای تطبیق چهره
               </Typography>
@@ -230,6 +233,7 @@ export default function FaceRecognitionPage() {
                           size="lg"
                           variant="secondary"
                           className="rounded-full px-8"
+                          onClick={() => router.push("/liveness-check")}
                           iconTrailing={<ArrowLeft className="h-4 w-4" />}
                         >
                           {highlight.ctaLabel}

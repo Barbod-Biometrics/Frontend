@@ -84,6 +84,19 @@ const FieldRow = ({ icon, label, value }: { icon: React.ReactNode; label: string
 const humanizeAccountType = (type: AccountKind) =>
   type === "legal" ? "شخص حقوقی" : "شخص حقیقی";
 
+const fieldOfWorkLabelMap: Record<string, string> = {
+  "online-store": "فروشگاه آنلاین",
+  services: "خدمات",
+  "content-media": "محتوا / رسانه",
+  education: "آموزش",
+  other: "سایر",
+};
+
+const formatFieldOfWork = (value?: string | null) => {
+  if (!value) return "";
+  return fieldOfWorkLabelMap[value] ?? value;
+};
+
 const formatDate = (input?: string | null) => {
   if (!input) return "";
   return input;
@@ -153,7 +166,11 @@ export function DetailsDialog({ open, onCloseAction, profile, footerActions }: P
                 label="شناسه ملی کسب و کار"
                 value={profile.type === "legal" ? business.businessNationalId ?? "-" : undefined}
               />
-              <FieldRow icon={<BriefcaseBusiness className="h-4 w-4" />} label="زمینه فعالیت" value={business.fieldOfWork} />
+              <FieldRow
+                icon={<BriefcaseBusiness className="h-4 w-4" />}
+                label="زمینه فعالیت"
+                value={formatFieldOfWork(business.fieldOfWork)}
+              />
               <FieldRow icon={<Globe className="h-4 w-4" />} label="آدرس وب‌سایت" value={business.websiteUrl} />
             </SectionCard>
           )}

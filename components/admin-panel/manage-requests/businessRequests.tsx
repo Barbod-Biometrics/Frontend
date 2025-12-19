@@ -9,16 +9,19 @@ import { DetailsDialog } from "./detailsDialogue";
 import {
   fetchAdminProfiles,
   fetchAdminProfileDetails,
+  type AdminProfilesQuery,
   type AdminProfileSummary,
 } from "../../../lib/api/adminProfiles";
 
 type BusinessStatus = "verified" | "pending" | "rejected" | "draft";
+type SortBy = Exclude<AdminProfilesQuery["sortBy"], undefined> | "";
+type SortOrder = Exclude<AdminProfilesQuery["sortOrder"], undefined> | "";
 
 type BusinessRequest = {
   id: string;
   name: string;
   type: string;
-  address: string;
+  createdAt: string;
   status: BusinessStatus;
   initials: string;
   profileDetails: BusinessProfile;
@@ -65,6 +68,28 @@ const mapStatus = (raw?: string): BusinessStatus => {
   return "pending";
 };
 
+const formatCreatedAt = (value?: string) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const formatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value ?? "";
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+  const day = parts.find((part) => part.type === "day")?.value ?? "";
+  const hour = parts.find((part) => part.type === "hour")?.value ?? "";
+  const minute = parts.find((part) => part.type === "minute")?.value ?? "";
+  if (!year || !month || !day || !hour || !minute) return formatter.format(date);
+  return `${year}-${month}-${day}/${hour}:${minute}`;
+};
+
 const mapAdminProfileToRequest = (profile: AdminProfileSummary): BusinessRequest => {
   const type = mapProfileType(profile.profile_type);
   const name = profile.profile_name || profile.owner_name || "";
@@ -75,7 +100,7 @@ const mapAdminProfileToRequest = (profile: AdminProfileSummary): BusinessRequest
     id: profile.id.toString(),
     name,
     type: type === "legal" ? "حقوقی" : "حقیقی",
-    address: "",
+    createdAt: formatCreatedAt(profile.created_at),
     status,
     initials,
     profileDetails: {
@@ -118,191 +143,6 @@ const mapAdminProfileToRequest = (profile: AdminProfileSummary): BusinessRequest
     },
   };
 };
-
-const businessRequests: BusinessRequest[] = [
-  {
-    id: "1",
-    name: "شرکت آینده سازان",
-    type: "شخص حقوقی",
-    address: "تهران، سعادت‌آباد",
-    status: "rejected",
-    initials: "ش",
-    profileDetails: {
-      id: "req-1",
-      name: "شرکت آینده سازان",
-      type: "legal",
-      verificationStatus: "rejected",
-      personalInfo: {
-        firstName: "حمید",
-        lastName: "مظفری",
-        nationalId: "0123456789",
-        birthDate: "1985-03-14",
-        phone: "09123456789",
-      },
-      businessInfo: {
-        brandName: "آینده سازان",
-        legalName: "شرکت توسعه آینده سازان",
-        fieldOfWork: "راهکارهای ابری",
-        websiteUrl: "https://ayandeh.co",
-        businessNationalId: "10345678901",
-      },
-      locationInfo: {
-        address: "تهران، سعادت‌آباد، خیابان سرو، پلاک ۱۲، واحد ۳",
-        province: "تهران",
-        city: "تهران",
-        fixedPhone: "02122334455",
-        postalCode: "1998712345",
-        plateNumber: "12",
-        unit: "3",
-      },
-    },
-  },
-  {
-    id: "2",
-    name: "بازرگانی صالح",
-    type: "شخص حقیقی",
-    address: "اصفهان، میدان نقش جهان",
-    status: "pending",
-    initials: "ب",
-    profileDetails: {
-      id: "req-2",
-      name: "بازرگانی صالح",
-      type: "real",
-      verificationStatus: "pending",
-      personalInfo: {
-        firstName: "صالح",
-        lastName: "موسوی",
-        nationalId: "0654321987",
-        birthDate: "1990-07-22",
-        phone: "09135556677",
-      },
-      businessInfo: {
-        brandName: "بازرگانی صالح",
-        fieldOfWork: "توزیع مواد غذایی",
-        websiteUrl: "https://salehtrade.ir",
-        businessNationalId: "10223334455",
-      },
-      locationInfo: {
-        address: "اصفهان، میدان نقش جهان، کوچه آذین، پلاک ۸، واحد ۱",
-        province: "اصفهان",
-        city: "اصفهان",
-        fixedPhone: "03133778899",
-        postalCode: "8156712345",
-        plateNumber: "8",
-        unit: "1",
-      },
-    },
-  },
-  {
-    id: "3",
-    name: "هولدینگ پارسا",
-    type: "شخص حقوقی",
-    address: "شیراز، بلوار چمران",
-    status: "verified",
-    initials: "ه",
-    profileDetails: {
-      id: "req-3",
-      name: "هولدینگ پارسا",
-      type: "legal",
-      verificationStatus: "verified",
-      personalInfo: {
-        firstName: "فرشاد",
-        lastName: "پارسایی",
-        nationalId: "0789012345",
-        birthDate: "1982-11-09",
-        phone: "09172223344",
-      },
-      businessInfo: {
-        brandName: "پارسا",
-        legalName: "هولدینگ پارسا",
-        fieldOfWork: "خدمات هوش مصنوعی",
-        websiteUrl: "https://parsa.ai",
-        businessNationalId: "10998887766",
-      },
-      locationInfo: {
-        address: "شیراز، بلوار چمران، خیابان دنا، پلاک ۴۵، واحد ۶",
-        province: "فارس",
-        city: "شیراز",
-        fixedPhone: "07132221100",
-        postalCode: "7199812345",
-        plateNumber: "45",
-        unit: "6",
-      },
-    },
-  },
-  {
-    id: "4",
-    name: "گروه صنعتی نیکان",
-    type: "شخص حقوقی",
-    address: "تبریز، خیابان ولیعصر",
-    status: "rejected",
-    initials: "گ",
-    profileDetails: {
-      id: "req-4",
-      name: "گروه صنعتی نیکان",
-      type: "legal",
-      verificationStatus: "rejected",
-      personalInfo: {
-        firstName: "نادر",
-        lastName: "فرهادی",
-        nationalId: "0332211456",
-        birthDate: "1978-02-01",
-        phone: "09149998877",
-      },
-      businessInfo: {
-        brandName: "نیکان",
-        legalName: "گروه صنعتی نیکان",
-        fieldOfWork: "قطعات خودرو",
-        websiteUrl: "https://nikanparts.com",
-        businessNationalId: "10011223344",
-      },
-      locationInfo: {
-        address: "تبریز، خیابان ولیعصر، کوچه یاس، پلاک ۹، واحد ۲",
-        province: "آذربایجان شرقی",
-        city: "تبریز",
-        fixedPhone: "04135557788",
-        postalCode: "5136812345",
-        plateNumber: "9",
-        unit: "2",
-      },
-    },
-  },
-  {
-    id: "5",
-    name: "موسسه مشاوره رهام",
-    type: "شخص حقیقی",
-    address: "مشهد، احمدآباد",
-    status: "pending",
-    initials: "م",
-    profileDetails: {
-      id: "req-5",
-      name: "موسسه مشاوره رهام",
-      type: "real",
-      verificationStatus: "pending",
-      personalInfo: {
-        firstName: "رهام",
-        lastName: "سالاری",
-        nationalId: "0456321879",
-        birthDate: "1995-09-17",
-        phone: "09153054050",
-      },
-      businessInfo: {
-        brandName: "رهام",
-        fieldOfWork: "مشاوره مدیریت",
-        websiteUrl: "https://rohamconsult.ir",
-      },
-      locationInfo: {
-        address: "مشهد، احمدآباد، خیابان راهنمایی، پلاک ۱۲، واحد ۵",
-        province: "خراسان رضوی",
-        city: "مشهد",
-        fixedPhone: "05137654321",
-        postalCode: "9188812345",
-        plateNumber: "12",
-        unit: "5",
-      },
-    },
-  },
-];
 
 const SelectPill = ({
   value,
@@ -363,13 +203,14 @@ const SelectPill = ({
 export default function BusinessRequests() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<BusinessStatus | "">("");
-  const [sortBy, setSortBy] = useState("");
-  const [sortDir, setSortDir] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("");
+  const [sortDir, setSortDir] = useState<SortOrder>("");
   const [pageSizeInput, setPageSizeInput] = useState("1");
-  const [requests, setRequests] = useState<BusinessRequest[]>(businessRequests);
-  const [totalPages, setTotalPages] = useState<number>(Math.max(businessRequests.length, 1));
+  const [requests, setRequests] = useState<BusinessRequest[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [toast, setToast] = useState<string | null>(null);
   const [approveToast, setApproveToast] = useState<string | null>(null);
+  const [rejectToast, setRejectToast] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
   const closeDialog = () => {
@@ -388,6 +229,12 @@ export default function BusinessRequests() {
     const t = setTimeout(() => setApproveToast(null), 3000);
     return () => clearTimeout(t);
   }, [approveToast]);
+
+  useEffect(() => {
+    if (!rejectToast) return;
+    const t = setTimeout(() => setRejectToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [rejectToast]);
 
   const handleApproved = (profileId: string) => {
     setRequests((prev) =>
@@ -408,6 +255,27 @@ export default function BusinessRequests() {
       prev && prev.id === profileId ? { ...prev, verificationStatus: "verified" } : prev,
     );
     setApproveToast("تایید شد");
+  };
+
+  const handleRejected = (profileId: string) => {
+    setRequests((prev) =>
+      prev.map((item) =>
+        item.id === profileId
+          ? {
+              ...item,
+              status: "rejected",
+              profileDetails: {
+                ...item.profileDetails,
+                verificationStatus: "rejected",
+              },
+            }
+          : item,
+      ),
+    );
+    setSelectedProfile((prev) =>
+      prev && prev.id === profileId ? { ...prev, verificationStatus: "rejected" } : prev,
+    );
+    setRejectToast("رد شد");
   };
 
   useEffect(() => {
@@ -433,7 +301,7 @@ export default function BusinessRequests() {
 
         if (cancelled) return;
 
-        const total = response?.total_pages ?? Math.max(businessRequests.length, 1);
+        const total = Math.max(response?.total_pages ?? 0, 1);
         if (total && pageNumber > total) {
           setToast("U,OúU?O UOUc O1O_O_ U^OOñO_ U.O®O\"O¦ U^OOñO_ UcU+UOO_");
           setRequests([]);
@@ -442,12 +310,13 @@ export default function BusinessRequests() {
         }
 
         const mapped = (response?.profiles ?? []).map(mapAdminProfileToRequest);
-        setRequests(mapped.length ? mapped : businessRequests);
+        setRequests(mapped);
         setTotalPages(total);
       } catch (error) {
         if (cancelled) return;
         console.warn("businessRequests fetch failed", error);
-        setRequests(businessRequests);
+        setRequests([]);
+        setTotalPages(1);
       }
     };
 
@@ -494,7 +363,7 @@ export default function BusinessRequests() {
             <SelectPill
               placeholder="وضعیت کسب و کار"
               value={statusFilter}
-              onChange={setStatusFilter}
+              onChange={(val) => setStatusFilter(val as BusinessStatus | "")}
               options={[
                 { label: "رد شده", value: "rejected" },
                 { label: "در انتظار تایید", value: "pending" },
@@ -513,7 +382,7 @@ export default function BusinessRequests() {
             <SelectPill
               placeholder="مرتب سازی بر اساس"
               value={sortBy}
-              onChange={setSortBy}
+              onChange={(val) => setSortBy(val as SortBy)}
               options={[
                 { label: "تاریخ ایجاد حساب", value: "created_at" },
                 { label: "نام حساب", value: "profile_name" },
@@ -525,7 +394,7 @@ export default function BusinessRequests() {
             <SelectPill
               placeholder="نحوه مرتب سازی"
               value={sortDir}
-              onChange={setSortDir}
+              onChange={(val) => setSortDir(val as SortOrder)}
               options={[
                 { label: "صعودی", value: "asc" },
                 { label: "نزولی", value: "desc" },
@@ -558,8 +427,8 @@ export default function BusinessRequests() {
                           <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
                         </span>
                         <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">
-                          نام صاحب:{" "}
-                          <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.address}</span>
+                          تاریخ ایجاد حساب:{" "}
+                          <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.createdAt}</span>
                         </span>
                       </div>
                     </div>
@@ -613,16 +482,20 @@ export default function BusinessRequests() {
         </div>
       )}
 
+      {rejectToast && (
+        <div className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-md border border-red-600 bg-red-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
+          {rejectToast}
+        </div>
+      )}
+
       {selectedProfile && (
         <DetailsDialog
           open={dialogOpen}
           onCloseAction={closeDialog}
           profile={selectedProfile}
-          onApproved={handleApproved}
           footerActions={[
-            { id: "reject", label: "رد کردن", tone: "danger", onClick: closeDialog },
-            { id: "suspend", label: "معلق کردن", tone: "warning", onClick: closeDialog },
-            { id: "approve", label: "قبول کردن", tone: "success", onClick: closeDialog },
+            { id: "reject", label: "رد کردن", tone: "danger", onClick: () => { handleRejected(selectedProfile.id); closeDialog(); } },
+            { id: "approve", label: "تایید کردن", tone: "success", onClick: () => { handleApproved(selectedProfile.id); closeDialog(); } },
           ]}
         />
       )}

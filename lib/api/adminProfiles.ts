@@ -258,3 +258,19 @@ export async function approveAdminProfile(
     body: JSON.stringify({ note }),
   });
 }
+
+export async function rejectAdminProfile(
+  profileId: string | number,
+  reason = "",
+): Promise<void> {
+  const token = getAccessToken();
+  if (!token) {
+    throw new Error("Missing access token. Please log in again.");
+  }
+
+  await apiFetch<void>(`/admin/profiles/${profileId}/reject`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ reason }),
+  });
+}

@@ -15,13 +15,14 @@ import {
 import clsx from "clsx";
 import { AccountKind, BusinessProfile } from "../../../types/businessProfile";
 import { Button } from "../../ui/Button";
-import { approveAdminProfile } from "../../../lib/api/adminProfiles";
+import { approveAdminProfile, rejectAdminProfile } from "../../../lib/api/adminProfiles";
 
 type ProfileDetailsDialogProps = {
   open: boolean;
   onCloseAction: () => void;
   profile: BusinessProfile;
-  onApproved?: (profileId: string) => void;
+  onApprovedAction?: (profileId: string) => void;
+  onRejectedAction?: (profileId: string) => void;
   footerActions?: Array<{
     id: string;
     label: string;
@@ -104,7 +105,7 @@ const formatDate = (input?: string | null) => {
   return input;
 };
 
-export function DetailsDialog({ open, onCloseAction, profile, onApproved, footerActions }: ProfileDetailsDialogProps) {
+export function DetailsDialog({ open, onCloseAction, profile, onApprovedAction, onRejectedAction, footerActions }: ProfileDetailsDialogProps) {
   const personal = profile.personalInfo;
   const business = profile.businessInfo;
   const location = profile.locationInfo;
@@ -116,15 +117,17 @@ export function DetailsDialog({ open, onCloseAction, profile, onApproved, footer
   const [approveOpen, setApproveOpen] = useState(false);
   const [approveNote, setApproveNote] = useState("");
   const [approveLoading, setApproveLoading] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejectLoading, setRejectLoading] = useState(false);
   const normalizedStatus = (profile.verificationStatus ?? "").toLowerCase();
-  const isRejected = normalizedStatus === "rejected";
-  const isApproved = normalizedStatus === "verified" || normalizedStatus === "approved";
+  const isPending = normalizedStatus === "pending";
   const filteredFooterActions = footerActions?.filter((action) => {
-    if (action.id === "reject" && isRejected) return false;
-    if (action.id === "approve" && isApproved) return false;
+    if (action.id === "approve" || action.id === "reject") return isPending;
     return true;
   });
   const approveAction = footerActions?.find((action) => action.id === "approve");
+  const rejectAction = footerActions?.find((action) => action.id === "reject");
 
   const handleApprove = async () => {
     setApproveLoading(true);
@@ -132,7 +135,7 @@ export function DetailsDialog({ open, onCloseAction, profile, onApproved, footer
       await approveAdminProfile(profile.id, approveNote.trim());
       setApproveOpen(false);
       setApproveNote("");
-      onApproved?.(profile.id);
+      onApprovedAction?.(profile.id);
       if (approveAction) {
         approveAction.onClick();
       } else {
@@ -142,6 +145,25 @@ export function DetailsDialog({ open, onCloseAction, profile, onApproved, footer
       console.warn("approveAdminProfile failed", error);
     } finally {
       setApproveLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    setRejectLoading(true);
+    try {
+      await rejectAdminProfile(profile.id, rejectReason.trim());
+      setRejectOpen(false);
+      setRejectReason("");
+      onRejectedAction?.(profile.id);
+      if (rejectAction) {
+        rejectAction.onClick();
+      } else {
+        onCloseAction();
+      }
+    } catch (error) {
+      console.warn("rejectAdminProfile failed", error);
+    } finally {
+      setRejectLoading(false);
     }
   };
 
@@ -237,7 +259,7 @@ export function DetailsDialog({ open, onCloseAction, profile, onApproved, footer
                 <Button
                   key={action.id}
                   type="button"
-                  onClick={action.id === "approve" ? () => setApproveOpen(true) : action.onClick}
+                  onClick={action.id === "approve" ? () => setApproveOpen(true) : action.id === "reject" ? () => setRejectOpen(true) : action.onClick}
                   variant="primary"
                   className={clsx(
                     "rounded-full px-4 py-2 text-sm font-semibold shadow-[var(--elevation-1)] transition hover:brightness-105",
@@ -276,6 +298,37 @@ export function DetailsDialog({ open, onCloseAction, profile, onApproved, footer
                   className="rounded-full bg-green-500 px-6 py-2 text-sm font-semibold text-white shadow-[var(--elevation-1)] hover:brightness-105 disabled:opacity-70"
                 >
                   تایید
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {rejectOpen && (
+          <div
+            className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 px-4 py-6"
+            onClick={() => setRejectOpen(false)}
+          >
+            <div
+              className="w-full max-w-md rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] p-4 shadow-[var(--elevation-3)]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <textarea
+                dir="rtl"
+                value={rejectReason}
+                onChange={(event) => setRejectReason(event.target.value)}
+                placeholder="توضیحات تکمیلی (اختیاری)"
+                className="h-32 w-full resize-none overflow-y-auto rounded-xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-sm text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none focus:border-[color:var(--md-sys-color-primary)]"
+              />
+              <div className="mt-4 flex justify-end">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleReject}
+                  disabled={rejectLoading}
+                  className="rounded-full bg-red-500 px-6 py-2 text-sm font-semibold text-white shadow-[var(--elevation-1)] hover:brightness-105 disabled:opacity-70"
+                >
+                  رد
                 </Button>
               </div>
             </div>

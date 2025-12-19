@@ -369,6 +369,7 @@ export default function BusinessRequests() {
   const [requests, setRequests] = useState<BusinessRequest[]>(businessRequests);
   const [totalPages, setTotalPages] = useState<number>(Math.max(businessRequests.length, 1));
   const [toast, setToast] = useState<string | null>(null);
+  const [approveToast, setApproveToast] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
   const closeDialog = () => {
@@ -381,6 +382,33 @@ export default function BusinessRequests() {
     const t = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(t);
   }, [toast]);
+
+  useEffect(() => {
+    if (!approveToast) return;
+    const t = setTimeout(() => setApproveToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [approveToast]);
+
+  const handleApproved = (profileId: string) => {
+    setRequests((prev) =>
+      prev.map((item) =>
+        item.id === profileId
+          ? {
+              ...item,
+              status: "verified",
+              profileDetails: {
+                ...item.profileDetails,
+                verificationStatus: "verified",
+              },
+            }
+          : item,
+      ),
+    );
+    setSelectedProfile((prev) =>
+      prev && prev.id === profileId ? { ...prev, verificationStatus: "verified" } : prev,
+    );
+    setApproveToast("تایید شد");
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -579,11 +607,18 @@ export default function BusinessRequests() {
         </div>
       )}
 
+      {approveToast && (
+        <div className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-md border border-green-600 bg-green-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
+          {approveToast}
+        </div>
+      )}
+
       {selectedProfile && (
         <DetailsDialog
           open={dialogOpen}
           onCloseAction={closeDialog}
           profile={selectedProfile}
+          onApproved={handleApproved}
           footerActions={[
             { id: "reject", label: "رد کردن", tone: "danger", onClick: closeDialog },
             { id: "suspend", label: "معلق کردن", tone: "warning", onClick: closeDialog },

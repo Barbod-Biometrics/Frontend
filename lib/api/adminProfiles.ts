@@ -242,3 +242,19 @@ export async function fetchAdminProfileDetails(profileId: string | number): Prom
     return null;
   }
 }
+
+export async function approveAdminProfile(
+  profileId: string | number,
+  note = "",
+): Promise<void> {
+  const token = getAccessToken();
+  if (!token) {
+    throw new Error("Missing access token. Please log in again.");
+  }
+
+  await apiFetch<void>(`/admin/profiles/${profileId}/approve`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ note }),
+  });
+}

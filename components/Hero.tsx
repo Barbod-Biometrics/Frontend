@@ -106,7 +106,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
           <div className="mt-auto flex w-full flex-col items-center pt-12 lg:pt-20">
             <div className="flex flex-col gap-6 pb-12 sm:flex-row sm:justify-center lg:pb-16">
               <Button
-                variant="gradient"
+                variant="monochrome"
                 size="lg"
                 className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-0 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
                 onClick={() => router.push("/login")}

@@ -7,8 +7,16 @@ const IS_ADMIN_KEY = "barbod_is_admin";
 
 const isBrowser = () => typeof window !== "undefined";
 
-export const saveAuth = (tokens: VerifyOtpResponse) => {
+type SaveAuthOptions = {
+  preserveExisting?: boolean;
+};
+
+export const saveAuth = (
+  tokens: VerifyOtpResponse,
+  options: SaveAuthOptions = {}
+) => {
   if (!isBrowser()) return;
+  const preserveExisting = options.preserveExisting ?? false;
 
   if (tokens.access_token) {
     localStorage.setItem(ACCESS_TOKEN_KEY, tokens.access_token);
@@ -16,7 +24,7 @@ export const saveAuth = (tokens: VerifyOtpResponse) => {
 
   if (tokens.refresh_token) {
     localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
-  } else {
+  } else if (!preserveExisting) {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
   }
 
@@ -25,7 +33,7 @@ export const saveAuth = (tokens: VerifyOtpResponse) => {
   }
   if (typeof tokens.is_admin !== "undefined") {
     localStorage.setItem(IS_ADMIN_KEY, tokens.is_admin ? "1" : "0");
-  } else {
+  } else if (!preserveExisting) {
     localStorage.removeItem(IS_ADMIN_KEY);
   }
 };
@@ -37,6 +45,25 @@ export const clearAuth = () => {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(PHONE_NUMBER_KEY);
   localStorage.removeItem(IS_ADMIN_KEY);
+};
+
+export const clearClientStorage = async () => {
+  if (!isBrowser()) return;
+
+  try {
+    localStorage.clear();
+  } catch {}
+
+  try {
+    sessionStorage.clear();
+  } catch {}
+
+  if ("caches" in window) {
+    try {
+      const cacheKeys = await caches.keys();
+      await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+    } catch {}
+  }
 };
 
 export const getAccessToken = () => {

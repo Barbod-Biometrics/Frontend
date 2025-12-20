@@ -78,9 +78,9 @@ export function Hero({ language, theme, dir }: HeroProps) {
     }
 
     if (isAdmin) {
-      router.push("/admin/test-admin-panel");
+      router.push("/admin");
     } else {
-      router.push("/user/test-sidebar");
+      router.push("/user");
     }
   };
 

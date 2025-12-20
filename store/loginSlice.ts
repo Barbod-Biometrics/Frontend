@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { requestOtp, verifyOtp, VerifyOtpResponse } from "../lib/auth-api";
-import { getIsAdmin, saveAuth } from "../lib/auth-storage";
+import { getAccessToken, getIsAdmin, saveAuth } from "../lib/auth-storage";
 import type { RootState } from "./store";
 
 type Step = "login" | "otp";
@@ -99,10 +99,13 @@ const loginSlice = createSlice({
     },
     hydrateFromStorage(state) {
       if (typeof window === "undefined") return;
+      const token = getAccessToken();
       const isAdmin = getIsAdmin();
-      if (typeof isAdmin === "boolean") {
+      if (token && typeof isAdmin === "boolean") {
         state.isAdmin = isAdmin;
         state.step = "otp";
+      } else {
+        state.isAdmin = undefined;
       }
       // mark that we've checked persistent storage
       state.hydrated = true;
@@ -113,6 +116,15 @@ const loginSlice = createSlice({
       state.authError = null;
       state.isSubmitting = false;
       state.isHovered = false;
+    },
+    clearAuthState(state) {
+      state.step = "login";
+      state.phoneNumber = "";
+      state.authError = null;
+      state.isSubmitting = false;
+      state.isHovered = false;
+      state.isAdmin = undefined;
+      state.hydrated = true;
     },
   },
   extraReducers: (builder) => {
@@ -172,7 +184,7 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setIsHovered, resetLogin, hydrateFromStorage } =
+export const { setIsHovered, resetLogin, hydrateFromStorage, clearAuthState } =
   loginSlice.actions;
 
 export const selectLogin = (state: RootState) => state.login;

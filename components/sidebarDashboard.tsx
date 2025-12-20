@@ -11,12 +11,22 @@ import {
 import clsx from "clsx";
 import { Typography } from "./ui/Typography";
 import { Button } from "./ui/Button";
-import { ChevronDown, ChevronLeft, FileText, Fingerprint, PlusCircle, ScanFace } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  FileText,
+  Fingerprint,
+  LogOut,
+  PlusCircle,
+  ScanFace,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ProfileListItem } from "../lib/api/userProfiles";
 import { useDispatch, useSelector } from "react-redux"; 
 import { setCurrentProfile, selectProfileById } from "../store/selectedProfileSlice";
 import { resetWalletForProfileChange } from "../store/walletSlice";
+import { clearClientStorage } from "../lib/auth-storage";
+import { clearAuthState } from "../store/loginSlice";
 
 type NavSubItem = {
   id: string;
@@ -104,7 +114,12 @@ const normalizeBusinessStatus = (value?: string): BusinessStatus => {
   if (normalized.includes("progress") || normalized.includes("draft")) return "in-progress";
   if (normalized.includes("pending") || normalized.includes("wait") || normalized.includes("review"))
     return "pending";
-  if (normalized.includes("approved") || normalized.includes("accept")) return "approved";
+  if (
+    normalized.includes("approved") ||
+    normalized.includes("accept") ||
+    normalized.includes("verified")
+  )
+    return "approved";
   if (normalized.includes("reject")) return "rejected";
   return "pending";
 };
@@ -263,10 +278,23 @@ export function SidebarDashboard({
   const [activeBusinessId, setActiveBusinessId] = useState<string | null>(
     businessProfiles[0]?.id ?? null,
   );
+  const handleLogout = async () => {
+    try {
+      await clearClientStorage();
+    } finally {
+      dispatch(clearAuthState());
+      if (typeof window !== "undefined") {
+        window.location.replace("/");
+      } else {
+        router.replace("/");
+      }
+    }
+  };
   const activeBusiness = useMemo(
     () => businessProfiles.find((profile) => profile.id === activeBusinessId) ?? null,
     [activeBusinessId, businessProfiles],
   );
+  const isApprovedProfile = activeBusiness?.status === "approved";
   const showBusinessNameHeader = !isCollapsed && activeBusiness?.status === "approved";
   const businessNameLabel = showBusinessNameHeader ? activeBusiness?.title ?? "" : "";
    useEffect(() => {
@@ -550,8 +578,12 @@ export function SidebarDashboard({
             "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface-container)]",
           )}
         >
-          {sections.map((section) => (
-            <div key={section.id} className="mb-6 last:mb-0">
+          {sections.map((section) => {
+            const isSectionLocked =
+              !isApprovedProfile && (section.id === "business" || section.id === "services");
+
+            return (
+              <div key={section.id} className="mb-6 last:mb-0">
               {!isCollapsed && (
                 <Typography
                   variant="caption"
@@ -564,17 +596,21 @@ export function SidebarDashboard({
               <div className="space-y-1.5">
                 {section.items.map((item) => {
                   const hasChildren = !!item.children?.length;
+                  const isItemDisabled = isSectionLocked;
                   const isGroupOpen = hasChildren ? openGroups.has(item.id) : false;
                   const isItemActive =
                     activeItemId === item.id ||
                     (hasChildren && item.children!.some((sub) => sub.id === activeItemId));
+                  const isItemActiveAndEnabled = isItemActive && !isItemDisabled;
 
                   return (
                     <div key={item.id}>
                       {/* Main item row */}
                       <Button
                         variant="ghost"
+                        disabled={isItemDisabled}
                         onClick={() => {
+                         if (isItemDisabled) return;
                          if (item.onClick) {
                             item.onClick();
                           } else if (hasChildren) {
@@ -586,15 +622,17 @@ export function SidebarDashboard({
                         }}
                         className={clsx(
                           "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
-                          isItemActive
+                          isItemActiveAndEnabled
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
+                          isItemDisabled && "cursor-not-allowed opacity-50",
                           !isCollapsed &&
+                            !isItemDisabled &&
                             "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <ItemIconFrame active={isItemActive}>{item.icon}</ItemIconFrame>
+                          <ItemIconFrame active={isItemActiveAndEnabled}>{item.icon}</ItemIconFrame>
                           <div
                             className={clsx(
                               "min-w-0 truncate text-right font-medium transition-all duration-150",
@@ -678,8 +716,36 @@ export function SidebarDashboard({
                   );
                 })}
               </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="border-t border-[color:var(--md-sys-color-outline-variant)] px-2 py-3">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            aria-label="خروج"
+            className={clsx(
+              "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
+              "text-[color:var(--md-sys-color-error)]",
+              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <ItemIconFrame>
+                <LogOut className="h-5 w-5 text-[color:var(--md-sys-color-error)]" />
+              </ItemIconFrame>
+              <div
+                className={clsx(
+                  "min-w-0 truncate text-right font-medium transition-all duration-150",
+                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                خروج
+              </div>
             </div>
-          ))}
+          </Button>
         </div>
       </div>
     </aside>

@@ -57,7 +57,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
       saveAuth(tokens);
       // Redirect based on role after successful verification
       if (tokens?.is_admin) {
-        router.push("/admin/test-admin-panel");
+        router.push("/admin");
       } else {
         router.push("/user/test-sidebar");
       }

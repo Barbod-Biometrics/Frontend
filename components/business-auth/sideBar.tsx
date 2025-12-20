@@ -57,16 +57,19 @@ interface AuthSidebarProps {
   activeItemId?: string;
   onItemSelect?: (itemId: string) => void;
   accountType?: AccountKind;
+  disabledItemIds?: string[];
 }
 
 export function AuthSidebar({
   activeItemId: controlledActiveId,
   onItemSelect,
   accountType = "legal",
+  disabledItemIds = [],
 }: AuthSidebarProps) {
   const steps = useMemo(() => buildSteps(accountType), [accountType]);
   const [openSteps, setOpenSteps] = useState<Set<string>>(() => new Set([steps[0].id]));
   const [internalActiveId, setInternalActiveId] = useState<string>(steps[0].items[0].id);
+  const disabledSet = useMemo(() => new Set(disabledItemIds), [disabledItemIds]);
 
   const activeItemId = controlledActiveId ?? internalActiveId;
 
@@ -92,6 +95,7 @@ export function AuthSidebar({
   const getFirstItemId = (step: Step) => step.items[0]?.id ?? step.id;
 
   const handleSelect = (id: string) => {
+    if (disabledSet.has(id)) return;
     if (!controlledActiveId) setInternalActiveId(id);
     onItemSelect?.(id);
   };
@@ -113,19 +117,23 @@ export function AuthSidebar({
           const isOpen = openSteps.has(step.id);
           const isStepActive =
             step.id === activeStepId || step.items.some((item) => item.id === activeItemId);
+          const firstItemId = getFirstItemId(step);
+          const isStepDisabled = disabledSet.has(firstItemId);
 
           return (
             <Fragment key={step.id}>
               <div className="relative z-10 flex items-center justify-center pt-1">
                 <button
                   type="button"
+                  disabled={isStepDisabled}
                   onClick={() => {
                     toggleStep(step.id);
-                    handleSelect(getFirstItemId(step));
+                    handleSelect(firstItemId);
                   }}
                   className={clsx(
                     "flex h-5 w-5 items-center justify-center rounded-full text-base font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] ring-4 ring-white/60 ring-offset-0 bg-[radial-gradient(circle_at_30%_30%,#5561e9,#2747d7_45%,#0f62d8)] dark:ring-[color:var(--md-sys-color-surface-container)] transition-opacity",
                     isStepActive ? "opacity-100" : "opacity-70",
+                    isStepDisabled && "cursor-not-allowed opacity-40",
                   )}
                   aria-label={step.title}
                 >
@@ -136,11 +144,15 @@ export function AuthSidebar({
               <div className="relative z-10">
                 <button
                   type="button"
+                  disabled={isStepDisabled}
                   onClick={() => {
                     toggleStep(step.id);
-                    handleSelect(getFirstItemId(step));
+                    handleSelect(firstItemId);
                   }}
-                  className="flex w-full items-center justify-between gap-2 text-right"
+                  className={clsx(
+                    "flex w-full items-center justify-between gap-2 text-right",
+                    isStepDisabled && "cursor-not-allowed opacity-50",
+                  )}
                   aria-expanded={isOpen}
                 >
                   <Typography
@@ -158,6 +170,7 @@ export function AuthSidebar({
               {isOpen &&
                 step.items.map((item) => {
                   const isActive = activeItemId === item.id;
+                  const isDisabled = disabledSet.has(item.id);
                   return (
                     <Fragment key={item.id}>
                       <div className="relative top-1 z-10 flex items-center justify-end pr-1">
@@ -183,8 +196,12 @@ export function AuthSidebar({
                       <div className="relative z-10">
                         <button
                           type="button"
+                          disabled={isDisabled}
                           onClick={() => handleSelect(item.id)}
-                          className="block w-full pr-3 text-right"
+                          className={clsx(
+                            "block w-full pr-3 text-right",
+                            isDisabled && "cursor-not-allowed opacity-50",
+                          )}
                         >
                           <Typography
                             variant="body-sm"

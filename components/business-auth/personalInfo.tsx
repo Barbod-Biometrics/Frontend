@@ -8,13 +8,14 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
-import { PersonalInfoPayload } from "../../types/businessProfile";
+import { AccountKind, PersonalInfoPayload } from "../../types/businessProfile";
 
 interface PersonalInfoProps {
   onContinue?: (data: PersonalInfoPayload) => void;
   onBack?: () => void;
   initialData?: PersonalInfoPayload;
   isLoading?: boolean;
+  accountType?: AccountKind;
 }
 
 const BIRTHDATE_FORMAT = "YYYY-MM-DD";
@@ -23,7 +24,13 @@ const LATIN_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 type PersonalInfoForm = PersonalInfoPayload;
 const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
 
-export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: PersonalInfoProps) {
+export function PersonalInfo({
+  onContinue,
+  onBack,
+  initialData,
+  isLoading,
+  accountType = "legal",
+}: PersonalInfoProps) {
   const [form, setForm] = useState<PersonalInfoForm>({
     firstName: "",
     lastName: "",
@@ -113,7 +120,7 @@ export function PersonalInfo({ onContinue, onBack, initialData, isLoading }: Per
     >
       <div className="space-y-2 text-right">
         <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
-          اطلاعات شخصی
+          {accountType === "legal" ? "اطلاعات نماینده" : "اطلاعات شخصی"}
         </Typography>
         <Typography
           variant="body-md"

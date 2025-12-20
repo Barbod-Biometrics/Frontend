@@ -112,25 +112,6 @@ export function LocationInfo({
       </div>
 
       <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
-        <div className="space-y-2 text-right">
-          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
-            آدرس
-          </label>
-          <input
-            dir="rtl"
-            type="text"
-            value={form.address}
-            onChange={(event) => handleChange("address", event.target.value)}
-            placeholder="مثال: تهران، خیابان ..."
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-          />
-          {errors.address && (
-            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
-              {errors.address}
-            </p>
-          )}
-        </div>
-
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2 text-right">
             <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
@@ -194,6 +175,25 @@ export function LocationInfo({
               </p>
             )}
           </div>
+        </div>
+
+        <div className="space-y-2 text-right">
+          <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
+            آدرس
+          </label>
+          <input
+            dir="rtl"
+            type="text"
+            value={form.address}
+            onChange={(event) => handleChange("address", event.target.value)}
+            placeholder="مثال: تهران، خیابان ..."
+            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+          />
+          {errors.address && (
+            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+              {errors.address}
+            </p>
+          )}
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">

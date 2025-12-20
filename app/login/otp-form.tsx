@@ -59,7 +59,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
       if (tokens?.is_admin) {
         router.push("/admin");
       } else {
-        router.push("/user/test-sidebar");
+        router.push("/user");
       }
     } catch {
       // handled by authError

@@ -104,7 +104,12 @@ const normalizeBusinessStatus = (value?: string): BusinessStatus => {
   if (normalized.includes("progress") || normalized.includes("draft")) return "in-progress";
   if (normalized.includes("pending") || normalized.includes("wait") || normalized.includes("review"))
     return "pending";
-  if (normalized.includes("approved") || normalized.includes("accept")) return "approved";
+  if (
+    normalized.includes("approved") ||
+    normalized.includes("accept") ||
+    normalized.includes("verified")
+  )
+    return "approved";
   if (normalized.includes("reject")) return "rejected";
   return "pending";
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowUpLeft,
   ArrowUpRight,
   BadgeCheck,
   Mail,
@@ -87,6 +88,8 @@ export default function SalesContactPage() {
   const isFa = language === Language.FA;
   const c = copy[language];
   const phonePlaceholder = isFa ? "9xx xxx xxxx +98" : "+98 9xx xxx xxxx";
+  const SlaIcon = dir === "rtl" ? ArrowUpLeft : ArrowUpRight;
+  const sendIconClass = dir === "rtl" ? "h-4 w-4 -scale-x-100" : "h-4 w-4";
 
   return (
     <div className="flex min-h-screen flex-col bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
@@ -133,7 +136,7 @@ export default function SalesContactPage() {
                   </div>
                 </div>
                 <div className="hidden rounded-full bg-[color:var(--surface-elevated)] px-3 py-1.5 text-xs font-semibold text-[color:var(--brand-cyan)] sm:block">
-                  <ArrowUpRight className="mr-1 inline h-3.5 w-3.5 align-middle" />
+                  <SlaIcon className="mr-1 inline h-3.5 w-3.5 align-middle" />
                   SLA
                 </div>
               </div>
@@ -163,7 +166,7 @@ export default function SalesContactPage() {
                   <Button
                     size="lg"
                     className="rounded-xl px-6 bg-black text-white hover:bg-black hover:brightness-110"
-                    iconLeading={<Send className="h-4 w-4" />}
+                    iconLeading={<Send className={sendIconClass} />}
                   >
                     {c.submit}
                   </Button>

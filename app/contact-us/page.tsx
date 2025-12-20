@@ -1,14 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, PhoneCall, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 import { ContactAccessSection } from "../../components/ContactAccessSection";
 import { Footer } from "../../components/Footer";
 import { Navbar } from "../../components/Navbar";
 import { Button } from "../../components/ui/Button";
+import { Card } from "../../components/ui/Card";
+import { Container } from "../../components/ui/Container";
+import { Section } from "../../components/ui/Section";
+import { Typography } from "../../components/ui/Typography";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
+
+const MAP_LINK =
+  "https://www.google.com/maps/place/School+of+Computer+Engineering,+Iran+University+of+Science+and+Technology,+Tehran";
 
 const heroCopy: Record<Language, { badge: string; title: string; subtitle: string; mapCta: string; salesCta: string }> =
 {
@@ -47,7 +54,7 @@ const highlightCopy: Record<
 };
 
 export default function ContactUsPage() {
-  const { language } = useLanguage();
+  const { language, dir } = useLanguage();
   const copy = heroCopy[language];
   const isFa = language === Language.FA;
 
@@ -56,45 +63,52 @@ export default function ContactUsPage() {
       <Navbar />
 
       <main className="flex-1">
-        <section className="relative overflow-hidden">
+        <Section className="overflow-hidden" dir={dir}>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(6,182,212,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(37,99,235,0.08),transparent_35%)] blur-3xl" />
-          <div className="relative mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-14 sm:px-6 lg:px-12">
+          <Container className="relative flex flex-col gap-6">
             <div className="inline-flex items-center gap-2 self-start rounded-full border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-[color:var(--text-secondary)]">
               <Sparkles className="h-4 w-4 text-[color:var(--brand-cyan)]" />
               {copy.badge}
             </div>
-            <div
-              className={`grid gap-8 rounded-[28px] border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)]/80 p-6 shadow-[var(--shadow-lg)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr] ${isFa ? "text-right" : "text-left"
-                }`}
+            <Card
+              variant="filled"
+              className={`grid gap-8 border border-[color:var(--border-subtle)] bg-[color:var(--surface-card)]/80 p-6 shadow-[var(--shadow-lg)] backdrop-blur-xl lg:grid-cols-[1.1fr_0.9fr] ${
+                isFa ? "text-right" : "text-left"
+              }`}
             >
               <div className="space-y-4">
-                <h1 className="text-3xl font-bold leading-tight sm:text-4xl">{copy.title}</h1>
-                <p className="max-w-3xl text-lg leading-relaxed text-[color:var(--text-secondary)]">{copy.subtitle}</p>
+                <Typography variant="h2" className="leading-tight">
+                  {copy.title}
+                </Typography>
+                <Typography
+                  variant="body-lg"
+                  className="max-w-3xl text-[color:var(--text-secondary)]"
+                >
+                  {copy.subtitle}
+                </Typography>
                 <div className="flex flex-wrap gap-3">
-                  <Link href="/contact-us">
-                    <Button
-                      size="lg"
-                      className="rounded-xl bg-gradient-to-r from-[color:var(--brand-azure)] to-[color:var(--brand-cyan)] px-6 text-white shadow-[var(--shadow-sm)] hover:brightness-110"
-                      iconLeading={<MapPin className="h-5 w-5" />}
-                    >
-                      {copy.mapCta}
-                    </Button>
-                  </Link>
+                  <Button
+                    size="lg"
+                    className="rounded-xl bg-gradient-to-r from-[color:var(--brand-azure)] to-[color:var(--brand-cyan)] px-6 text-white shadow-[var(--shadow-sm)] hover:brightness-110"
+                    type="button"
+                    onClick={() => window.open(MAP_LINK, "_blank", "noopener,noreferrer")}
+                  >
+                    {copy.mapCta}
+                  </Button>
                   <Link href="/contact-sales">
                     <Button
                       size="lg"
                       variant="ghost"
                       className="rounded-xl border border-[color:var(--border-subtle)] px-6"
-                      iconLeading={<PhoneCall className="h-5 w-5" />}
                     >
                       {copy.salesCta}
                     </Button>
                   </Link>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
+            </Card>
+          </Container>
+        </Section>
 
         <div id="contact-map">
           <ContactAccessSection />

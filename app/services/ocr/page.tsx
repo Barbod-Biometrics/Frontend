@@ -91,11 +91,11 @@ export default function OCRPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="relative"
               >
-                <div className="relative rounded-3xl overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/50 bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] p-4">
+                <div className="relative overflow-hidden rounded-3xl">
                   <img
                     src="/assets/images/ocr-1.jpg"
                     alt="OCR"
-                    className="w-full h-auto rounded-2xl object-cover"
+                    className="w-full h-auto rounded-3xl object-cover"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
@@ -120,7 +120,7 @@ export default function OCRPage() {
               </Typography>
             </div>
 
-            <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
@@ -141,11 +141,11 @@ export default function OCRPage() {
                         <feature.icon className="h-7 w-7" />
                       </motion.span>
                       <div className="flex-1 pt-1 text-right">
-                        <h3 className="text-lg font-semibold leading-tight text-foreground">{feature.title}</h3>
+                        <h3 className="text-xl font-semibold leading-tight text-foreground">{feature.title}</h3>
                       </div>
                     </CardHeader>
                     <CardContent className="p-7 pt-2">
-                      <p className="text-sm leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
+                      <p className="text-base leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
                         {feature.description}
                       </p>
                     </CardContent>
@@ -193,7 +193,7 @@ export default function OCRPage() {
                   transition={{ duration: 0.6 }}
                   className={`relative order-2 ${highlight.reverse ? "lg:order-1" : "lg:order-2"}`}
                 >
-                  <div className="rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="rounded-3xl overflow-hidden">
                     <img src={highlight.image} alt={highlight.alt} className="w-full h-auto" loading="lazy" />
                   </div>
                 </motion.div>
@@ -231,12 +231,12 @@ export default function OCRPage() {
                     <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
                       نمونه درخواست API
                     </Typography>
-                    <Typography variant="body-sm" className="text-[color:var(--md-sys-color-on-surface-variant)]">
+                    <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]">
                       ارسال تصویر و دریافت متن استخراج‌شده
                     </Typography>
                   </CardHeader>
                   <CardContent>
-                    <div className="rounded-2xl bg-slate-900 text-green-300 font-mono text-sm p-5 shadow-inner" dir="ltr">
+                    <div className="rounded-2xl bg-slate-900 text-green-300 font-mono text-base p-6 shadow-inner" dir="ltr">
                       <div className="mb-2">curl -X POST \</div>
                       <div className="mb-2 pl-4">https://api.example.com/ocr \</div>
                       <div className="mb-2 pl-4">-H "Authorization: Bearer TOKEN" \</div>
@@ -260,3 +260,4 @@ export default function OCRPage() {
     </div>
   );
 }
+

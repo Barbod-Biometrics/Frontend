@@ -123,7 +123,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
               </Button>
             </div>
 
-            <div className="grid w-full max-w-5xl grid-cols-3 gap-8 lg:gap-12">
+            <div className="grid w-full max-w-5xl grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8 lg:gap-12">
               {copy.stats.map((stat) => (
                 <div
                   key={stat.label}
@@ -132,7 +132,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
                   <div className="mb-2 text-3xl font-bold tracking-tight text-[color:var(--md-sys-color-on-surface)] transition-colors group-hover:text-[color:var(--md-sys-color-primary)] sm:text-4xl lg:text-5xl">
                     {stat.value}
                   </div>
-                  <div className="text-xs font-medium uppercase tracking-wider text-[color:var(--md-sys-color-on-surface-variant)] sm:text-sm lg:text-base">
+                  <div className="text-sm font-medium uppercase tracking-wider text-[color:var(--md-sys-color-on-surface-variant)] sm:text-base lg:text-lg">
                     {stat.label}
                   </div>
                 </div>

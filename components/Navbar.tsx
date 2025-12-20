@@ -35,6 +35,7 @@ const navCopy: Record<
     services: string;
     docs: string;
     status: string;
+    faq: string;
     faceRecognition: string;
     livenessDetection: string;
     ocr: string;
@@ -47,6 +48,7 @@ const navCopy: Record<
     services: "Services",
     docs: "Docs",
     status: "Status",
+    faq: "FAQ",
     faceRecognition: "Face Recognition",
     livenessDetection: "Liveness Detection",
     ocr: "OCR",
@@ -58,6 +60,7 @@ const navCopy: Record<
     services: "سرویس‌ها",
     docs: "مستندات",
     status: "وضعیت",
+    faq: "\u0633\u0648\u0627\u0644\u0627\u062a \u0645\u062a\u062f\u0627\u0648\u0644",
     faceRecognition: "تشخیص چهره",
     livenessDetection: "تشخیص زنده‌بودن",
     ocr: "تشخیص نوشتار",
@@ -84,6 +87,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
         { label: copy.ocr, href: "/services/ocr" },
       ],
     },
+    { label: copy.faq, href: "/faq" },
     { label: copy.docs, href: "docs" },
     {
       label: language === Language.FA ? "تماس با تیم فروش" : "Contact sales",
@@ -306,3 +310,5 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
     </motion.nav>
   );
 }
+
+

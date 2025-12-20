@@ -100,7 +100,7 @@ export function StatsSection() {
         <div className="pointer-events-none absolute inset-0 opacity-60 blur-3xl [background:radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(99,102,241,0.14),transparent_45%)]" />
 
         <div className={cn("relative max-w-4xl space-y-3", isRtl ? "text-right" : "text-left")}>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--md-sys-color-on-surface-variant)]">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--md-sys-color-on-surface-variant)]">
             {copy.badge}
           </span>
           <Typography variant="h3" className="leading-tight">
@@ -111,7 +111,7 @@ export function StatsSection() {
           </Typography>
         </div>
 
-        <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -135,14 +135,14 @@ export function StatsSection() {
                     </motion.span>
 
                     <div className={cn("flex-1 pt-1", isRtl ? "text-right" : "text-left")}>
-                      <h3 className="text-lg font-semibold leading-tight text-foreground">{stat.title}</h3>
+                      <h3 className="text-xl font-semibold leading-tight text-foreground">{stat.title}</h3>
                     </div>
                   </CardHeader>
 
                   <CardContent className="p-7 pt-2">
                     <p
                       className={cn(
-                        "text-sm leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground",
+                        "text-base leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground",
                         isRtl ? "text-right" : "text-left"
                       )}
                     >

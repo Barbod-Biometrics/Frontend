@@ -82,7 +82,7 @@ export function DemoModal({ onClose }: DemoModalProps) {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
                     transition={{ type: "spring", duration: 0.5 }}
-                    className="relative w-full max-w-2xl bg-[color:var(--md-sys-color-surface-container)] rounded-2xl shadow-[var(--elevation-3)] overflow-hidden"
+                    className="relative w-full max-w-6xl bg-[color:var(--md-sys-color-surface-container)] rounded-3xl shadow-[var(--elevation-3)] overflow-hidden"
                     onClick={(e) => e.stopPropagation()}
                     dir="rtl"
                 >
@@ -213,9 +213,10 @@ export function DemoModal({ onClose }: DemoModalProps) {
                                 }}
                             >
                                 <CheckCircle2
-                                    size={80}
-                                    className="mx-auto mb-6 text-green-500"
-                                    strokeWidth={2}
+                                    size={100}
+                                    className="mx-auto mb-6 text-cyan-400"
+                                    strokeWidth={2.5}
+                                    style={{ filter: "drop-shadow(0 0 20px rgba(100, 200, 255, 0.6))" }}
                                 />
                             </motion.div>
 
@@ -223,7 +224,7 @@ export function DemoModal({ onClose }: DemoModalProps) {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="text-3xl md:text-4xl font-bold mb-4 text-green-500"
+                                className="text-3xl md:text-4xl font-bold mb-4 text-cyan-300"
                             >
                                 ✓ تأیید شد
                             </motion.h2>
@@ -242,7 +243,7 @@ export function DemoModal({ onClose }: DemoModalProps) {
                                 {[...Array(20)].map((_, i) => (
                                     <motion.div
                                         key={i}
-                                        className="absolute w-2 h-2 bg-green-500 rounded-full"
+                                        className="absolute w-2 h-2 bg-cyan-400 rounded-full"
                                         initial={{
                                             x: "50%",
                                             y: "50%",

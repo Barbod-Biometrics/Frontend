@@ -45,9 +45,7 @@ function ComingSoonBadge({
   return (
     <span
       dir={dir}
-      className={`pointer-events-none absolute -top-4 ${
-        dir === "rtl" ? "left-6" : "right-6"
-      } inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold tracking-wide backdrop-blur-md`}
+      className="inline-flex items-center gap-2 self-center rounded-full px-4 py-2 text-sm font-semibold tracking-wide backdrop-blur-md"
       style={{
         background,
         border: `1px solid ${border}`,
@@ -78,9 +76,9 @@ const servicesData: Record<Language, Service[]> = {
       title: "Face Verification",
       description:
         "High-precision 1:1 and 1:N face matching using advanced 3D topology analysis. Robust to lighting, age, and accessories.",
-      imageGradient: "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
-      colorFrom: "#06b6d4",
-      colorTo: "#3b82f6",
+      imageGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      colorFrom: "#667eea",
+      colorTo: "#764ba2",
       icon: <ScanFace className="w-6 h-6" />,
     },
     {
@@ -98,9 +96,9 @@ const servicesData: Record<Language, Service[]> = {
       title: "Document OCR",
       description:
         "Extract data instantly from IDs, passports, and driver licenses with Persian, Arabic, and Latin support.",
-      imageGradient: "linear-gradient(135deg, #0ea964 0%, #22d3ee 100%)",
-      colorFrom: "#0ea964",
-      colorTo: "#22d3ee",
+      imageGradient: "linear-gradient(135deg, #16a34a 0%, #22c55e 100%)",
+      colorFrom: "#16a34a",
+      colorTo: "#22c55e",
       icon: <FileText className="w-6 h-6" />,
     },
     {
@@ -120,9 +118,9 @@ const servicesData: Record<Language, Service[]> = {
       title: "احراز هویت چهره",
       description:
         "تطبیق چهره ۱:۱ و ۱:N با تحلیل سه‌بعدی؛ مقاوم در برابر نور، سن و اکسسوری.",
-      imageGradient: "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
-      colorFrom: "#06b6d4",
-      colorTo: "#3b82f6",
+      imageGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      colorFrom: "#667eea",
+      colorTo: "#764ba2",
       icon: <ScanFace className="w-6 h-6" />,
     },
     {
@@ -140,9 +138,9 @@ const servicesData: Record<Language, Service[]> = {
       title: "OCR مدارک",
       description:
         "استخراج داده آنی از مدارک هویتی با پشتیبانی فارسی، عربی و لاتین.",
-      imageGradient: "linear-gradient(135deg, #0ea964 0%, #22d3ee 100%)",
-      colorFrom: "#0ea964",
-      colorTo: "#22d3ee",
+      imageGradient: "linear-gradient(135deg, #16a34a 0%, #22c55e 100%)",
+      colorFrom: "#16a34a",
+      colorTo: "#22c55e",
       icon: <FileText className="w-6 h-6" />,
     },
     {
@@ -260,10 +258,9 @@ export function ServicesSection() {
                 size="md"
                 onClick={() => handleTabClick(service.id)}
                 className={`relative group min-w-[220px] flex-1 h-auto px-8 py-6 whitespace-normal rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left justify-start hover:bg-transparent
-                  ${
-                    isActive
-                      ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
-                      : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
+                  ${isActive
+                    ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
+                    : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
                   }`}
               >
                 <div
@@ -279,17 +276,16 @@ export function ServicesSection() {
                   >
                     {React.isValidElement(service.icon)
                       ? React.cloneElement(
-                          service.icon as React.ReactElement<any>,
-                          { className: "w-7 h-7" }
-                        )
+                        service.icon as React.ReactElement<any>,
+                        { className: "w-7 h-7" }
+                      )
                       : service.icon}
                   </span>
                   <span
-                    className={`font-semibold transition-colors duration-300 ${
-                      isActive
-                        ? "text-[color:var(--md-sys-color-on-surface)]"
-                        : "text-[color:var(--md-sys-color-on-surface-variant)]"
-                    }`}
+                    className={`font-semibold transition-colors duration-300 ${isActive
+                      ? "text-[color:var(--md-sys-color-on-surface)]"
+                      : "text-[color:var(--md-sys-color-on-surface-variant)]"
+                      }`}
                   >
                     {service.title}
                   </span>
@@ -341,26 +337,27 @@ export function ServicesSection() {
                     {currentService.description}
                   </Typography>
 
-                  <Button
-                    variant="secondary"
-                    className="relative px-10 py-4 rounded-full text-base font-medium group h-12"
-                    disabled={isComingSoonService || !learnMoreHref}
-                    onClick={() => {
-                      if (learnMoreHref) router.push(learnMoreHref);
-                    }}
-                    iconTrailing={
-                      <span
-                        className={`transition-transform duration-200 ${
-                          dir === "rtl"
+                  <div className="flex flex-wrap items-center gap-3" dir={dir}>
+                    <Button
+                      variant="secondary"
+                      className="px-10 py-4 rounded-full text-base font-medium group h-12"
+                      disabled={isComingSoonService || !learnMoreHref}
+                      onClick={() => {
+                        if (learnMoreHref) router.push(learnMoreHref);
+                      }}
+                      iconTrailing={
+                        <span
+                          className={`transition-transform duration-200 ${dir === "rtl"
                             ? "group-hover:-translate-x-1"
                             : "group-hover:translate-x-1"
-                        }`}
-                      >
-                        {ctaArrow}
-                      </span>
-                    }
-                  >
-                    {copy.button}
+                            }`}
+                        >
+                          {ctaArrow}
+                        </span>
+                      }
+                    >
+                      {copy.button}
+                    </Button>
                     {isComingSoonService ? (
                       <ComingSoonBadge
                         label={comingSoonLabel}
@@ -368,7 +365,7 @@ export function ServicesSection() {
                         dir={dir}
                       />
                     ) : null}
-                  </Button>
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>

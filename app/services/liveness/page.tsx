@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { motion } from "framer-motion";
@@ -23,23 +23,23 @@ type Feature = {
 const features: Feature[] = [
   {
     icon: Eye,
-    title: "تشخیص زنده بودن",
-    description: "شناسایی چهره واقعی از تصاویر، ویدیوها و ماسک‌های ساختگی",
+    title: "تشخیص دقیق زنده بودن",
+    description: "حرکات طبیعی چشم و صورت تحلیل می‌شود تا حضور کاربر واقعی تایید شود.",
   },
   {
     icon: Lock,
-    title: "امنیت دوطرفه",
-    description: "جلوگیری از حملات spoofing با تحلیل چندلایه",
+    title: "مقاومت در برابر جعل",
+    description: "مقابله با حملات spoofing مانند عکس چاپی، ویدیو و ماسک.",
   },
   {
     icon: Camera,
-    title: "تحلیل لحظه‌ای",
-    description: "بررسی زنده بودن در زمان واقعی با تاخیر کمتر از ۱ ثانیه",
+    title: "عملکرد پایدار",
+    description: "در شرایط نوری و کیفیت‌های مختلف دوربین، نتیجه پایدار و قابل اعتماد است.",
   },
   {
     icon: Zap,
-    title: "دقت بالا",
-    description: "نرخ تشخیص صحیح بالای ۹۹.۵٪ در شرایط مختلف",
+    title: "سرعت بالا",
+    description: "نتیجه در چند ثانیه با دقت بالای 99% ارائه می‌شود.",
   },
 ];
 
@@ -60,16 +60,15 @@ export default function LivenessPage() {
                 className="text-right space-y-6"
               >
                 <Typography variant="h2" className="text-5xl font-bold leading-tight">
-                  سرویس تشخیص زنده بودن چهره
+                  تشخیص زنده بودن چهره
                 </Typography>
                 <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed">
-                  سیستم پیشرفته تشخیص زنده بودن ما با استفاده از الگوریتم‌های یادگیری عمیق و تحلیل
-                  چندلایه، قادر به تشخیص چهره واقعی از تصاویر ساختگی، ویدیوها، و ماسک‌های سه‌بعدی
-                  می‌باشد. این سرویس برای جلوگیری از کلاهبرداری و حملات spoofing طراحی شده است.
+                  سیستم تشخیص زنده بودن باربد با تحلیل عمق تصویر، حرکات طبیعی و الگوهای رفتاری، از جعل هویت جلوگیری
+                  می‌کند و به‌سادگی در جریان‌های احراز هویت و ورود امن ادغام می‌شود.
                 </Typography>
                 <div className="flex flex-wrap gap-4 justify-end lg:justify-center">
                   <Button size="lg" variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
-                    شروع رایگان
+                    درخواست سرویس
                   </Button>
                   <Button size="lg" variant="secondary" className="rounded-full px-10">
                     مشاهده دمو
@@ -83,11 +82,11 @@ export default function LivenessPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="relative"
               >
-                <div className="relative rounded-3xl overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/50 bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] p-4">
+                <div className="relative overflow-hidden rounded-3xl">
                   <img
                     src="/assets/images/liveness-detection-4.jpg"
-                    alt="تشخیص زنده بودن"
-                    className="w-full h-auto rounded-2xl object-cover"
+                    alt="تشخیص زنده بودن چهره"
+                    className="w-full h-auto rounded-3xl object-cover"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
@@ -111,14 +110,14 @@ export default function LivenessPage() {
               className="relative max-w-3xl space-y-3 text-right"
             >
               <Typography variant="h3" className="leading-tight">
-                قابلیت‌های پیشرفته برای تشخیص زنده بودن
+                مزیت‌های تشخیص زنده بودن
               </Typography>
               <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8">
-                پوشش امنیت، سرعت، دقت و مقاومت در برابر حملات جعل برای اطمینان از زنده بودن کاربر
+                امنیت بیشتر برای فرآیندهای ورود، ثبت‌نام و احراز هویت در مقیاس بالا.
               </Typography>
             </motion.div>
 
-            <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
@@ -139,11 +138,11 @@ export default function LivenessPage() {
                         <feature.icon className="h-7 w-7" />
                       </motion.span>
                       <div className="flex-1 pt-1 text-right">
-                        <h3 className="text-lg font-semibold leading-tight text-foreground">{feature.title}</h3>
+                        <h3 className="text-xl font-semibold leading-tight text-foreground">{feature.title}</h3>
                       </div>
                     </CardHeader>
                     <CardContent className="p-7 pt-2">
-                      <p className="text-sm leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
+                      <p className="text-base leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
                         {feature.description}
                       </p>
                     </CardContent>
@@ -165,15 +164,14 @@ export default function LivenessPage() {
                 className="text-right"
               >
                 <Typography variant="h3" className="mb-6">
-                  الگوریتم پیشرفته تشخیص زنده بودن
+                  الگوریتم‌های تشخیص زنده بودن
                 </Typography>
                 <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6" dir="rtl">
-                  سیستم ما با استفاده از شبکه‌های عصبی عمیق و تحلیل چندلایه، حرکات طبیعی چهره،
-                  بافت پوست، و نشانه‌های حیاتی را بررسی می‌کند تا اطمینان حاصل کند که فرد در مقابل
-                  دوربین به صورت زنده حضور دارد.
+                  مدل‌های یادگیری عمیق با تحلیل حرکت، عمق و الگوهای طبیعی چهره، جعلی بودن تصویر را تشخیص می‌دهند
+                  و ریسک سوءاستفاده را کاهش می‌دهند.
                 </Typography>
                 <ul className="space-y-3 text-right" dir="rtl">
-                  {["تحلیل micro-expressions چهره", "بررسی بافت و عمق تصویر", "شناسایی حرکات طبیعی"].map((item) => (
+                  {["تحلیل micro-expressions صورت", "رد عکس و ویدیوهای بازپخش‌شده", "بررسی عمق و حرکت طبیعی"].map((item) => (
                     <li key={item} className="flex flex-row-reverse items-center gap-3 justify-end text-right w-full" dir="rtl">
                       <span className="text-[color:var(--md-sys-color-on-surface)]">{item}</span>
                       <div className="w-6 h-6 rounded-full bg-[color:var(--md-sys-color-primary)]/12 flex items-center justify-center shrink-0">
@@ -191,7 +189,7 @@ export default function LivenessPage() {
                 transition={{ duration: 0.6 }}
                 className="relative"
               >
-                <div className="rounded-3xl overflow-hidden shadow-2xl">
+                <div className="rounded-3xl overflow-hidden">
                   <img
                     src="/assets/images/liveness-detection-2.jpg"
                     alt="تحلیل زنده بودن"
@@ -210,7 +208,7 @@ export default function LivenessPage() {
                 transition={{ duration: 0.6 }}
                 className="order-2 lg:order-1"
               >
-                <div className="rounded-3xl overflow-hidden shadow-2xl">
+                <div className="rounded-3xl overflow-hidden">
                   <img
                     src="/assets/images/liveness-detection-3.jpg"
                     alt="مقابله با جعل"
@@ -228,31 +226,30 @@ export default function LivenessPage() {
                 className="order-1 lg:order-2 text-right"
               >
                 <Typography variant="h3" className="mb-6">
-                  محافظت در برابر حملات
+                  مقابله با حملات جعل
                 </Typography>
                 <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6">
-                  سیستم ما قادر به شناسایی انواع حملات spoofing از جمله تصاویر چاپی، نمایش ویدیو،
-                  ماسک‌های سه‌بعدی و deep fake می‌باشد. با استفاده از تکنولوژی‌های پیشرفته، امنیت
-                  سیستم احراز هویت شما تضمین می‌شود.
+                  سیستم در برابر حملات spoofing و deepfake مقاوم است و تلاش‌های مشکوک را شناسایی می‌کند تا دسترسی
+                  غیرمجاز متوقف شود.
                 </Typography>
                 <div className="space-y-4">
                   <Card className="border-r-4 border-r-[color:var(--md-sys-color-primary)] shadow-md">
                     <CardContent className="pt-6">
                       <Typography variant="h6" className="mb-2">
-                        تشخیص تصاویر ساختگی
+                        جلوگیری از حملات چاپی
                       </Typography>
-                      <Typography variant="body-sm" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-                        شناسایی تصاویر چاپی، نمایشگرها و ماسک‌ها
+                      <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]">
+                        شناسایی عکس چاپی و نمایشگرهای بازپخش‌شده با دقت بالا.
                       </Typography>
                     </CardContent>
                   </Card>
                   <Card className="border-r-4 border-r-[color:var(--md-sys-color-tertiary)] shadow-md">
                     <CardContent className="pt-6">
                       <Typography variant="h6" className="mb-2">
-                        محافظت از deep fake
+                        مقابله با deep fake
                       </Typography>
-                      <Typography variant="body-sm" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-                        شناسایی ویدیوهای دستکاری شده و محتوای جعلی
+                      <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]">
+                        تشخیص الگوهای مصنوعی و تغییرات غیرطبیعی در ویدیو.
                       </Typography>
                     </CardContent>
                   </Card>
@@ -269,11 +266,11 @@ export default function LivenessPage() {
                 className="text-right"
               >
                 <Typography variant="h3" className="mb-6">
-                  یکپارچه‌سازی ساده و سریع
+                  یکپارچه‌سازی سریع و امن
                 </Typography>
                 <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6">
-                  API استاندارد RESTful ما امکان یکپارچه‌سازی آسان با برنامه‌های موبایل و وب را فراهم
-                  می‌کند. SDK های آماده برای iOS، Android و Web در دسترس هستند.
+                  APIهای RESTful و SDKهای iOS، Android و Web به شما کمک می‌کنند سرویس را سریع و بدون پیچیدگی
+                  پیاده‌سازی کنید.
                 </Typography>
                 <Button variant="monochrome" className="rounded-full px-8 shadow-[var(--elevation-2)]">
                   مشاهده مستندات
@@ -292,12 +289,12 @@ export default function LivenessPage() {
                     <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
                       نمونه درخواست API
                     </Typography>
-                    <Typography variant="body-sm" className="text-[color:var(--md-sys-color-on-surface-variant)]">
+                    <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]">
                       نمونه ساده برای ارسال درخواست احراز زنده بودن
                     </Typography>
                   </CardHeader>
                   <CardContent>
-                    <div className="rounded-2xl bg-slate-900 text-green-300 font-mono text-sm p-5 shadow-inner" dir="ltr">
+                    <div className="rounded-2xl bg-slate-900 text-green-300 font-mono text-base p-6 shadow-inner" dir="ltr">
                       <div className="mb-2">curl -X POST \</div>
                       <div className="mb-2 pl-4">https://api.example.com/liveness \</div>
                       <div className="mb-2 pl-4">-H "Authorization: Bearer TOKEN" \</div>
@@ -321,3 +318,5 @@ export default function LivenessPage() {
     </div>
   );
 }
+
+

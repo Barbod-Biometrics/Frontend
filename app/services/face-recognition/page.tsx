@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { motion } from "framer-motion";
@@ -32,27 +32,27 @@ type Highlight = {
 const features: Feature[] = [
   {
     icon: Shield,
-    title: "امنیت قوی",
+    title: "امنیت و حریم خصوصی",
     description:
-      "طبق الگوریتم‌های پیشرفته‌ی شناسایی چهره، امنیت بالا و حفظ حریم خصوصی کاربران تضمین شده و اجازه دسترسی افراد غیر مجاز داده نمی‌شود.",
+      "تمامی داده‌ها با رمزنگاری قوی پردازش و ذخیره می‌شوند و دسترسی غیرمجاز به اطلاعات حساس ممکن نیست.",
   },
   {
     icon: Zap,
-    title: "پردازش سریع",
+    title: "سرعت و دقت بالا",
     description:
-      "پردازش و تطبیق چهره در کمتر از ۵ ثانیه انجام شده و خطای سیستم نیز بسیار پایین است.",
+      "فرآیند تطبیق چهره در کمتر از چند ثانیه انجام می‌شود و نرخ خطا به حداقل می‌رسد.",
   },
   {
     icon: Users,
-    title: "اخذ صورت‌های موفق",
+    title: "پوشش سناریوهای متنوع",
     description:
-      "تمامی مراحل تشخیص با ثبت نتایج موفق یا ناموفق پایش می‌شود تا گزارش دقیقی از وضعیت تطبیق در اختیار شما باشد.",
+      "مناسب برای احراز هویت کاربران جدید، ورود امن، بازیابی حساب و فرآیندهای KYC در مقیاس بالا.",
   },
   {
     icon: CheckCircle,
-    title: "دقت بالا",
+    title: "دقت پایدار در شرایط مختلف",
     description:
-      "با کمک مدل‌ها و الگوهای یادگیری عمیق در پردازش تصویر، دقت تطبیق چهره بسیار بالا بوده و خطای سیستم به حداقل می‌رسد.",
+      "مدل‌های یادگیری عمیق در نور کم، تغییر سن، زاویه‌های مختلف و اکسسوری‌ها عملکرد دقیقی دارند.",
   },
 ];
 
@@ -60,24 +60,24 @@ const highlights: Highlight[] = [
   {
     title: "تطبیق دقیق چهره",
     description:
-      "سرویس تطبیق چهره با الگوریتم‌های پیشرفته پردازش تصویر و یادگیری عمیق، تصویر کاربر را با داده‌های مرجع مقایسه می‌کند و هویت او را با دقت بسیار بالا تایید یا رد می‌کند.",
+      "تصویر کاربر با داده‌های مرجع مقایسه می‌شود و با تحلیل ویژگی‌های سه‌بعدی، نتیجه تایید یا رد با اطمینان بالا برگردانده می‌شود.",
     image: "/assets/images/face-recognition-2.jpg",
     alt: "تطبیق دقیق چهره",
   },
   {
     title: "تحلیل ویژگی‌های چهره",
     description:
-      "سیستم تشخیص چهره به‌طور خودکار ویژگی‌های کلیدی صورت شامل ساختار صورت و فاصله اجزا را استخراج و تحلیل کرده و مسیر تطبیق دقیق و مطمئن را انجام می‌دهد.",
+      "نقاط کلیدی صورت استخراج می‌شوند تا تفاوت چهره واقعی و تصاویر ساختگی تشخیص داده شود و خطا کاهش یابد.",
     image: "/assets/images/face-recognition-3.jpg",
     alt: "تحلیل ویژگی‌های چهره",
     reverse: true,
   },
   {
-    title: "استعلام برخط و تایید هویت",
+    title: "تایید نهایی و پاسخ لحظه‌ای",
     description:
-      "در مرحله نهایی، داده‌های استخراج‌شده به‌صورت برخط با پایگاه‌های رسمی تطبیق داده می‌شود تا صحت هویت کاربر تایید شده و نتیجه به‌صورت لحظه‌ای ارائه گردد.",
+      "نتایج با قواعد کسب‌وکار و منابع معتبر سنجیده می‌شود تا پاسخ نهایی در همان لحظه ارائه شود.",
     image: "/assets/images/face-recognition-1.jpg",
-    alt: "استعلام برخط و تایید هویت",
+    alt: "پاسخ لحظه‌ای تطبیق",
     ctaLabel: "تست سرویس",
   },
 ];
@@ -101,12 +101,12 @@ export default function FaceRecognitionPage() {
                 className="text-right space-y-6"
               >
                 <Typography variant="h2" className="text-5xl font-bold leading-tight">
-                  تطبیق چهره
+                  احراز هویت چهره
                 </Typography>
                 <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed">
-                  با استفاده از سرویس تطبیق چهره، هویت کاربر از طریق تحلیل تصویر و الگوریتم‌های پیشرفته
-                  پردازش تصویری بررسی شده و در گام بعد با پایگاه داده تطبیق داده می‌شود. این سرویس
-                  طیف گسترده‌ای از سناریوهای هویت و تمامی فرآیندهای حساس هویتی قابل استفاده است.
+                  سرویس تطبیق چهره باربد با تحلیل سه‌بعدی و یادگیری عمیق، تصویر کاربر را با داده‌های مرجع مقایسه
+                  می‌کند و نتیجه را با دقت بالا ارائه می‌دهد. مقاوم در برابر نور، سن و اکسسوری و مناسب سناریوهای
+                  بانکی و دیجیتال.
                 </Typography>
                 <div className="flex flex-wrap gap-4 justify-end lg:justify-center">
                   <Button
@@ -115,7 +115,7 @@ export default function FaceRecognitionPage() {
                     className="rounded-full px-10 shadow-[var(--elevation-2)]"
                     onClick={() => router.push("/login")}
                   >
-                    درخواست سرویس
+                    شروع کنید
                   </Button>
                   <Button
                     size="lg"
@@ -135,11 +135,11 @@ export default function FaceRecognitionPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="relative"
               >
-                <div className="relative rounded-3xl overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/50 bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] p-4">
+                <div className="relative overflow-hidden rounded-3xl">
                   <img
                     src="/assets/images/face-reconition-4.jpg"
-                    alt="تطبیق چهره"
-                    className="w-full h-auto rounded-2xl object-cover"
+                    alt="احراز هویت چهره"
+                    className="w-full h-auto rounded-3xl object-cover"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
@@ -157,14 +157,14 @@ export default function FaceRecognitionPage() {
 
             <div className="relative max-w-3xl space-y-3 text-right">
               <Typography variant="h3" className="leading-tight">
-                قابلیت‌های پیشرفته برای تطبیق چهره
+                ویژگی‌های کلیدی تشخیص چهره
               </Typography>
               <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8">
-                امنیت، دقت، سرعت و پایش کامل در تمامی فرآیندهای تشخیص و تطبیق چهره
+                ترکیبی از امنیت، سرعت و دقت برای تجربه‌ای بدون اصطکاک در احراز هویت.
               </Typography>
             </div>
 
-            <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
@@ -185,11 +185,11 @@ export default function FaceRecognitionPage() {
                         <feature.icon className="h-7 w-7" />
                       </motion.span>
                       <div className="flex-1 pt-1 text-right">
-                        <h3 className="text-lg font-semibold leading-tight text-foreground">{feature.title}</h3>
+                        <h3 className="text-xl font-semibold leading-tight text-foreground">{feature.title}</h3>
                       </div>
                     </CardHeader>
                     <CardContent className="p-7 pt-2">
-                      <p className="text-sm leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
+                      <p className="text-base leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
                         {feature.description}
                       </p>
                     </CardContent>
@@ -225,7 +225,7 @@ export default function FaceRecognitionPage() {
                       <Typography variant="h3" className="mb-2">
                         {highlight.title}
                       </Typography>
-                      <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]" dir="rtl">
+                      <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)]" dir="rtl">
                         {highlight.description}
                       </Typography>
                       {highlight.ctaLabel ? (
@@ -250,7 +250,7 @@ export default function FaceRecognitionPage() {
                   transition={{ duration: 0.6 }}
                   className={`relative order-2 ${highlight.reverse ? "lg:order-1" : "lg:order-2"}`}
                 >
-                  <div className="rounded-3xl overflow-hidden shadow-2xl">
+                  <div className="rounded-3xl overflow-hidden">
                     <img
                       src={highlight.image}
                       alt={highlight.alt}
@@ -275,3 +275,5 @@ export default function FaceRecognitionPage() {
     </div>
   );
 }
+
+

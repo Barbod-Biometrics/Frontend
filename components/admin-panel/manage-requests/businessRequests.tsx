@@ -161,7 +161,7 @@ const SelectPill = ({
 }) => (
   <label
     className={clsx(
-      "relative flex items-center gap-2 rounded-xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-3 py-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:border-[color:var(--md-sys-color-primary)] transition",
+      "relative flex w-full flex-1 items-center gap-2 rounded-xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:border-[color:var(--md-sys-color-primary)] transition",
       minWidth,
     )}
   >
@@ -285,7 +285,7 @@ export default function BusinessRequests() {
       const pageNumber = pageSizeInput.trim() ? Number(pageSizeInput) : 1;
 
       if (!Number.isFinite(pageNumber) || pageNumber <= 0) {
-        setToast("U,OúU?Oŕ UOUc O1O_O_ U^OŕOñO_ U.O®O\"O¦ U^OŕOñO_ UcU+UOO_");
+        setToast("صفحه مورد نظر وجود ندارد");
         setRequests([]);
         return;
       }
@@ -303,7 +303,7 @@ export default function BusinessRequests() {
 
         const total = Math.max(response?.total_pages ?? 0, 1);
         if (total && pageNumber > total) {
-          setToast("U,OúU?O UOUc O1O_O_ U^OOñO_ U.O®O\"O¦ U^OOñO_ UcU+UOO_");
+          setToast("صفحه مورد نظر وجود ندارد");
           setRequests([]);
           setTotalPages(total);
           return;
@@ -345,9 +345,9 @@ export default function BusinessRequests() {
     >
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <div className="flex flex-col gap-3 rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-4 shadow-[var(--elevation-2)] md:flex-row md:items-center md:justify-start md:gap-2 md:flex-nowrap">
-          <div className="flex flex-1 items-center gap-2 md:gap-2 min-w-[260px] md:min-w-[280px] md:max-w-[360px]">
+          <div className="flex w-full flex-1 items-center gap-2 md:gap-2 min-w-[260px] md:min-w-[280px]">
             <h2 className="text-lg font-bold text-[#0f8bff] whitespace-nowrap">لیست کسب و کارها</h2>
-            <div className="flex flex-1 items-center gap-2 rounded-full border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-1.5 text-sm text-[color:var(--md-sys-color-on-surface-variant)] shadow-[var(--elevation-1)] min-w-[150px] md:min-w-[170px]">
+            <div className="flex w-full flex-1 items-center gap-2 rounded-full border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-1.5 text-sm text-[color:var(--md-sys-color-on-surface-variant)] shadow-[var(--elevation-1)] min-w-[150px] md:min-w-[170px]">
               <Search className="h-4 w-4 text-[color:var(--md-sys-color-primary)]" />
               <input
                 type="text"
@@ -359,7 +359,7 @@ export default function BusinessRequests() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 md:flex-nowrap md:justify-start md:gap-2 md:flex-[1.05]">
+          <div className="flex w-full flex-wrap items-center gap-2 md:flex-nowrap md:justify-start md:gap-2 md:flex-1">
             <SelectPill
               placeholder="وضعیت کسب و کار"
               value={statusFilter}
@@ -471,7 +471,7 @@ export default function BusinessRequests() {
       </div>
 
       {toast && (
-        <div className="fixed left-4 bottom-6 z-50 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 shadow-lg">
+        <div className="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-md border border-red-600 bg-red-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
           {toast}
         </div>
       )}

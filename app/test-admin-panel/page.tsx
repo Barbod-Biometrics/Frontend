@@ -7,6 +7,7 @@ import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 import { Header } from "./header";
 import BusinessRequests from "../../components/admin-panel/manage-requests/businessRequests";
+import ContactSalesRequests from "../../components/admin-panel/manage-requests/contactSalesRequests";
 
 type PanelView = "admin" | "business";
 
@@ -82,6 +83,7 @@ export default function Page() {
             )}
           >
             {activeItem === "manageBusinessRequests" && <BusinessRequests />}
+            {activeItem === "manageContactUsRequests" && <ContactSalesRequests />}
           </div>
         </>
       ) : (

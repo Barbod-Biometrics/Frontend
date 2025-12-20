@@ -4,32 +4,43 @@ import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
-import { selectIsAdmin } from "../store/loginSlice";
+import {
+  selectIsAdmin,
+  selectIsAuthenticated,
+  selectIsHydrated,
+} from "../store/loginSlice";
 
 type Props = { children: ReactNode };
 
 export function AdminRoute({ children }: Props) {
   const router = useRouter();
   const isAdmin = useSelector((state: RootState) => selectIsAdmin(state));
-  const loginStep = useSelector((state: RootState) => state.login.step);
+  const isAuthenticated = useSelector((state: RootState) =>
+    selectIsAuthenticated(state)
+  );
+  const hydrated = useSelector((state: RootState) => selectIsHydrated(state));
 
   useEffect(() => {
-    // if not login, ensure they login
-    if (loginStep === "login") {
+    // wait for storage hydration first
+    if (!hydrated) return;
+
+    // not authenticated -> ensure they login
+    if (!isAuthenticated) {
       router.push("/login");
       return;
     }
 
-    // wait until we know status
+    // wait until we know admin status
     if (typeof isAdmin === "undefined") return;
 
     if (!isAdmin) {
       // not admin -> send to user area
       router.push("/user");
     }
-  }, [isAdmin, loginStep, router]);
+  }, [isAdmin, isAuthenticated, hydrated, router]);
 
-  if (loginStep === "login" || typeof isAdmin === "undefined") return null;
+  if (!hydrated || !isAuthenticated || typeof isAdmin === "undefined")
+    return null;
   if (!isAdmin) return null;
   return <>{children}</>;
 }
@@ -37,10 +48,17 @@ export function AdminRoute({ children }: Props) {
 export function UserRoute({ children }: Props) {
   const router = useRouter();
   const isAdmin = useSelector((state: RootState) => selectIsAdmin(state));
-  const loginStep = useSelector((state: RootState) => state.login.step);
+  const isAuthenticated = useSelector((state: RootState) =>
+    selectIsAuthenticated(state)
+  );
+  const hydrated = useSelector((state: RootState) => selectIsHydrated(state));
 
   useEffect(() => {
-    if (loginStep === "login") {
+    // wait for storage hydration first
+    if (!hydrated) return;
+
+    // not authenticated -> ensure they login
+    if (!isAuthenticated) {
       router.push("/login");
       return;
     }
@@ -50,9 +68,10 @@ export function UserRoute({ children }: Props) {
     if (isAdmin) {
       router.push("/admin");
     }
-  }, [isAdmin, loginStep, router]);
+  }, [isAdmin, isAuthenticated, hydrated, router]);
 
-  if (loginStep === "login" || typeof isAdmin === "undefined") return null;
+  if (!hydrated || !isAuthenticated || typeof isAdmin === "undefined")
+    return null;
   if (isAdmin) return null;
   return <>{children}</>;
 }

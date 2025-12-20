@@ -12,6 +12,7 @@ interface LoginState {
   isSubmitting: boolean;
   isHovered: boolean;
   isAdmin?: boolean;
+  hydrated: boolean;
 }
 
 const initialState: LoginState = {
@@ -21,6 +22,7 @@ const initialState: LoginState = {
   isSubmitting: false,
   isHovered: false,
   isAdmin: undefined,
+  hydrated: false,
 };
 
 const toMessage = (error: unknown, fallback: string) => {
@@ -45,10 +47,7 @@ export const requestOtpThunk = createAsyncThunk<
     await requestOtp(phoneNumber);
   } catch (error) {
     return rejectWithValue(
-      toMessage(
-        error,
-        "Unable to send the code right now. Please try again."
-      )
+      toMessage(error, "Unable to send the code right now. Please try again.")
     );
   }
 });
@@ -86,10 +85,7 @@ export const resendOtpThunk = createAsyncThunk<
     await requestOtp(phoneNumber);
   } catch (error) {
     return rejectWithValue(
-      toMessage(
-        error,
-        "Unable to send the code right now. Please try again."
-      )
+      toMessage(error, "Unable to send the code right now. Please try again.")
     );
   }
 });
@@ -108,6 +104,8 @@ const loginSlice = createSlice({
         state.isAdmin = isAdmin;
         state.step = "otp";
       }
+      // mark that we've checked persistent storage
+      state.hydrated = true;
     },
     resetLogin(state) {
       state.step = "login";
@@ -146,6 +144,8 @@ const loginSlice = createSlice({
         state.isAdmin = payload?.is_admin ?? false;
         // persist tokens and related info
         if (payload) saveAuth(payload);
+        // mark authenticated state as checked
+        state.hydrated = true;
       })
       .addCase(verifyOtpThunk.rejected, (state, action) => {
         state.isSubmitting = false;
@@ -182,5 +182,6 @@ export const selectMaskedPhone = (state: RootState) =>
 export const selectIsAdmin = (state: RootState) => state.login.isAdmin;
 export const selectIsAuthenticated = (state: RootState) =>
   typeof state.login.isAdmin !== "undefined";
+export const selectIsHydrated = (state: RootState) => state.login.hydrated;
 
 export default loginSlice.reducer;

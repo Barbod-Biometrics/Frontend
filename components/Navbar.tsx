@@ -188,9 +188,9 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
                                 <Button
                                   key={child.label}
                                   variant="ghost"
-                                  size="sm"
+                                  size="md"
                                   onClick={() => handleNavClick(child.href)}
-                                  className="w-full h-auto min-w-0 justify-start gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-sm text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] group text-start"
+                                  className="w-full h-auto min-w-0 justify-start gap-3 px-4 py-3 rounded-[var(--radius-md)] text-base text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] group text-start"
                                 >
                                   {child.icon && (
                                     <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-black/20 border border-white/10 shadow-inner">
@@ -285,7 +285,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
                           key={child.label}
                           variant="ghost"
                           onClick={() => handleNavClick(child.href)}
-                          className="w-full justify-start px-4 py-2 text-sm text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
+                          className="w-full justify-start px-4 py-3 text-base text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
                         >
                           {child.label}
                         </Button>

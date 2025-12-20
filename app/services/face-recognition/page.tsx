@@ -32,27 +32,27 @@ type Highlight = {
 const features: Feature[] = [
   {
     icon: Shield,
-    title: "امنیت و حریم خصوصی",
+    title: "امنیت قوی",
     description:
-      "تمامی داده‌ها با رمزنگاری قوی پردازش و ذخیره می‌شوند و دسترسی غیرمجاز به اطلاعات حساس ممکن نیست.",
+      "باربد با الگوریتم‌های پیشرفته بیومتریک و رمزنگاری، امنیت داده‌ها و اطلاعات حساس کاربران را تضمین می‌کند.",
   },
   {
     icon: Zap,
-    title: "سرعت و دقت بالا",
+    title: "پردازش سریع",
     description:
-      "فرآیند تطبیق چهره در کمتر از چند ثانیه انجام می‌شود و نرخ خطا به حداقل می‌رسد.",
+      "پردازش تصویر و تطبیق در زمان کوتاه انجام می‌شود تا تجربه کاربری سریع و بدون تأخیر ارائه گردد.",
   },
   {
     icon: Users,
-    title: "پوشش سناریوهای متنوع",
+    title: "احراز هویت های موفق",
     description:
-      "مناسب برای احراز هویت کاربران جدید، ورود امن، بازیابی حساب و فرآیندهای KYC در مقیاس بالا.",
+      "ثبت تمامی درخواست‌های موفق امکان پایش کامل و ارائه گزارش‌های دقیق را فراهم می‌کند.",
   },
   {
     icon: CheckCircle,
-    title: "دقت پایدار در شرایط مختلف",
+    title: "دقت بالا",
     description:
-      "مدل‌های یادگیری عمیق در نور کم، تغییر سن، زاویه‌های مختلف و اکسسوری‌ها عملکرد دقیقی دارند.",
+      "الگوریتم‌های تطبیق چهره با دقت بسیار بالا و نرخ خطای پایین عمل می‌کنند.",
   },
 ];
 
@@ -60,24 +60,24 @@ const highlights: Highlight[] = [
   {
     title: "تطبیق دقیق چهره",
     description:
-      "تصویر کاربر با داده‌های مرجع مقایسه می‌شود و با تحلیل ویژگی‌های سه‌بعدی، نتیجه تایید یا رد با اطمینان بالا برگردانده می‌شود.",
+      "سرویس تطبیق چهره با تحلیل ویژگی‌های چهره و الگوریتم‌های پیشرفته، تصویر کاربر را با داده‌های مرجع مقایسه کرده و با دقت بسیار بالا تایید یا رد می‌کند.",
     image: "/assets/images/face-recognition-2.jpg",
     alt: "تطبیق دقیق چهره",
   },
   {
     title: "تحلیل ویژگی‌های چهره",
     description:
-      "نقاط کلیدی صورت استخراج می‌شوند تا تفاوت چهره واقعی و تصاویر ساختگی تشخیص داده شود و خطا کاهش یابد.",
+      "در این مرحله ویژگی‌های کلیدی صورت مانند فاصله نقاط اصلی صورت و هندسه چهره استخراج و تحلیل می‌شود تا تطبیق دقیق و مطمئن با داده‌های مرجع انجام شود.",
     image: "/assets/images/face-recognition-3.jpg",
     alt: "تحلیل ویژگی‌های چهره",
     reverse: true,
   },
   {
-    title: "تایید نهایی و پاسخ لحظه‌ای",
+    title: "استعلام برخط و تایید هویت",
     description:
-      "نتایج با قواعد کسب‌وکار و منابع معتبر سنجیده می‌شود تا پاسخ نهایی در همان لحظه ارائه شود.",
+      "در مرحله نهایی، اطلاعات تایید شده با پایگاه‌های رسمی تطبیق داده می‌شوند و نتیجه به‌صورت لحظه‌ای ارائه می‌گردد.",
     image: "/assets/images/face-recognition-1.jpg",
-    alt: "پاسخ لحظه‌ای تطبیق",
+    alt: "استعلام برخط و تایید هویت",
     ctaLabel: "تست سرویس",
   },
 ];
@@ -101,12 +101,12 @@ export default function FaceRecognitionPage() {
                 className="text-right space-y-6"
               >
                 <Typography variant="h2" className="text-5xl font-bold leading-tight">
-                  احراز هویت چهره
+                  تطبیق چهره
                 </Typography>
                 <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed">
-                  سرویس تطبیق چهره باربد با تحلیل سه‌بعدی و یادگیری عمیق، تصویر کاربر را با داده‌های مرجع مقایسه
-                  می‌کند و نتیجه را با دقت بالا ارائه می‌دهد. مقاوم در برابر نور، سن و اکسسوری و مناسب سناریوهای
-                  بانکی و دیجیتال.
+                  با استفاده از سرویس تطبیق چهره، هویت کاربران از طریق تحلیل تصویر و الگوریتم‌های پیشرفته پردازش تصویری
+                  بررسی شده و با دقت بسیار بالا به مراجع استعلام تطبیق داده می‌شود. این سرویس برای بانک‌ها، شرکت‌های بزرگ
+                  و تمامی نهادهای حساس هویتی قابل استفاده است.
                 </Typography>
                 <div className="flex flex-wrap gap-4 justify-end lg:justify-center">
                   <Button
@@ -115,7 +115,7 @@ export default function FaceRecognitionPage() {
                     className="rounded-full px-10 shadow-[var(--elevation-2)]"
                     onClick={() => router.push("/login")}
                   >
-                    شروع کنید
+                    درخواست سرویس
                   </Button>
                   <Button
                     size="lg"
@@ -138,7 +138,7 @@ export default function FaceRecognitionPage() {
                 <div className="relative overflow-hidden rounded-3xl">
                   <img
                     src="/assets/images/face-reconition-4.jpg"
-                    alt="احراز هویت چهره"
+                    alt="تطبیق چهره"
                     className="w-full h-auto rounded-3xl object-cover"
                     loading="lazy"
                   />
@@ -157,10 +157,10 @@ export default function FaceRecognitionPage() {
 
             <div className="relative max-w-3xl space-y-3 text-right">
               <Typography variant="h3" className="leading-tight">
-                ویژگی‌های کلیدی تشخیص چهره
+                تطبیق چهره
               </Typography>
               <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8">
-                ترکیبی از امنیت، سرعت و دقت برای تجربه‌ای بدون اصطکاک در احراز هویت.
+                امنیت قوی، پردازش سریع، احراز هویت های موفق و دقت بالا
               </Typography>
             </div>
 

@@ -28,26 +28,42 @@ type Highlight = {
 };
 
 const features: Feature[] = [
-  { icon: ScanLine, title: "استخراج متن", description: "تبدیل تصاویر و اسناد به متن قابل ویرایش با دقت بالا" },
-  { icon: Globe, title: "چند زبانه", description: "پشتیبانی از فارسی، عربی، انگلیسی و بیش از ۱۰۰ زبان دیگر" },
-  { icon: Layers, title: "پردازش دسته‌ای", description: "پردازش همزمان صدها سند با سرعت بالا" },
-  { icon: Zap, title: "سرعت بالا", description: "استخراج متن از هر سند در کمتر از ۲ ثانیه" },
+  {
+    icon: ScanLine,
+    title: "یکپارچگی و مقیاس‌پذیری",
+    description: "استفاده آسان از API و قابلیت اتصال به سامانه‌ها، پردازش در مقیاس بالا را فراهم می‌کند.",
+  },
+  {
+    icon: Globe,
+    title: "نرخ پاسخ‌دهی",
+    description: "پاسخ‌دهی سریع و پردازش هوشمند، خروجی را در زمان کوتاه ارائه می‌دهد.",
+  },
+  {
+    icon: Layers,
+    title: "کارت‌های پردازش شده",
+    description: "استخراج دقیق اطلاعات کارت ملی و تبدیل به داده دیجیتال قابل استفاده.",
+  },
+  {
+    icon: Zap,
+    title: "نرخ موفقیت",
+    description: "تشخیص دقیق حتی در کیفیت‌های متفاوت تصویر با نرخ موفقیت بالا.",
+  },
 ];
 
 const highlights: Highlight[] = [
   {
-    title: "پردازش پیشرفته تصویر",
+    title: "استخراج هوشمند اطلاعات از کارت ملی",
     description:
-      "الگوریتم OCR ما با استفاده از شبکه‌های عصبی کانولوشنال تصاویر را پیش‌پردازش کرده و متن را با دقت بالا استخراج می‌کند؛ شامل تصحیح زاویه، حذف نویز و بهبود کنتراست.",
+      "سرویس OCR کارت ملی با بهره‌گیری از الگوریتم‌های پیشرفته، تمامی اطلاعات را استخراج کرده و داده‌های تمیز و قابل استفاده تولید می‌کند. فرآیند به صورت خودکار و سریع و بدون دخالت انسانی انجام می‌شود.",
     image: "/assets/images/ocr-2.jpg",
-    alt: "پردازش تصویر",
+    alt: "استخراج هوشمند اطلاعات از کارت ملی",
   },
   {
-    title: "پشتیبانی کامل از زبان فارسی",
+    title: "تحلیل و اعتبارسنجی داده‌ها",
     description:
-      "پشتیبانی عالی از زبان‌های راست‌به‌چپ به‌ویژه فارسی و عربی؛ تشخیص دقیق فونت‌ها و خطوط مختلف و استخراج ساختارها و جداول پیچیده.",
+      "پس از استخراج اطلاعات، سیستم به‌صورت خودکار خطاها و تناقض‌ها را تشخیص داده و با الگوریتم‌های داخلی صحت داده‌ها را بررسی می‌کند.",
     image: "/assets/images/ocr-3.jpg",
-    alt: "پشتیبانی زبان فارسی",
+    alt: "تحلیل و اعتبارسنجی داده‌ها",
     reverse: true,
   },
 ];
@@ -69,18 +85,19 @@ export default function OCRPage() {
                 className="text-right space-y-6"
               >
                 <Typography variant="h2" className="text-5xl font-bold leading-tight">
-                  تبدیل تصویر به متن
+                  سرویس OCR و استعلام کارت ملی
                 </Typography>
                 <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed">
-                  سرویس OCR پیشرفته ما با استفاده از هوش مصنوعی و یادگیری عمیق، قادر به استخراج متن از تصاویر، PDF‌ها و اسناد اسکن شده با
-                  دقت بالای ۹۸٪ است و از زبان‌های فارسی و عربی با خط‌های مختلف به خوبی پشتیبانی می‌کند.
+                  این سرویس با استفاده از هوش مصنوعی و پردازش تصویر، اطلاعات کارت ملی را به صورت خودکار استخراج و به داده‌های دیجیتال
+                  تبدیل می‌کند. سپس با استعلام از مراجع رسمی، صحت اطلاعات بررسی شده و نتیجه به‌صورت آنی ارائه می‌شود. احراز هویت سریع،
+                  دقیق و بدون ورود دستی اطلاعات انجام می‌شود.
                 </Typography>
                 <div className="flex flex-wrap gap-4 justify-end lg:justify-center">
                   <Button size="lg" variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
-                    شروع رایگان
+                    درخواست سرویس
                   </Button>
                   <Button size="lg" variant="secondary" className="rounded-full px-10">
-                    مشاهده دمو
+                    تست سرویس
                   </Button>
                 </div>
               </motion.div>
@@ -94,7 +111,7 @@ export default function OCRPage() {
                 <div className="relative overflow-hidden rounded-3xl">
                   <img
                     src="/assets/images/ocr-1.jpg"
-                    alt="OCR"
+                    alt="سرویس OCR و استعلام کارت ملی"
                     className="w-full h-auto rounded-3xl object-cover"
                     loading="lazy"
                   />
@@ -113,10 +130,10 @@ export default function OCRPage() {
 
             <div className="relative max-w-3xl space-y-3 text-right">
               <Typography variant="h3" className="leading-tight">
-                قابلیت‌های پیشرفته برای استخراج و پردازش متن
+                سرویس OCR و استعلام کارت ملی
               </Typography>
               <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8">
-                امنیت، سرعت و دقت بالا در تشخیص متون، با پشتیبانی گسترده از زبان‌ها و ساختارهای پیچیده
+                یکپارچگی و مقیاس‌پذیری، نرخ پاسخ‌دهی، کارت‌های پردازش شده و نرخ موفقیت
               </Typography>
             </div>
 
@@ -209,13 +226,13 @@ export default function OCRPage() {
                 className="text-right"
               >
                 <Typography variant="h3" className="mb-6">
-                  API ساده و قدرتمند
+                  استعلام برخط از مراجع رسمی
                 </Typography>
                 <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6">
-                  با استفاده از REST API ساده ما، به راحتی می‌توانید قابلیت OCR را به برنامه خود اضافه کنید. تصویر را آپلود کنید و متن استخراج شده را دریافت کنید.
+                  در مرحله پایانی، اطلاعات استخراج شده با مراجع رسمی تطبیق داده می‌شود و نتیجه به‌صورت لحظه‌ای ارائه می‌شود.
                 </Typography>
                 <Button variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
-                  مشاهده مستندات
+                  تست سرویس
                 </Button>
               </motion.div>
 
@@ -229,10 +246,10 @@ export default function OCRPage() {
                 <Card className="rounded-3xl overflow-hidden shadow-2xl bg-[color:var(--md-sys-color-surface-container-high)]">
                   <CardHeader className="pb-2">
                     <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
-                      نمونه درخواست API
+                      استعلام برخط از مراجع رسمی
                     </Typography>
                     <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-                      ارسال تصویر و دریافت متن استخراج‌شده
+                      در مرحله پایانی، اطلاعات استخراج شده با مراجع رسمی تطبیق داده می‌شود و نتیجه به‌صورت لحظه‌ای ارائه می‌شود.
                     </Typography>
                   </CardHeader>
                   <CardContent>
@@ -260,4 +277,3 @@ export default function OCRPage() {
     </div>
   );
 }
-

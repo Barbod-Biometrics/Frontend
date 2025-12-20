@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import clsx from "clsx";
 import { AdminSidebar } from "../../components/admin-panel/sideBar";
 import { SidebarDashboard } from "../../components/sidebarDashboard";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 import { Header } from "./header";
+import BusinessRequests from "../../components/admin-panel/manage-requests/businessRequests";
+import ContactSalesRequests from "../../components/admin-panel/manage-requests/contactSalesRequests";
 
 type PanelView = "admin" | "business";
 
@@ -55,7 +58,7 @@ export default function Page() {
   const headerIsInAdminPanel = useMemo(() => panelView === "admin", [panelView]);
 
   return (
-    <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
+    <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)] pt-16 md:pt-20">
       <Header
         collapsed={collapsed}
         onToggleAction={() => setCollapsed((state) => !state)}
@@ -67,11 +70,22 @@ export default function Page() {
       />
 
       {panelView === "admin" ? (
-        <AdminSidebar
-          collapsed={collapsed}
-          activeItemId={activeItem}
-          onSelectItemAction={(id) => setActiveItem(id)}
-        />
+        <>
+          <AdminSidebar
+            collapsed={collapsed}
+            activeItemId={activeItem}
+            onSelectItemAction={(id) => setActiveItem(id)}
+          />
+          <div
+            className={clsx(
+              "min-h-screen transition-all duration-300",
+              collapsed ? "mr-[76px] pr-4" : "mr-[210px] pr-6",
+            )}
+          >
+            {activeItem === "manageBusinessRequests" && <BusinessRequests />}
+            {activeItem === "manageContactUsRequests" && <ContactSalesRequests />}
+          </div>
+        </>
       ) : (
         <SidebarDashboard
           collapsed={collapsed}

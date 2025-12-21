@@ -89,7 +89,12 @@ export function Header({
   const isLight = theme === Theme.LIGHT;
 
   const themeIcon = useMemo(
-    () => (isLight ? <Sun className="h-5 w-5 text-amber-500" /> : <Moon className="h-5 w-5 text-blue-200" />),
+    () =>
+      isLight ? (
+        <Moon className="h-5 w-5" />
+      ) : (
+        <Sun className="h-5 w-5 text-white" />
+      ),
     [isLight],
   );
 
@@ -130,6 +135,7 @@ export function Header({
             "flex h-10 w-10 items-center justify-center rounded-full border transition",
             "border-[color:var(--md-sys-color-outline-variant)]",
             "bg-[color:var(--md-sys-color-surface-container-high)]",
+            "text-[color:var(--md-sys-color-on-surface-variant)]",
             "hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)]",
           )}
         >

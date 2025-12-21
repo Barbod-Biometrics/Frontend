@@ -126,25 +126,16 @@ export function DemoModal({ onClose }: DemoModalProps) {
                                 دسترسی بدهید.
                             </p>
 
-                            <div className="space-y-3 mb-8 text-right max-w-md mx-auto">
-                                <div className="flex items-start gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-[color:var(--md-sys-color-primary)] mt-2 flex-shrink-0" />
-                                    <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                                        دوربین خود را در محیطی روشن قرار دهید
-                                    </p>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-[color:var(--md-sys-color-primary)] mt-2 flex-shrink-0" />
-                                    <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                                        چهره خود را مستقیم به دوربین نشان دهید
-                                    </p>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-[color:var(--md-sys-color-primary)] mt-2 flex-shrink-0" />
-                                    <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                                        از عینک یا ماسک استفاده نکنید
-                                    </p>
-                                </div>
+                            <div className="space-y-3 mb-8 text-center max-w-md mx-auto">
+                                <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                                    دوربین خود را در محیطی روشن قرار دهید
+                                </p>
+                                <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                                    چهره خود را مستقیم به دوربین نشان دهید
+                                </p>
+                                <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                                    از عینک یا ماسک استفاده نکنید
+                                </p>
                             </div>
 
                             <Button

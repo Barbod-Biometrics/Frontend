@@ -18,15 +18,14 @@ type StatItem = {
   icon: React.ElementType;
 };
 
-const headingCopy: Record<Language, { badge: string; title: string; subtitle: string }> = {
+const headingCopy: Record<Language, { badge?: string; title: string; subtitle: string }> = {
   [Language.EN]: {
     badge: "Key reliability metrics",
     title: "Why teams trust Barbod",
     subtitle:
-      "Barbod’s identity stack is tuned for speed, security, and observability so you ship dependable onboarding at any scale.",
+      "Barbod's identity stack is tuned for speed, security, and observability so you ship dependable onboarding at any scale.",
   },
   [Language.FA]: {
-    badge: "شاخص‌های کلیدی",
     title: "چرا تیم‌ها به باربد اعتماد می‌کنند",
     subtitle:
       "زیرساخت احراز هویت باربد برای سرعت، امنیت و مشاهده‌پذیری طراحی شده است تا در هر مقیاسی نتایج دقیق ارائه دهد.",
@@ -100,13 +99,18 @@ export function StatsSection() {
         <div className="pointer-events-none absolute inset-0 opacity-60 blur-3xl [background:radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(99,102,241,0.14),transparent_45%)]" />
 
         <div className={cn("relative max-w-4xl space-y-3", isRtl ? "text-right" : "text-left")}>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--md-sys-color-on-surface-variant)]">
-            {copy.badge}
-          </span>
+          {copy.badge ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--md-sys-color-on-surface-variant)]">
+              {copy.badge}
+            </span>
+          ) : null}
           <Typography variant="h3" className="leading-tight">
             {copy.title}
           </Typography>
-          <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8">
+          <Typography
+            variant="body-lg"
+            className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8 lg:whitespace-nowrap"
+          >
             {copy.subtitle}
           </Typography>
         </div>

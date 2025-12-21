@@ -48,7 +48,7 @@ export default function LivenessPage() {
     <div className="min-h-screen bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] font-vazirmatn" dir="rtl">
       <Navbar />
 
-      <main>
+      <main className="pr-2 sm:pr-4 lg:pr-8 xl:pr-12">
         <Section spacing="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--md-sys-color-primary)]/12 to-[color:var(--md-sys-color-tertiary)]/12" />
           <Container className="relative">

@@ -96,7 +96,13 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
   ];
 
   const handleNavClick = (href: string) => {
-    if (href.startsWith("/")) {
+    if (href === "home") {
+      if (window.location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.location.assign("/");
+      }
+    } else if (href.startsWith("/")) {
       window.location.assign(href);
     } else {
       onNavigate(href);

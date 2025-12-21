@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Camera, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Camera, CheckCircle2 } from "lucide-react";
 import { FaceScanner } from "../../components/FaceScanner";
 import { Button } from "../../components/ui/Button";
+import { useLanguage } from "../../lib/useLanguage";
 
 type Phase = "permission" | "scanner" | "challenge" | "success";
 
@@ -22,6 +23,8 @@ const CHALLENGES: ChallengeType[] = [
 
 export default function LivenessCheckPage() {
     const router = useRouter();
+    const { dir } = useLanguage();
+    const BackIcon = dir === "rtl" ? ArrowRight : ArrowLeft;
     const [phase, setPhase] = useState<Phase>("permission");
     const [currentChallenge, setCurrentChallenge] = useState<ChallengeType | null>(null);
     const [challengeIndex, setChallengeIndex] = useState(0);
@@ -130,7 +133,7 @@ export default function LivenessCheckPage() {
                 className="fixed top-4 left-4 z-10 h-auto w-auto p-2 rounded-full bg-[color:var(--md-sys-color-surface-container-high)] hover:bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)]"
                 aria-label="بازگشت"
             >
-                <ArrowRight size={24} />
+                <BackIcon size={24} />
             </Button>
 
             <AnimatePresence mode="wait">
@@ -164,25 +167,16 @@ export default function LivenessCheckPage() {
                             دسترسی بدهید.
                         </p>
 
-                        <div className="space-y-3 mb-8 text-right max-w-md mx-auto">
-                            <div className="flex items-start gap-3">
-                                <div className="w-2 h-2 rounded-full bg-[color:var(--md-sys-color-primary)] mt-2 flex-shrink-0" />
-                                <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                                    دوربین خود را در محیطی روشن قرار دهید
-                                </p>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-2 h-2 rounded-full bg-[color:var(--md-sys-color-primary)] mt-2 flex-shrink-0" />
-                                <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                                    چهره خود را مستقیم به دوربین نشان دهید
-                                </p>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="w-2 h-2 rounded-full bg-[color:var(--md-sys-color-primary)] mt-2 flex-shrink-0" />
-                                <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                                    از عینک یا ماسک استفاده نکنید
-                                </p>
-                            </div>
+                        <div className="space-y-3 mb-8 text-center max-w-md mx-auto">
+                            <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                                دوربین خود را در محیطی روشن قرار دهید
+                            </p>
+                            <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                                چهره خود را مستقیم به دوربین نشان دهید
+                            </p>
+                            <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                                از عینک یا ماسک استفاده نکنید
+                            </p>
                         </div>
 
                         <Button
@@ -202,9 +196,9 @@ export default function LivenessCheckPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="w-full max-w-2xl bg-[color:var(--md-sys-color-surface-container)] rounded-2xl shadow-[var(--elevation-3)] p-6 md:p-8"
+                        className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl bg-[color:var(--md-sys-color-surface-container)] rounded-2xl shadow-[var(--elevation-3)] p-4 sm:p-6 md:p-8 lg:p-10"
                     >
-                        <h2 className="text-xl md:text-2xl font-bold mb-6 text-center text-[color:var(--md-sys-color-on-surface)]">
+                        <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-center text-[color:var(--md-sys-color-on-surface)]">
                             تشخیص چهره
                         </h2>
                         <FaceScanner
@@ -221,10 +215,10 @@ export default function LivenessCheckPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="w-full max-w-2xl bg-[color:var(--md-sys-color-surface-container)] rounded-2xl shadow-[var(--elevation-3)] p-6 md:p-8"
+                        className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl bg-[color:var(--md-sys-color-surface-container)] rounded-2xl shadow-[var(--elevation-3)] p-4 sm:p-6 md:p-8 lg:p-10"
                     >
-                        <div className="mb-6 text-center">
-                            <h2 className="text-xl md:text-2xl font-bold mb-2 text-[color:var(--md-sys-color-on-surface)]">
+                        <div className="mb-4 sm:mb-6 text-center">
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 text-[color:var(--md-sys-color-on-surface)]">
                                 تأیید زنده‌بودن
                             </h2>
                             <div className="flex justify-center gap-2">
@@ -242,7 +236,7 @@ export default function LivenessCheckPage() {
                                     />
                                 ))}
                             </div>
-                            <p className="text-sm text-[color:var(--md-sys-color-on-surface-variant)] mt-2">
+                            <p className="text-xs sm:text-sm text-[color:var(--md-sys-color-on-surface-variant)] mt-2">
                                 چالش {challengeIndex + 1} از {CHALLENGES.length}
                             </p>
                         </div>

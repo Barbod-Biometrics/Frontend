@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Globe, Layers, ScanLine, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Footer } from "../../../components/Footer";
 import { Navbar } from "../../../components/Navbar";
@@ -78,6 +79,8 @@ const highlights: Highlight[] = [
 ];
 
 export default function OCRPage() {
+  const router = useRouter();
+
   return (
     <div
       className="min-h-screen bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] font-vazirmatn"
@@ -124,6 +127,7 @@ export default function OCRPage() {
                     size="lg"
                     variant="secondary"
                     className="rounded-full px-10"
+                    onClick={() => router.push("/liveness-check")}
                   >
                     تست سرویس
                   </Button>
@@ -297,6 +301,7 @@ export default function OCRPage() {
                 <Button
                   variant="monochrome"
                   className="rounded-full px-10 shadow-[var(--elevation-2)]"
+                  onClick={() => router.push("/liveness-check")}
                 >
                   تست سرویس
                 </Button>

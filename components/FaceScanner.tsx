@@ -128,7 +128,7 @@ export function FaceScanner({
     };
 
     return (
-        <div className="w-full space-y-4">
+        <div className="mx-auto w-full max-w-[740px] space-y-4">
             <div className="relative w-full aspect-[4/5] sm:aspect-[16/11] rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-950">
                 {/* Webcam Feed */}
                 <Webcam

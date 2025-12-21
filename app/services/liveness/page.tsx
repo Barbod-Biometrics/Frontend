@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Camera, CheckCircle, Eye, Lock, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Footer } from "../../../components/Footer";
 import { Input } from "../../../components/Input";
@@ -44,6 +45,8 @@ const features: Feature[] = [
 ];
 
 export default function LivenessPage() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] font-vazirmatn" dir="rtl">
       <Navbar />
@@ -71,7 +74,12 @@ export default function LivenessPage() {
                   <Button size="lg" variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
                     درخواست سرویس
                   </Button>
-                  <Button size="lg" variant="secondary" className="rounded-full px-10">
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="rounded-full px-10"
+                    onClick={() => router.push("/liveness-check")}
+                  >
                     تست سرویس
                   </Button>
                 </div>
@@ -272,7 +280,11 @@ export default function LivenessPage() {
               <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6">
                 در مرحله نهایی، اطلاعات تایید شده با پایگاه‌های رسمی تطبیق داده می‌شوند و نتیجه به‌صورت لحظه‌ای ارائه می‌گردد.
               </Typography>
-              <Button variant="monochrome" className="rounded-full px-8 shadow-[var(--elevation-2)]">
+              <Button
+                variant="monochrome"
+                className="rounded-full px-8 shadow-[var(--elevation-2)]"
+                onClick={() => router.push("/liveness-check")}
+              >
                 تست سرویس
               </Button>
             </motion.div>

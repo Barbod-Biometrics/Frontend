@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
-/* 
-  Global Scaling Strategy 
+/*
+  Global Scaling Strategy
   - Default (Mobile/Tablet): 16px (100%)
-  - Laptop (1024px - 1536px): 12px (75%) - Aggressive reduction for "too big" feedback
-  - Desktop (1537px+): 14px (87.5%) - Compact desktop view
+  - Laptop (1024px - 1536px): 14px (87.5%) - Moderate reduction for readability
+  - Desktop (1537px+): 15px (93.75%) - Balanced desktop view
 */
 html {
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 @media (min-width: 1024px) and (max-width: 1536px) {
   html {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
 @media (min-width: 1537px) {
   html {
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 
@@ -216,6 +217,36 @@ body {
 
 html[lang='fa'] body {
   font-family: var(--font-vazirmatn), "Vazirmatn", system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+html[lang='fa'] p,
+html[lang='fa'] li,
+html[lang='fa'] blockquote,
+html[lang='fa'] figcaption,
+html[lang='fa'] dd {
+  text-align: justify;
+  text-align-last: right;
+  text-justify: inter-word;
+}
+
+@supports (text-justify: inter-character) {
+  html[lang='fa'] p,
+  html[lang='fa'] li,
+  html[lang='fa'] blockquote,
+  html[lang='fa'] figcaption,
+  html[lang='fa'] dd {
+    text-justify: inter-character;
+  }
+}
+
+html[lang='fa'] .text-center,
+html[lang='fa'] .text-center p,
+html[lang='fa'] .text-center li,
+html[lang='fa'] .text-center blockquote,
+html[lang='fa'] .text-center figcaption {
+  text-align: center;
+  text-align-last: center;
 }
 
 .font-vazirmatn *,

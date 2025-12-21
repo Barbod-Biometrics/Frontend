@@ -172,18 +172,23 @@ export default function FAQPage() {
         </div>
 
         {/* Contact CTA */}
-        <Card variant="filled" className="mt-12 p-6 text-center ">
-        <Typography variant="h5" className="mb-3">
-        {isFA ? "جواب سوال خود را پیدا نکردید؟" : "Can't find the answer to your question?"}
-        </Typography>
-        <Typography variant="body-lg" className="mb-4">
-        {isFA
-        ? "می‌توانید با تیم پشتیبانی ما تماس بگیرید و سوال خود را مطرح کنید."
-        : "You can contact our support team for assistance."}
-        </Typography>
-        <Button variant="primary" size="lg" onClick={() => (window.location.href = '/contact-us')}>
-        {isFA ? "تماس با ما" : "Contact Us"}
-        </Button>
+        <Card variant="filled" className="mt-12 p-6 text-center">
+          <Typography variant="h5" className="mb-3">
+            {isFA ? "جواب سوال خود را پیدا نکردید؟" : "Can't find the answer to your question?"}
+          </Typography>
+          <Typography variant="body-lg" className="mb-4">
+            {isFA
+              ? "می‌توانید با تیم پشتیبانی ما تماس بگیرید و سوال خود را مطرح کنید."
+              : "You can contact our support team for assistance."}
+          </Typography>
+          <Button
+            variant="primary"
+            size="lg"
+            className="rounded-full px-10"
+            onClick={() => router.push("/contact-us")}
+          >
+            {isFA ? "تماس با ما" : "Contact Us"}
+          </Button>
         </Card>
       </Container>
     </Section>

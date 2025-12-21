@@ -37,6 +37,7 @@ const navCopy: Record<
     services: string;
     docs: string;
     status: string;
+    faq: string;
     faceRecognition: string;
     livenessDetection: string;
     ocr: string;
@@ -49,6 +50,7 @@ const navCopy: Record<
     services: "Services",
     docs: "Docs",
     status: "Status",
+    faq: "FAQ",
     faceRecognition: "Face Recognition",
     livenessDetection: "Liveness Detection",
     ocr: "OCR",
@@ -60,6 +62,7 @@ const navCopy: Record<
     services: "سرویس‌ها",
     docs: "مستندات",
     status: "وضعیت",
+    faq: "\u0633\u0648\u0627\u0644\u0627\u062a \u0645\u062a\u062f\u0627\u0648\u0644",
     faceRecognition: "تشخیص چهره",
     livenessDetection: "تشخیص زنده‌بودن",
     ocr: "تشخیص نوشتار",
@@ -89,6 +92,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
         { label: copy.ocr, href: "/services/ocr" },
       ],
     },
+    { label: copy.faq, href: "/faq" },
     { label: copy.docs, href: "docs" },
     {
       label: language === Language.FA ? "تماس با تیم فروش" : "Contact sales",
@@ -97,7 +101,13 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
   ];
 
   const handleNavClick = (href: string) => {
-    if (href.startsWith("/")) {
+    if (href === "home") {
+      if (window.location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.location.assign("/");
+      }
+    } else if (href.startsWith("/")) {
       window.location.assign(href);
     } else {
       onNavigate(href);
@@ -202,9 +212,9 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
                                 <Button
                                   key={child.label}
                                   variant="ghost"
-                                  size="sm"
+                                  size="md"
                                   onClick={() => handleNavClick(child.href)}
-                                  className="w-full h-auto min-w-0 justify-start gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-sm text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] group text-start"
+                                  className="w-full h-auto min-w-0 justify-start gap-3 px-4 py-3 rounded-[var(--radius-md)] text-base text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container-high)] hover:text-[color:var(--md-sys-color-on-surface)] group text-start"
                                 >
                                   {child.icon && (
                                     <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-black/20 border border-white/10 shadow-inner">
@@ -299,7 +309,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
                           key={child.label}
                           variant="ghost"
                           onClick={() => handleNavClick(child.href)}
-                          className="w-full justify-start px-4 py-2 text-sm text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
+                          className="w-full justify-start px-4 py-3 text-base text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
                         >
                           {child.label}
                         </Button>
@@ -324,3 +334,5 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
     </motion.nav>
   );
 }
+
+

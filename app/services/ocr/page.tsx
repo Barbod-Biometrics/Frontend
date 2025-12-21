@@ -8,7 +8,12 @@ import { Footer } from "../../../components/Footer";
 import { Navbar } from "../../../components/Navbar";
 import { SalesConnector } from "../../../components/SalesConnector";
 import { Button } from "../../../components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/Card";
 import { Container } from "../../../components/ui/Container";
 import { Section } from "../../../components/ui/Section";
 import { Typography } from "../../../components/ui/Typography";
@@ -28,36 +33,59 @@ type Highlight = {
 };
 
 const features: Feature[] = [
-  { icon: ScanLine, title: "استخراج متن", description: "تبدیل تصاویر و اسناد به متن قابل ویرایش با دقت بالا" },
-  { icon: Globe, title: "چند زبانه", description: "پشتیبانی از فارسی، عربی، انگلیسی و بیش از ۱۰۰ زبان دیگر" },
-  { icon: Layers, title: "پردازش دسته‌ای", description: "پردازش همزمان صدها سند با سرعت بالا" },
-  { icon: Zap, title: "سرعت بالا", description: "استخراج متن از هر سند در کمتر از ۲ ثانیه" },
+  {
+    icon: ScanLine,
+    title: "یکپارچگی و مقیاس‌پذیری",
+    description:
+      "سرویس OCR کارت ملی از طریق API امن و مستندات کامل قابل استفاده در هر سیستم احراز هویت، سامانه ثبت‌نام یا اپلیکیشن بانکی است.",
+  },
+  {
+    icon: Globe,
+    title: "نرخ پاسخ‌دهی",
+    description:
+      "به‌واسطه‌ی زیرساخت بهینه و سرورهای پردازش سریع، میانگین زمان پاسخگویی کمتر از ۵۰۰ میلی‌ثانیه است.این عملکرد باعث می‌شود کاربران در فرآیند احراز هویت، هیچ تأخیری احساس نکنند.",
+  },
+  {
+    icon: Layers,
+    title: "کارت‌های پردازش شده",
+    description:
+      "تاکنون بیش از ۲۰۰,۰۰۰ کارت ملی با استفاده از سرویس OCR ما با موفقیت پردازش و اطلاعات آن استخراج شده است.",
+  },
+  {
+    icon: Zap,
+    title: "نرخ موفقیت",
+    description:
+      "استفاده از جدیدترین تکنولوژی‌های هوش مصنوعی و شبکه‌های عصبی عمیق، نرخ موفقیت استخراج و استعلام اطلاعات کارت ملی را تا ۹۹.۹۹٪ افزایش داده است.",
+  },
 ];
 
 const highlights: Highlight[] = [
   {
-    title: "پردازش پیشرفته تصویر",
+    title: "استخراج هوشمند اطلاعات از کارت ملی",
     description:
-      "الگوریتم OCR ما با استفاده از شبکه‌های عصبی کانولوشنال تصاویر را پیش‌پردازش کرده و متن را با دقت بالا استخراج می‌کند؛ شامل تصحیح زاویه، حذف نویز و بهبود کنتراست.",
+      "سرویس OCR کارت ملی با استفاده از الگوریتم‌های پیشرفته‌ی پردازش تصویر و یادگیری عمیق، اطلاعات درج‌شده بر روی کارت ملی را به‌صورت دقیق استخراج می‌کند و ثبت‌نام و احراز هویت کاربران را سریع‌تر و بدون خطا انجام می‌دهد.",
     image: "/assets/images/ocr-2.jpg",
-    alt: "پردازش تصویر",
+    alt: "استخراج هوشمند اطلاعات از کارت ملی",
   },
   {
-    title: "پشتیبانی کامل از زبان فارسی",
+    title: "تحلیل و اعتبارسنجی داده‌ها",
     description:
-      "پشتیبانی عالی از زبان‌های راست‌به‌چپ به‌ویژه فارسی و عربی؛ تشخیص دقیق فونت‌ها و خطوط مختلف و استخراج ساختارها و جداول پیچیده.",
+      "پس از استخراج اطلاعات، سیستم به‌صورت خودکار داده‌ها را تحلیل و صحت آن‌ها را با الگوریتم‌های داخلی مانند کنترل شماره ملی و تطبیق قالب تاریخ تولد بررسی می‌کند.",
     image: "/assets/images/ocr-3.jpg",
-    alt: "پشتیبانی زبان فارسی",
+    alt: "تحلیل و اعتبارسنجی داده‌ها",
     reverse: true,
   },
 ];
 
 export default function OCRPage() {
   return (
-    <div className="min-h-screen bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] font-vazirmatn" dir="rtl">
+    <div
+      className="min-h-screen bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] font-vazirmatn"
+      dir="rtl"
+    >
       <Navbar />
 
-      <main>
+      <main className="pr-2 sm:pr-4 lg:pr-8 xl:pr-12">
         <Section spacing="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--md-sys-color-primary)]/12 to-[color:var(--md-sys-color-tertiary)]/12" />
           <Container className="relative">
@@ -68,19 +96,36 @@ export default function OCRPage() {
                 transition={{ duration: 0.6 }}
                 className="text-right space-y-6"
               >
-                <Typography variant="h2" className="text-5xl font-bold leading-tight">
-                  تبدیل تصویر به متن
+                <Typography
+                  variant="h2"
+                  className="text-5xl font-bold leading-tight"
+                >
+                  سرویس OCR
                 </Typography>
-                <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed">
-                  سرویس OCR پیشرفته ما با استفاده از هوش مصنوعی و یادگیری عمیق، قادر به استخراج متن از تصاویر، PDF‌ها و اسناد اسکن شده با
-                  دقت بالای ۹۸٪ است و از زبان‌های فارسی و عربی با خط‌های مختلف به خوبی پشتیبانی می‌کند.
+                <Typography
+                  variant="body-lg"
+                  className="text-[color:var(--md-sys-color-on-surface-variant)] leading-relaxed"
+                >
+                  این سرویس با استفاده از هوش مصنوعی و پردازش تصویر، اطلاعات
+                  کارت ملی را به صورت خودکار استخراج و به داده‌های دیجیتال تبدیل
+                  می‌کند. سپس با استعلام از مراجع رسمی، صحت اطلاعات بررسی شده و
+                  نتیجه به‌صورت آنی ارائه می‌شود. احراز هویت سریع، دقیق و بدون
+                  ورود دستی اطلاعات انجام می‌شود.
                 </Typography>
                 <div className="flex flex-wrap gap-4 justify-end lg:justify-center">
-                  <Button size="lg" variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
-                    شروع رایگان
+                  <Button
+                    size="lg"
+                    variant="monochrome"
+                    className="rounded-full px-10 shadow-[var(--elevation-2)]"
+                  >
+                    درخواست سرویس
                   </Button>
-                  <Button size="lg" variant="secondary" className="rounded-full px-10">
-                    مشاهده دمو
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="rounded-full px-10"
+                  >
+                    تست سرویس
                   </Button>
                 </div>
               </motion.div>
@@ -91,11 +136,11 @@ export default function OCRPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="relative"
               >
-                <div className="relative rounded-3xl overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/50 bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] p-4">
+                <div className="relative overflow-hidden rounded-3xl">
                   <img
                     src="/assets/images/ocr-1.jpg"
-                    alt="OCR"
-                    className="w-full h-auto rounded-2xl object-cover"
+                    alt="سرویس OCR و استعلام کارت ملی"
+                    className="w-full h-auto rounded-3xl object-cover"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
@@ -113,26 +158,37 @@ export default function OCRPage() {
 
             <div className="relative max-w-3xl space-y-3 text-right">
               <Typography variant="h3" className="leading-tight">
-                قابلیت‌های پیشرفته برای استخراج و پردازش متن
+                سرویس OCR و استعلام کارت ملی
               </Typography>
-              <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8">
-                امنیت، سرعت و دقت بالا در تشخیص متون، با پشتیبانی گسترده از زبان‌ها و ساختارهای پیچیده
+              <Typography
+                variant="body-lg"
+                className="text-[color:var(--md-sys-color-on-surface-variant)] leading-8"
+              >
+                یکپارچگی و مقیاس‌پذیری، نرخ پاسخ‌دهی، کارت‌های پردازش شده و نرخ
+                موفقیت
               </Typography>
             </div>
 
-            <div className="relative grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.06, duration: 0.5, ease: "easeOut" }}
+                  transition={{
+                    delay: index * 0.06,
+                    duration: 0.5,
+                    ease: "easeOut",
+                  }}
                   className="group relative h-full"
                 >
                   <div className="absolute inset-0 rounded-[24px] bg-gradient-to-br from-[color:var(--md-sys-color-primary)]/10 via-transparent to-[color:var(--md-sys-color-tertiary)]/12 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   <Card className="relative h-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-card/70 shadow-[var(--elevation-2)] backdrop-blur-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[var(--elevation-3)]">
-                    <CardHeader className="flex-row items-center gap-4 space-y-0 p-7 pb-2" dir="rtl">
+                    <CardHeader
+                      className="flex-row items-center gap-4 space-y-0 p-7 pb-2"
+                      dir="rtl"
+                    >
                       <motion.span
                         className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[color:var(--md-sys-color-primary)] to-[color:var(--md-sys-color-tertiary)] text-white shadow-[var(--elevation-2)]"
                         whileHover={{ scale: 1.06, rotate: 2 }}
@@ -141,11 +197,13 @@ export default function OCRPage() {
                         <feature.icon className="h-7 w-7" />
                       </motion.span>
                       <div className="flex-1 pt-1 text-right">
-                        <h3 className="text-lg font-semibold leading-tight text-foreground">{feature.title}</h3>
+                        <h3 className="text-xl font-semibold leading-tight text-foreground">
+                          {feature.title}
+                        </h3>
                       </div>
                     </CardHeader>
                     <CardContent className="p-7 pt-2">
-                      <p className="text-sm leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
+                      <p className="text-base leading-relaxed text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-300 group-hover:text-foreground text-right">
                         {feature.description}
                       </p>
                     </CardContent>
@@ -156,19 +214,26 @@ export default function OCRPage() {
           </Container>
         </Section>
 
-        <Section spacing="lg" className="bg-[color:var(--md-sys-color-surface-container-low)]/60">
+        <Section
+          spacing="lg"
+          className="bg-[color:var(--md-sys-color-surface-container-low)]/60"
+        >
           <Container>
             {highlights.map((highlight, index) => (
               <div
                 key={highlight.title}
-                className={`grid lg:grid-cols-2 gap-12 items-center ${index < highlights.length - 1 ? "mb-20" : ""}`}
+                className={`grid lg:grid-cols-2 gap-12 items-center ${
+                  index < highlights.length - 1 ? "mb-20" : ""
+                }`}
               >
                 <motion.div
                   initial={{ opacity: 0, x: highlight.reverse ? -50 : 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className={`order-1 ${highlight.reverse ? "lg:order-2" : "lg:order-1"} text-right`}
+                  className={`order-1 ${
+                    highlight.reverse ? "lg:order-2" : "lg:order-1"
+                  } text-right`}
                 >
                   <div className="relative flex items-start gap-4 justify-end pr-2">
                     <span
@@ -179,7 +244,11 @@ export default function OCRPage() {
                       <Typography variant="h3" className="mb-2">
                         {highlight.title}
                       </Typography>
-                      <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)]" dir="rtl">
+                      <Typography
+                        variant="body-md"
+                        className="text-[color:var(--md-sys-color-on-surface-variant)]"
+                        dir="rtl"
+                      >
                         {highlight.description}
                       </Typography>
                     </div>
@@ -191,10 +260,17 @@ export default function OCRPage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className={`relative order-2 ${highlight.reverse ? "lg:order-1" : "lg:order-2"}`}
+                  className={`relative order-2 ${
+                    highlight.reverse ? "lg:order-1" : "lg:order-2"
+                  }`}
                 >
-                  <div className="rounded-3xl overflow-hidden shadow-2xl">
-                    <img src={highlight.image} alt={highlight.alt} className="w-full h-auto" loading="lazy" />
+                  <div className="rounded-3xl overflow-hidden">
+                    <img
+                      src={highlight.image}
+                      alt={highlight.alt}
+                      className="w-full h-auto"
+                      loading="lazy"
+                    />
                   </div>
                 </motion.div>
               </div>
@@ -209,13 +285,20 @@ export default function OCRPage() {
                 className="text-right"
               >
                 <Typography variant="h3" className="mb-6">
-                  API ساده و قدرتمند
+                  استعلام برخط از مراجع رسمی
                 </Typography>
-                <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6">
-                  با استفاده از REST API ساده ما، به راحتی می‌توانید قابلیت OCR را به برنامه خود اضافه کنید. تصویر را آپلود کنید و متن استخراج شده را دریافت کنید.
+                <Typography
+                  variant="body-md"
+                  className="text-[color:var(--md-sys-color-on-surface-variant)] mb-6"
+                >
+                  در مرحله پایانی، اطلاعات استخراج شده با مراجع رسمی تطبیق داده
+                  می‌شود و نتیجه به‌صورت لحظه‌ای ارائه می‌شود.
                 </Typography>
-                <Button variant="monochrome" className="rounded-full px-10 shadow-[var(--elevation-2)]">
-                  مشاهده مستندات
+                <Button
+                  variant="monochrome"
+                  className="rounded-full px-10 shadow-[var(--elevation-2)]"
+                >
+                  تست سرویس
                 </Button>
               </motion.div>
 
@@ -228,18 +311,32 @@ export default function OCRPage() {
               >
                 <Card className="rounded-3xl overflow-hidden shadow-2xl bg-[color:var(--md-sys-color-surface-container-high)]">
                   <CardHeader className="pb-2">
-                    <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
-                      نمونه درخواست API
+                    <Typography
+                      variant="h5"
+                      className="text-[color:var(--md-sys-color-on-surface)]"
+                    >
+                      استعلام برخط از مراجع رسمی
                     </Typography>
-                    <Typography variant="body-sm" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-                      ارسال تصویر و دریافت متن استخراج‌شده
+                    <Typography
+                      variant="body-md"
+                      className="text-[color:var(--md-sys-color-on-surface-variant)]"
+                    >
+                      در مرحله پایانی، اطلاعات استخراج شده با مراجع رسمی تطبیق
+                      داده می‌شود و نتیجه به‌صورت لحظه‌ای ارائه می‌شود.
                     </Typography>
                   </CardHeader>
                   <CardContent>
-                    <div className="rounded-2xl bg-slate-900 text-green-300 font-mono text-sm p-5 shadow-inner" dir="ltr">
+                    <div
+                      className="rounded-2xl bg-slate-900 text-green-300 font-mono text-base p-6 shadow-inner"
+                      dir="ltr"
+                    >
                       <div className="mb-2">curl -X POST \</div>
-                      <div className="mb-2 pl-4">https://api.example.com/ocr \</div>
-                      <div className="mb-2 pl-4">-H "Authorization: Bearer TOKEN" \</div>
+                      <div className="mb-2 pl-4">
+                        https://api.example.com/ocr \
+                      </div>
+                      <div className="mb-2 pl-4">
+                        -H "Authorization: Bearer TOKEN" \
+                      </div>
                       <div className="pl-4">-F "image=@document.jpg"</div>
                     </div>
                   </CardContent>

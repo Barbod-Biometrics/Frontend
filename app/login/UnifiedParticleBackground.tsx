@@ -52,6 +52,7 @@ const UnifiedParticleBackground = () => {
   const theme = useSelector((state: RootState) => state.theme.theme);
   const particlesRef = useRef<MorphingParticle[]>([]);
   const imageLoadedRef = useRef(false);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const hoverRef = useRef(false);
   const prevHoverRef = useRef(false);
   const themeRef = useRef<Theme>(theme);
@@ -106,12 +107,15 @@ const UnifiedParticleBackground = () => {
       PULSE_AMPLITUDE: 0.35,
       PULSE_SPEED_MIN: 0.015,
       PULSE_SPEED_MAX: 0.045,
-      IMAGE_SCALE: 1.5, // Smaller for full face visibility (was 2.5)
+      IMAGE_MAX_SCALE: 1.5, // Smaller for full face visibility (was 2.5)
       IMAGE_SAMPLE_STEP: 3, // More particles for better detail
       IMAGE_DARKNESS_THRESHOLD: 200,
-      // Position offset for the face - high and centered
-      FACE_OFFSET_X: 100, // Centered horizontally
-      FACE_OFFSET_Y_PERCENT: 0.0, // Move face a bit higher
+      // Face layout within the viewport
+      FACE_PADDING_X: 24,
+      FACE_PADDING_Y: 24,
+      FACE_OFFSET_X_RATIO: 0.12,
+      FACE_OFFSET_Y_RATIO: 0.08,
+      FACE_OFFSET_Y_PERCENT: 0.0,
     };
 
     let lastWidth = window.innerWidth;
@@ -181,92 +185,124 @@ const UnifiedParticleBackground = () => {
     };
 
     // Load and process image to extract target positions
+    const getFaceLayout = (
+      imgWidth: number,
+      imgHeight: number,
+      canvasWidth: number,
+      canvasHeight: number
+    ) => {
+      const maxWidth = canvasWidth - CONFIG.FACE_PADDING_X * 2;
+      const maxHeight = canvasHeight - CONFIG.FACE_PADDING_Y * 2;
+      const scale = Math.min(
+        CONFIG.IMAGE_MAX_SCALE,
+        maxWidth / imgWidth,
+        maxHeight / imgHeight
+      );
+      const scaledWidth = imgWidth * scale;
+      const scaledHeight = imgHeight * scale;
+      const offsetX = Math.max(
+        CONFIG.FACE_PADDING_X,
+        (canvasWidth - scaledWidth) * CONFIG.FACE_OFFSET_X_RATIO
+      );
+      const offsetY =
+        Math.max(
+          CONFIG.FACE_PADDING_Y,
+          (canvasHeight - scaledHeight) * CONFIG.FACE_OFFSET_Y_RATIO
+        ) + canvasHeight * CONFIG.FACE_OFFSET_Y_PERCENT;
+
+      return { scale, offsetX, offsetY };
+    };
+
+    const buildParticles = (img: HTMLImageElement) => {
+      const tempCanvas = document.createElement("canvas");
+      const tempCtx = tempCanvas.getContext("2d");
+      if (!tempCtx) return;
+
+      tempCanvas.width = img.width;
+      tempCanvas.height = img.height;
+      tempCtx.drawImage(img, 0, 0);
+
+      const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
+      const targetPositions: { x: number; y: number }[] = [];
+      const layout = getFaceLayout(
+        img.width,
+        img.height,
+        canvas.width,
+        canvas.height
+      );
+
+      for (let y = 0; y < imageData.height; y += CONFIG.IMAGE_SAMPLE_STEP) {
+        for (let x = 0; x < imageData.width; x += CONFIG.IMAGE_SAMPLE_STEP) {
+          const index = y * 4 * imageData.width + x * 4;
+          const red = imageData.data[index];
+
+          if (red < CONFIG.IMAGE_DARKNESS_THRESHOLD) {
+            targetPositions.push({
+              x: x * layout.scale + layout.offsetX,
+              y: y * layout.scale + layout.offsetY,
+            });
+          }
+        }
+      }
+
+      const particles: MorphingParticle[] = [];
+      for (let i = 0; i < targetPositions.length; i++) {
+        const target = targetPositions[i];
+        const floatSpeed = randomRange(
+          CONFIG.FLOAT_SPEED_MIN,
+          CONFIG.FLOAT_SPEED_MAX
+        );
+        const angle = Math.random() * Math.PI * 2;
+        const homeX = Math.random() * canvas.width;
+        const homeY = Math.random() * canvas.height;
+        const wanderStart = randomOffsetInCircle(CONFIG.SCATTER_WANDER_RADIUS);
+
+        particles.push({
+          x: homeX,
+          y: homeY,
+          vx: Math.cos(angle) * floatSpeed,
+          vy: Math.sin(angle) * floatSpeed,
+          homeX,
+          homeY,
+          toFaceSpeed: randomRange(
+            CONFIG.MORPH_TO_FACE_MIN,
+            CONFIG.MORPH_TO_FACE_MAX
+          ),
+          toScatterSpeed: randomRange(
+            CONFIG.MORPH_TO_SCATTER_MIN,
+            CONFIG.MORPH_TO_SCATTER_MAX
+          ),
+          wanderOffsetX: wanderStart.x,
+          wanderOffsetY: wanderStart.y,
+          wanderTargetX: wanderStart.x,
+          wanderTargetY: wanderStart.y,
+          wanderSpeed: randomRange(
+            CONFIG.SCATTER_WANDER_SPEED_MIN,
+            CONFIG.SCATTER_WANDER_SPEED_MAX
+          ),
+          pulsePhase: Math.random() * Math.PI * 2,
+          pulseSpeed: randomRange(
+            CONFIG.PULSE_SPEED_MIN,
+            CONFIG.PULSE_SPEED_MAX
+          ),
+          targetX: target.x,
+          targetY: target.y,
+          size: randomRange(CONFIG.SIZE - 0.5, CONFIG.SIZE + 0.5),
+          opacity: CONFIG.OPACITY,
+        });
+      }
+
+      particlesRef.current = particles;
+      imageLoadedRef.current = true;
+    };
+
     const loadImageParticles = () => {
       const img = new Image();
       img.src = "/assets/images/side-face.jpg";
 
       img.onload = () => {
-        // Create temporary canvas to process image
-        const tempCanvas = document.createElement("canvas");
-        const tempCtx = tempCanvas.getContext("2d");
-        if (!tempCtx) return;
-
-        tempCanvas.width = img.width;
-        tempCanvas.height = img.height;
-        tempCtx.drawImage(img, 0, 0);
-
-        const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
-        const targetPositions: { x: number; y: number }[] = [];
-
-        // Sample pixels to create target positions
-        for (let y = 0; y < imageData.height; y += CONFIG.IMAGE_SAMPLE_STEP) {
-          for (let x = 0; x < imageData.width; x += CONFIG.IMAGE_SAMPLE_STEP) {
-            const index = y * 4 * imageData.width + x * 4;
-            const red = imageData.data[index];
-
-            // If pixel is dark enough, it's a target position
-            if (red < CONFIG.IMAGE_DARKNESS_THRESHOLD) {
-              const targetX = x * CONFIG.IMAGE_SCALE + CONFIG.FACE_OFFSET_X;
-              const targetY =
-                y * CONFIG.IMAGE_SCALE +
-                canvas.height * CONFIG.FACE_OFFSET_Y_PERCENT;
-              targetPositions.push({ x: targetX, y: targetY });
-            }
-          }
-        }
-
-        // Create particles with random starting positions
-        const particles: MorphingParticle[] = [];
-        for (let i = 0; i < targetPositions.length; i++) {
-          const target = targetPositions[i];
-          const floatSpeed = randomRange(
-            CONFIG.FLOAT_SPEED_MIN,
-            CONFIG.FLOAT_SPEED_MAX
-          );
-          const angle = Math.random() * Math.PI * 2;
-          const homeX = Math.random() * canvas.width;
-          const homeY = Math.random() * canvas.height;
-          const wanderStart = randomOffsetInCircle(
-            CONFIG.SCATTER_WANDER_RADIUS
-          );
-
-          particles.push({
-            x: homeX,
-            y: homeY,
-            vx: Math.cos(angle) * floatSpeed,
-            vy: Math.sin(angle) * floatSpeed,
-            homeX,
-            homeY,
-            toFaceSpeed: randomRange(
-              CONFIG.MORPH_TO_FACE_MIN,
-              CONFIG.MORPH_TO_FACE_MAX
-            ),
-            toScatterSpeed: randomRange(
-              CONFIG.MORPH_TO_SCATTER_MIN,
-              CONFIG.MORPH_TO_SCATTER_MAX
-            ),
-            wanderOffsetX: wanderStart.x,
-            wanderOffsetY: wanderStart.y,
-            wanderTargetX: wanderStart.x,
-            wanderTargetY: wanderStart.y,
-            wanderSpeed: randomRange(
-              CONFIG.SCATTER_WANDER_SPEED_MIN,
-              CONFIG.SCATTER_WANDER_SPEED_MAX
-            ),
-            pulsePhase: Math.random() * Math.PI * 2,
-            pulseSpeed: randomRange(
-              CONFIG.PULSE_SPEED_MIN,
-              CONFIG.PULSE_SPEED_MAX
-            ),
-            targetX: target.x,
-            targetY: target.y,
-            size: randomRange(CONFIG.SIZE - 0.5, CONFIG.SIZE + 0.5),
-            opacity: CONFIG.OPACITY,
-          });
-        }
-
-        particlesRef.current = particles;
-        imageLoadedRef.current = true;
+        imageRef.current = img;
+        buildParticles(img);
       };
     };
 
@@ -381,22 +417,14 @@ const UnifiedParticleBackground = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-      // Update target positions for existing particles
-      if (imageLoadedRef.current) {
+      if (imageRef.current) {
+        buildParticles(imageRef.current);
+      } else if (imageLoadedRef.current) {
         const particles = particlesRef.current;
         const widthRatio = canvas.width / lastWidth;
         const heightRatio = canvas.height / lastHeight;
 
         particles.forEach((p) => {
-          // Recalculate targetY based on new canvas height
-          const relativeY =
-            (p.targetY - canvas.height * CONFIG.FACE_OFFSET_Y_PERCENT) /
-            CONFIG.IMAGE_SCALE;
-          p.targetY =
-            relativeY * CONFIG.IMAGE_SCALE +
-            canvas.height * CONFIG.FACE_OFFSET_Y_PERCENT;
-
-          // Keep scatter home proportional to new canvas size
           p.homeX *= widthRatio;
           p.homeY *= heightRatio;
         });

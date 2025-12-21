@@ -2,6 +2,7 @@
 
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
 import { PersonalInfo } from "../../components/business-auth/personalInfo";
@@ -127,6 +128,15 @@ function BusinessAuthPage({
   const lastProfileId = useRef<string | null>(null);
   const { personal, business, location, services } = completedSections;
   const hasAccountInfo = Boolean(profile?.id && profile?.name?.trim() && profile?.type);
+  const isAdminContext = useMemo(() => {
+    if (isAdminCreationFlow) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(ADMIN_PANEL_RETURN_KEY) === ADMIN_PANEL_BUSINESS_VIEW;
+    } catch {
+      return false;
+    }
+  }, [isAdminCreationFlow]);
 
   const allowedStepIds = useMemo<StepId[]>(() => {
     const allowed: StepId[] = ["account-type"];
@@ -184,6 +194,14 @@ function BusinessAuthPage({
     if (typeof error === "string" && error.trim()) return error;
     if (error instanceof Error && error.message) return error.message;
     return CONNECTION_ERROR_TEXT;
+  };
+
+  const handleExit = () => {
+    if (isAdminContext) {
+      router.push("/admin");
+    } else {
+      router.push("/user");
+    }
   };
 
   const persistStep = (step: StepId, id?: string) => {
@@ -485,6 +503,14 @@ function BusinessAuthPage({
             </div>
           </div>
         )}
+        <button
+          type="button"
+          aria-label="بستن"
+          onClick={handleExit}
+          className="absolute left-6 top-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface-variant)] shadow-[var(--elevation-1)] transition hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50"
+        >
+          <X className="h-5 w-5" aria-hidden />
+        </button>
         <div
           dir="rtl"
           className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-stretch gap-6 px-6 py-10 md:ml-auto md:mr-0 md:flex-row md:items-start md:justify-end"

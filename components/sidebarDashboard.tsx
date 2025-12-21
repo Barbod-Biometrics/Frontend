@@ -20,10 +20,10 @@ import {
   PlusCircle,
   ScanFace,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { ProfileListItem } from "../lib/api/userProfiles";
 import { useDispatch, useSelector } from "react-redux"; 
-import { setCurrentProfile, selectProfileById } from "../store/selectedProfileSlice";
+import { selectProfileById, setCurrentProfile } from "../store/selectedProfileSlice";
 import { resetWalletForProfileChange } from "../store/walletSlice";
 import { clearClientStorage } from "../lib/auth-storage";
 import { clearAuthState } from "../store/loginSlice";
@@ -257,6 +257,7 @@ export function SidebarDashboard({
   isAdminView?: boolean;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useDispatch();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
@@ -264,6 +265,10 @@ export function SidebarDashboard({
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
    const currentProfile = useSelector((state: any) => state.selectedProfile?.currentProfile);
+  const profileLookup = useMemo(
+    () => new Map((businessProfilesProp ?? []).map((profile) => [profile.id, profile])),
+    [businessProfilesProp],
+  );
   const businessProfiles = useMemo<BusinessProfileSummary[]>(() => {
     if (businessProfilesProp?.length) {
       return businessProfilesProp.map((item) => ({
@@ -313,6 +318,30 @@ export function SidebarDashboard({
     if (!businessProfiles.length) return;
     setActiveBusinessId((prev) => prev ?? businessProfiles[0]?.id ?? null);
   }, [businessProfiles]);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const normalizedPath = pathname.replace(/\/$/, "");
+    if (normalizedPath === "/business-info") {
+      setActiveItemId("business-info");
+      return;
+    }
+    if (normalizedPath === "/wallet") {
+      setActiveItemId("transactions");
+      return;
+    }
+    if (normalizedPath.startsWith("/services/face-recognition")) {
+      setActiveItemId("face");
+      return;
+    }
+    if (normalizedPath.startsWith("/services/liveness")) {
+      setActiveItemId("liveness");
+      return;
+    }
+    if (normalizedPath.startsWith("/services/ocr")) {
+      setActiveItemId("ocr");
+    }
+  }, [pathname]);
   const switcherRef = useRef<HTMLDivElement | null>(null);
 
   const sections = useMemo<NavSection[]>(
@@ -505,7 +534,12 @@ export function SidebarDashboard({
                       type="button"
                       key={profile.id}
                       onClick={() => {
-                        dispatch(selectProfileById(profile.id));
+                        const fullProfile = profileLookup.get(profile.id);
+                        if (fullProfile) {
+                          dispatch(setCurrentProfile(fullProfile));
+                        } else {
+                          dispatch(selectProfileById(profile.id));
+                        }
                           
                         
                           dispatch(resetWalletForProfileChange());
@@ -581,13 +615,24 @@ export function SidebarDashboard({
           {sections.map((section) => {
             const isSectionLocked =
               !isApprovedProfile && (section.id === "business" || section.id === "services");
+            const isSectionActive = section.items.some(
+              (item) =>
+                item.id === activeItemId ||
+                (item.children?.some((child) => child.id === activeItemId) ?? false),
+            );
+            const showSectionActive = isSectionActive && !isSectionLocked;
 
             return (
               <div key={section.id} className="mb-6 last:mb-0">
               {!isCollapsed && (
                 <Typography
                   variant="caption"
-                  className="mb-2 px-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                  className={clsx(
+                    "mb-2 px-2 text-sm font-semibold",
+                    showSectionActive
+                      ? "text-[color:var(--md-sys-color-primary)]"
+                      : "text-[color:var(--md-sys-color-on-surface)]",
+                  )}
                 >
                   {section.title}
                 </Typography>
@@ -612,6 +657,7 @@ export function SidebarDashboard({
                         onClick={() => {
                          if (isItemDisabled) return;
                          if (item.onClick) {
+                            setActiveItemId(item.id);
                             item.onClick();
                           } else if (hasChildren) {
                             toggleGroup(item.id);

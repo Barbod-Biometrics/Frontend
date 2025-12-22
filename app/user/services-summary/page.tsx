@@ -1,14 +1,32 @@
 import { ChartSection } from "../../../components/services-log/chart-section";
 import { TableSection } from "../../../components/services-log/table-section";
 
-// Sample data
-const chartData = [
-  { name: "سه شنبه", ناموفق: 4000, موفق: 2400 },
-  { name: "چهارشنبه", ناموفق: 3000, موفق: 2210 },
-  { name: "پنج شنبه", ناموفق: 2000, موفق: 2290 },
-  { name: "جمعه", ناموفق: 2780, موفق: 2000 },
-  { name: "شنبه", ناموفق: 1890, موفق: 2181 },
-  { name: "یکشنبه", ناموفق: 2390, موفق: 2500 },
+// Daily data
+const dailyData = [
+  { name: "سه‌شنبه", موفق: 2400, ناموفق: 400 },
+  { name: "چهارشنبه", موفق: 2210, ناموفق: 300 },
+  { name: "پنج‌شنبه", موفق: 2290, ناموفق: 200 },
+  { name: "جمعه", موفق: 2000, ناموفق: 278 },
+  { name: "شنبه", موفق: 2181, ناموفق: 189 },
+  { name: "یکشنبه", موفق: 2500, ناموفق: 239 },
+];
+
+// Monthly data
+const monthlyData = [
+  { name: "فروردین", موفق: 7000, ناموفق: 1200 },
+  { name: "اردیبهشت", موفق: 6800, ناموفق: 950 },
+  { name: "خرداد", موفق: 7200, ناموفق: 1100 },
+  { name: "تیر", موفق: 6500, ناموفق: 800 },
+  { name: "مرداد", موفق: 7100, ناموفق: 1050 },
+  { name: "شهریور", موفق: 6900, ناموفق: 900 },
+];
+
+// Yearly data
+const yearlyData = [
+  { name: "1402", موفق: 48000, ناموفق: 8500 },
+  { name: "1403", موفق: 52000, ناموفق: 9200 },
+  { name: "1404", موفق: 52000, ناموفق: 7000 },
+  { name: "1405", موفق: 52000, ناموفق: 9200 },
 ];
 
 const tableData = [
@@ -20,7 +38,11 @@ const tableData = [
 export default function DashboardPage() {
   return (
     <div className="space-y-8  p-6">
-      <ChartSection data={chartData} />
+      <ChartSection
+        dailyData={dailyData}
+        monthlyData={monthlyData}
+        yearlyData={yearlyData}
+      />
       <TableSection data={tableData} />
     </div>
   );

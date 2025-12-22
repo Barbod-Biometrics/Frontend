@@ -19,7 +19,7 @@ type TableSectionProps = {
 
 export function TableSection({ data }: TableSectionProps) {
   return (
-    <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
+    <div className="bg-[#151C28] rounded-xl p-6 shadow-lg border border-[#354152]">
       <h2 className="text-xl font-bold mb-6 text-center">
         خلاصه هزینه ها در ماه اخیر
       </h2>

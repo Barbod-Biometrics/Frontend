@@ -15,6 +15,7 @@ interface DashboardLayoutProps {
 }
 
 const LOCKED_ROUTES = new Set(["/business-info", "/wallet"]);
+let persistedSidebarCollapsed = false;
 
 const isApprovedStatus = (value?: string | null) => {
   const normalized = (value ?? "").toLowerCase();
@@ -33,7 +34,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const currentProfile = useSelector(
     (state: RootState) => state.selectedProfile.currentProfile
   );
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => persistedSidebarCollapsed);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
 
   useEffect(() => {
@@ -62,7 +63,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
       <Header
         collapsed={collapsed}
-        onToggleAction={() => setCollapsed((s) => !s)}
+        onToggleAction={() =>
+          setCollapsed((state) => {
+            const next = !state;
+            persistedSidebarCollapsed = next;
+            return next;
+          })
+        }
         isAdmin={isAdminUser}
         isInAdminPanel={false}
         onPanelSwitchAction={() => router.push("/admin")}
@@ -70,14 +77,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       <SidebarDashboard
         collapsed={collapsed}
-        onToggleAction={(next) => setCollapsed(next)}
+        onToggleAction={(next) => {
+          persistedSidebarCollapsed = next;
+          setCollapsed(next);
+        }}
         businessProfiles={profiles}
         isAdminView={isAdminUser}
       />
 
       <div 
         className={`transition-all duration-300 pt-16 min-h-screen ${
-          collapsed ? 'pl-20' : 'pl-64'
+          collapsed ? 'pr-20' : 'pr-64'
         }`}
       >
         {shouldHideContent ? null : children}

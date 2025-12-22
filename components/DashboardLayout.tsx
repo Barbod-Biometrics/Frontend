@@ -2,15 +2,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
 import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
+import type { RootState } from "../store/store";
+import { selectIsAdmin } from "../store/loginSlice";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
+  const router = useRouter();
+  const isAdmin = useSelector((state: RootState) => selectIsAdmin(state));
+  const isAdminUser = Boolean(isAdmin);
   const [collapsed, setCollapsed] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
 
@@ -32,12 +39,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <Header collapsed={collapsed} onToggleAction={() => setCollapsed((s) => !s)} />
+      <Header
+        collapsed={collapsed}
+        onToggleAction={() => setCollapsed((s) => !s)}
+        isAdmin={isAdminUser}
+        isInAdminPanel={false}
+        onPanelSwitchAction={() => router.push("/admin")}
+      />
 
       <SidebarDashboard
         collapsed={collapsed}
         onToggleAction={(next) => setCollapsed(next)}
         businessProfiles={profiles}
+        isAdminView={isAdminUser}
       />
 
      

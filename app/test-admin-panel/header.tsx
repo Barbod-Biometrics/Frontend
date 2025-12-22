@@ -115,6 +115,7 @@ export function Header({
           type="button"
           onClick={onAvatarClickAction}
           aria-label="???? ??????"
+          title="تنظیمات شخصی"
           className={clsx(
             "flex h-10 w-10 items-center justify-center rounded-full border transition",
             "border-[color:var(--md-sys-color-outline-variant)]",
@@ -131,6 +132,7 @@ export function Header({
           type="button"
           onClick={toggleTheme}
           aria-label="O¦O§UOUOOñ O-OU,O¦ U+U.OUOO'"
+          title="حالت نمایش"
           className={clsx(
             "flex h-10 w-10 items-center justify-center rounded-full border transition",
             "border-[color:var(--md-sys-color-outline-variant)]",
@@ -147,6 +149,7 @@ export function Header({
             type="button"
             onClick={onPanelSwitchAction}
             aria-label={isInAdminPanel ? "OñU?O¦U+ O\"UØ U_U+U, UcO3O\"ƒ?O U^ UcOOñ" : "OñU?O¦U+ O\"UØ U_U+U, OO_U.UOU+"}
+            title={isInAdminPanel ? "پنل کسب و کار" : "پنل ادمین"}
             className={clsx(
               "flex h-10 w-10 items-center justify-center rounded-2xl border transition",
               "border-[color:var(--md-sys-color-outline-variant)]",

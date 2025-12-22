@@ -4,7 +4,10 @@
 import React, { useEffect, useState } from "react";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
-import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
+import {
+  fetchUserProfiles,
+  type ProfileListItem,
+} from "../lib/api/userProfiles";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,7 +35,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <Header collapsed={collapsed} onToggleAction={() => setCollapsed((s) => !s)} />
+      <Header
+        collapsed={collapsed}
+        onToggleAction={() => setCollapsed((s) => !s)}
+      />
 
       <SidebarDashboard
         collapsed={collapsed}
@@ -40,10 +46,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         businessProfiles={profiles}
       />
 
-     
-      <div 
+      <div
         className={`transition-all duration-300 pt-16 min-h-screen ${
-          collapsed ? 'pl-20' : 'pl-64'
+          collapsed ? "pr-20" : "pr-64"
         }`}
       >
         {children}

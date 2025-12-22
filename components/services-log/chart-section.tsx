@@ -149,7 +149,12 @@ export function ChartSection({
                   strokeWidth={2}
                   fill="none"
                   dot={false}
-                  activeDot={false}
+                  activeDot={{
+                    r: 4,
+                    fill: "#2A9D90",
+                    strokeWidth: 0,
+                    stroke: "#151C28",
+                  }}
                 />
               )}
               {(showBoth || isUnsuccessfulSelected) && (
@@ -160,7 +165,12 @@ export function ChartSection({
                   strokeWidth={2}
                   fill="none"
                   dot={false}
-                  activeDot={false}
+                  activeDot={{
+                    r: 4,
+                    fill: "#E76E50",
+                    strokeWidth: 0,
+                    stroke: "#151C28",
+                  }}
                 />
               )}
             </AreaChart>

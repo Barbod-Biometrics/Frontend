@@ -19,14 +19,9 @@ const tableData = [
 
 export default function DashboardPage() {
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen bg-gray-900 text-white p-6 pr-[220px]"
-    >
-      <div className="space-y-8">
-        <ChartSection data={chartData} />
-        <TableSection data={tableData} />
-      </div>
+    <div className="space-y-8  p-6">
+      <ChartSection data={chartData} />
+      <TableSection data={tableData} />
     </div>
   );
 }

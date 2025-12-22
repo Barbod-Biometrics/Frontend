@@ -30,9 +30,9 @@ const yearlyData = [
 ];
 
 const tableData = [
-  { status: "OCR", quantity: 200, sum: 200000 },
-  { status: "liveness detection", quantity: 50, sum: 25000 },
-  { status: "مجموع کل", quantity: 250, sum: 225000 },
+  { service: "OCR", quantity: 200, sum: 200000 },
+  { service: "liveness detection", quantity: 50, sum: 25000 },
+  { service: "همه", quantity: 250, sum: 225000 },
 ];
 
 export default function DashboardPage() {

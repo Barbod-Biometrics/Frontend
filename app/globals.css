@@ -3,8 +3,8 @@
 /*
   Global Scaling Strategy
   - Default (Mobile/Tablet): 16px (100%)
-  - Laptop (1024px - 1536px): 14px (87.5%) - Moderate reduction for readability
-  - Desktop (1537px+): 15px (93.75%) - Balanced desktop view
+  - Laptop (1024px - 1536px): 12px (75%) - Aggressive reduction for "too big" feedback
+  - Desktop (1537px+): 14px (87.5%) - Compact desktop view
 */
 html {
   font-size: 16px;
@@ -13,13 +13,13 @@ html {
 
 @media (min-width: 1024px) and (max-width: 1536px) {
   html {
-    font-size: 14px;
+    font-size: 12px;
   }
 }
 
 @media (min-width: 1537px) {
   html {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
@@ -247,6 +247,15 @@ html[lang='fa'] .text-center blockquote,
 html[lang='fa'] .text-center figcaption {
   text-align: center;
   text-align-last: center;
+}
+
+html[lang='fa'] nav p,
+html[lang='fa'] nav li,
+html[lang='fa'] aside p,
+html[lang='fa'] aside li {
+  text-align: start;
+  text-align-last: auto;
+  text-justify: auto;
 }
 
 .font-vazirmatn *,

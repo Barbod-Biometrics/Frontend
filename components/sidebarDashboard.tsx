@@ -428,7 +428,7 @@ export function SidebarDashboard({
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 z-30 h-[calc(108vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
+        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
         isCollapsed ? "w-[62px]" : "w-[200px]",
       )}

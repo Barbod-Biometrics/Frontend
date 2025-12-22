@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
@@ -14,10 +14,25 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+const LOCKED_ROUTES = new Set(["/business-info", "/wallet"]);
+
+const isApprovedStatus = (value?: string | null) => {
+  const normalized = (value ?? "").toLowerCase();
+  return (
+    normalized.includes("approved") ||
+    normalized.includes("verified") ||
+    normalized.includes("accept")
+  );
+};
+
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const isAdmin = useSelector((state: RootState) => selectIsAdmin(state));
   const isAdminUser = Boolean(isAdmin);
+  const currentProfile = useSelector(
+    (state: RootState) => state.selectedProfile.currentProfile
+  );
   const [collapsed, setCollapsed] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
 
@@ -37,6 +52,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, []);
 
+  const normalizedPath = (pathname ?? "").replace(/\/$/, "");
+  const shouldHideContent =
+    Boolean(currentProfile) &&
+    !isApprovedStatus(currentProfile?.verification_status) &&
+    LOCKED_ROUTES.has(normalizedPath);
+
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
       <Header
@@ -54,13 +75,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         isAdminView={isAdminUser}
       />
 
-     
       <div 
         className={`transition-all duration-300 pt-16 min-h-screen ${
           collapsed ? 'pl-20' : 'pl-64'
         }`}
       >
-        {children}
+        {shouldHideContent ? null : children}
       </div>
     </main>
   );

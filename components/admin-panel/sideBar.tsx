@@ -98,9 +98,9 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
       dir="rtl"
       aria-label="ناوبری ادمین"
       className={clsx(
-        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
+        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[57px]" : "w-[200px]",
+        isCollapsed ? "w-[57px] overflow-hidden" : "w-[200px] overflow-visible",
       )}
     >
       <div className="relative flex flex-col h-full">

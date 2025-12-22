@@ -299,9 +299,21 @@ export function SidebarDashboard({
     () => businessProfiles.find((profile) => profile.id === activeBusinessId) ?? null,
     [activeBusinessId, businessProfiles],
   );
-  const isApprovedProfile = activeBusiness?.status === "approved";
-  const showBusinessNameHeader = !isCollapsed && activeBusiness?.status === "approved";
-  const businessNameLabel = showBusinessNameHeader ? activeBusiness?.title ?? "" : "";
+  const resolvedProfile = useMemo(() => {
+    if (!currentProfile?.id) return activeBusiness;
+    const resolvedStatus = currentProfile.verification_status
+      ? normalizeBusinessStatus(currentProfile.verification_status)
+      : activeBusiness?.status ?? "pending";
+    return {
+      id: currentProfile.id,
+      title: currentProfile.name ?? activeBusiness?.title ?? "",
+      subtitle: currentProfile.type ? mapTypeLabel(currentProfile.type) : activeBusiness?.subtitle ?? "",
+      status: resolvedStatus,
+    };
+  }, [activeBusiness, currentProfile]);
+  const isApprovedProfile = resolvedProfile?.status === "approved";
+  const showBusinessNameHeader = !isCollapsed && isApprovedProfile;
+  const businessNameLabel = showBusinessNameHeader ? resolvedProfile?.title ?? "" : "";
    useEffect(() => {
     if (!businessProfiles.length) return;
     
@@ -428,9 +440,9 @@ export function SidebarDashboard({
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
+        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[62px]" : "w-[200px]",
+        isCollapsed ? "w-[62px] overflow-hidden" : "w-[200px] overflow-visible",
       )}
     >
       <div className="relative flex flex-col h-full">

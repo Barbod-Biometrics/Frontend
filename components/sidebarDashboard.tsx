@@ -518,9 +518,9 @@ export function SidebarDashboard({
           {isSwitcherOpen && (
             <div
               className={clsx(
-                "absolute z-40 w-[290px] rounded-[18px] border bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] overflow-hidden",
+                "absolute z-40 w-[min(290px,calc(100vw-2rem))] rounded-[18px] border bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-3)] overflow-hidden",
                 "border-[color:var(--md-sys-color-outline-variant)]",
-                "right-[calc(100%+12px)] top-3",
+                "right-3 left-3 top-3 sm:right-[calc(100%+12px)] sm:left-auto",
               )}
             >
               <div
@@ -541,51 +541,80 @@ export function SidebarDashboard({
                 )}
                 {businessProfiles.map((profile) => {
                   const isActive = profile.id === activeBusinessId;
+                  const canContinue =
+                    profile.status === "in-progress" || profile.status === "pending";
                   return (
-                    <button
-                      type="button"
-                      key={profile.id}
-                      onClick={() => {
-                        const fullProfile = profileLookup.get(profile.id);
-                        if (fullProfile) {
-                          dispatch(setCurrentProfile(fullProfile));
-                        } else {
-                          dispatch(selectProfileById(profile.id));
-                        }
-                          
-                        
+                    <div key={profile.id} className="relative">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const fullProfile = profileLookup.get(profile.id);
+                          if (fullProfile) {
+                            dispatch(setCurrentProfile(fullProfile));
+                          } else {
+                            dispatch(selectProfileById(profile.id));
+                          }
+
                           dispatch(resetWalletForProfileChange());
-                          
+
                           setActiveBusinessId(profile.id);
                           setIsSwitcherOpen(false);
-                      
-                          const event = new CustomEvent('profile-changed', {
+
+                          const event = new CustomEvent("profile-changed", {
                             detail: {
                               profileId: profile.id,
-                              profileName: profile.title
-                            }
+                              profileName: profile.title,
+                            },
                           });
                           window.dispatchEvent(event);
-                      }}
-                      className={clsx(
-                        "w-full rounded-2xl border px-4 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",
-                        isActive
-                          ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/8 shadow-[var(--elevation-1)]"
-                          : "border-[color:var(--md-sys-color-outline-variant)] hover:border-[color:var(--md-sys-color-primary)]/50 hover:bg-[color:var(--md-sys-color-surface-container-high)]",
-                      )}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-col items-end text-right">
-                          <span className="pr-0 text-base font-semibold leading-6">
-                            {profile.title}
-                          </span>
-                          <span className="block text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                            {profile.subtitle}
-                          </span>
+                        }}
+                        className={clsx(
+                          "w-full rounded-2xl border px-4 py-3 text-right transition text-[color:var(--md-sys-color-on-surface)]",
+                          canContinue && "pl-12 sm:pl-14",
+                          isActive
+                            ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/8 shadow-[var(--elevation-1)]"
+                            : "border-[color:var(--md-sys-color-outline-variant)] hover:border-[color:var(--md-sys-color-primary)]/50 hover:bg-[color:var(--md-sys-color-surface-container-high)]",
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-col items-end text-right">
+                            <span className="pr-0 text-base font-semibold leading-6">
+                              {profile.title}
+                            </span>
+                            <span className="block text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                              {profile.subtitle}
+                            </span>
+                          </div>
+                          <BusinessStatusBadge status={profile.status} />
                         </div>
-                        <BusinessStatusBadge status={profile.status} />
-                      </div>
-                    </button>
+                      </button>
+                      {canContinue && (
+                        <button
+                          type="button"
+                          title="تکمیل کسب و کار"
+                          aria-label="تکمیل کسب و کار"
+                          onClick={() => {
+                            if (isAdminView && typeof window !== "undefined") {
+                              window.localStorage.setItem(
+                                ADMIN_PANEL_RETURN_KEY,
+                                ADMIN_PANEL_BUSINESS_VIEW,
+                              );
+                            }
+                            setIsSwitcherOpen(false);
+                            router.push(`/business-auth?id=${encodeURIComponent(profile.id)}`);
+                          }}
+                          className={clsx(
+                            "absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
+                            "border-[color:var(--md-sys-color-outline-variant)]",
+                            "bg-[color:var(--md-sys-color-surface-container-high)]",
+                            "hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)]",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
+                          )}
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>

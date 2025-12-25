@@ -15,7 +15,9 @@ interface DashboardLayoutProps {
 }
 
 const LOCKED_ROUTES = new Set(["/business-info", "/wallet"]);
+const MOBILE_QUERY = "(max-width: 639px)";
 let persistedSidebarCollapsed = false;
+let persistedSidebarMobileOpen = false;
 
 const isApprovedStatus = (value?: string | null) => {
   const normalized = (value ?? "").toLowerCase();
@@ -34,7 +36,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const currentProfile = useSelector(
     (state: RootState) => state.selectedProfile.currentProfile
   );
-  const [collapsed, setCollapsed] = useState(() => persistedSidebarCollapsed);
+  const [isMobile, setIsMobile] = useState(false);
+  const [collapsedDesktop, setCollapsedDesktop] = useState(
+    () => persistedSidebarCollapsed
+  );
+  const [mobileOpen, setMobileOpen] = useState(
+    () => persistedSidebarMobileOpen
+  );
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
 
   useEffect(() => {
@@ -53,23 +61,48 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia(MOBILE_QUERY);
+    const handleChange = (event?: MediaQueryListEvent) => {
+      setIsMobile(event ? event.matches : media.matches);
+    };
+    handleChange();
+    if (media.addEventListener) {
+      media.addEventListener("change", handleChange);
+      return () => media.removeEventListener("change", handleChange);
+    }
+    media.addListener(handleChange);
+    return () => media.removeListener(handleChange);
+  }, []);
+
   const normalizedPath = (pathname ?? "").replace(/\/$/, "");
   const shouldHideContent =
     Boolean(currentProfile) &&
     !isApprovedStatus(currentProfile?.verification_status) &&
     LOCKED_ROUTES.has(normalizedPath);
+  const collapsed = isMobile ? !mobileOpen : collapsedDesktop;
+  const handleToggle = () => {
+    if (isMobile) {
+      setMobileOpen((open) => {
+        const next = !open;
+        persistedSidebarMobileOpen = next;
+        return next;
+      });
+    } else {
+      setCollapsedDesktop((state) => {
+        const next = !state;
+        persistedSidebarCollapsed = next;
+        return next;
+      });
+    }
+  };
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
       <Header
         collapsed={collapsed}
-        onToggleAction={() =>
-          setCollapsed((state) => {
-            const next = !state;
-            persistedSidebarCollapsed = next;
-            return next;
-          })
-        }
+        onToggleAction={handleToggle}
         isAdmin={isAdminUser}
         isInAdminPanel={false}
         onPanelSwitchAction={() => router.push("/admin")}
@@ -78,8 +111,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <SidebarDashboard
         collapsed={collapsed}
         onToggleAction={(next) => {
-          persistedSidebarCollapsed = next;
-          setCollapsed(next);
+          if (isMobile) {
+            const open = !next;
+            persistedSidebarMobileOpen = open;
+            setMobileOpen(open);
+          } else {
+            persistedSidebarCollapsed = next;
+            setCollapsedDesktop(next);
+          }
         }}
         businessProfiles={profiles}
         isAdminView={isAdminUser}
@@ -87,7 +126,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       <div 
         className={`transition-all duration-300 pt-16 min-h-screen ${
-          collapsed ? 'pr-20' : 'pr-64'
+          collapsed ? 'pr-0 sm:pr-20' : 'pr-0 sm:pr-64'
         }`}
       >
         {shouldHideContent ? null : children}

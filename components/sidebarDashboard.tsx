@@ -164,7 +164,7 @@ const BadgeIcon = ({ className }: IconProps) => (
 const HomeIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
-    className={clsx("h-5 w-5", className)}
+    className={clsx("h-6 w-6", className)}
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -177,7 +177,7 @@ const HomeIcon = ({ className }: IconProps) => (
 const TransferIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
-    className={clsx("h-5 w-5", className)}
+    className={clsx("h-6 w-6", className)}
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -220,7 +220,7 @@ const BiometricIcon = ({ className }: IconProps) => (
 const SupportIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
-    className={clsx("h-5 w-5", className)}
+    className={clsx("h-6 w-6", className)}
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -440,9 +440,11 @@ export function SidebarDashboard({
     <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col",
+        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-[width,transform] duration-300 flex flex-col",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[62px] overflow-hidden" : "w-[200px] overflow-visible",
+        isCollapsed
+          ? "w-[min(85vw,320px)] overflow-hidden translate-x-full pointer-events-none sm:pointer-events-auto sm:translate-x-0 sm:w-[62px]"
+          : "w-[min(85vw,320px)] translate-x-0 overflow-visible sm:w-[200px]",
       )}
     >
       <div className="relative flex flex-col h-full">
@@ -451,17 +453,26 @@ export function SidebarDashboard({
         <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
             className={clsx(
-              "relative flex items-center gap-3 pb-1 pt-7 justify-center",
+              "relative flex items-center gap-3 pb-1.5 pt-7.5 justify-center transition-colors",
               isCollapsed ? "px-4" : "pr-4 pl-16",
               "border-[color:var(--md-sys-color-outline-variant)]",
+              !isCollapsed &&
+                "cursor-pointer rounded-xl before:absolute before:inset-x-0 before:top-7 before:bottom-1 before:rounded-xl before:bg-transparent before:pointer-events-none before:transition-colors before:content-[''] hover:before:bg-[color:var(--md-sys-color-surface-container-highest)]/60",
             )}
+            onClick={() => {
+              if (isCollapsed) return;
+              setIsSwitcherOpen((open) => !open);
+            }}
           >
             {!isCollapsed && (
               <button
                 type="button"
                 aria-label="مشاهده فهرست کسب‌ و کارها"
                 aria-expanded={isSwitcherOpen}
-                onClick={() => setIsSwitcherOpen((open) => !open)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsSwitcherOpen((open) => !open);
+                }}
                 className={clsx(
                   "absolute left-3 top-4/6 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
                   "border-[color:var(--md-sys-color-outline-variant)]",
@@ -473,7 +484,7 @@ export function SidebarDashboard({
               </button>
             )}
 
-            <div className="flex items-center gap-3 min-w-0 flex-1 justify-start">
+            <div className="relative z-10 flex items-center gap-3 min-w-0 flex-1 justify-start">
               <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
               <div
                 className={clsx(
@@ -541,8 +552,7 @@ export function SidebarDashboard({
                 )}
                 {businessProfiles.map((profile) => {
                   const isActive = profile.id === activeBusinessId;
-                  const canContinue =
-                    profile.status === "in-progress" || profile.status === "pending";
+                  const canContinue = profile.status === "in-progress";
                   return (
                     <div key={profile.id} className="relative">
                       <button
@@ -690,11 +700,12 @@ export function SidebarDashboard({
                   const isItemActiveAndEnabled = isItemActive && !isItemDisabled;
 
                   return (
-                    <div key={item.id}>
+                    <div key={item.id} title={isCollapsed ? item.label : undefined}>
                       {/* Main item row */}
                       <Button
                         variant="ghost"
                         disabled={isItemDisabled}
+                        title={isCollapsed ? item.label : undefined}
                         onClick={() => {
                          if (isItemDisabled) return;
                          if (item.onClick) {
@@ -813,6 +824,7 @@ export function SidebarDashboard({
             variant="ghost"
             onClick={handleLogout}
             aria-label="خروج"
+            title={isCollapsed ? "خروج" : undefined}
             className={clsx(
               "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
               "text-[color:var(--md-sys-color-error)]",

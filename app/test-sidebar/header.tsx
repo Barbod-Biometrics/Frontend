@@ -17,33 +17,30 @@ type HeaderProps = {
   onAvatarClickAction?: () => void;
 };
 
-const CollapseIcon = ({ collapsed }: { collapsed: boolean }) =>
-  collapsed ? (
-    <svg viewBox="0 0 64 64" className="h-6 w-6" fill="none">
-      <defs>
-        <linearGradient id="openGradient" x1="0" x2="0" y1="0" y2="64" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0f8bff" />
-          <stop offset="1" stopColor="#2152ff" />
-        </linearGradient>
-      </defs>
-      <rect x="10" y="12" width="44" height="8" rx="4" fill="url(#openGradient)" />
-      <rect x="10" y="28" width="44" height="8" rx="4" fill="url(#openGradient)" />
-      <rect x="10" y="44" width="44" height="8" rx="4" fill="url(#openGradient)" />
-    </svg>
-  ) : (
-    <svg viewBox="0 0 64 64" className="h-6 w-6" fill="none">
-      <defs>
-        <linearGradient id="collapseGradient" x1="0" x2="0" y1="0" y2="64" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0f8bff" />
-          <stop offset="1" stopColor="#2152ff" />
-        </linearGradient>
-      </defs>
-      <path d="M12 16L12 48L28 32Z" fill="url(#collapseGradient)" />
-      <rect x="32" y="12" width="22" height="8" rx="4" fill="url(#collapseGradient)" />
-      <rect x="32" y="28" width="22" height="8" rx="4" fill="url(#collapseGradient)" />
-      <rect x="32" y="44" width="22" height="8" rx="4" fill="url(#collapseGradient)" />
-    </svg>
-  );
+const CollapseIcon = ({ collapsed }: { collapsed: boolean }) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={clsx(
+      "h-7 w-7 origin-center transition-transform duration-300",
+      collapsed ? "rotate-180" : "rotate-0",
+    )}
+    fill="none"
+  >
+    <defs>
+      <linearGradient id="collapseArrowGradient" x1="0" x2="0" y1="0" y2="24" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#0f8bff" />
+        <stop offset="1" stopColor="#2152ff" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M9 6L15 12L9 18"
+      stroke="url(#collapseArrowGradient)"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 const BusinessBadgeIcon = () => (
   <svg viewBox="0 0 32 32" className="h-8 w-8 text-[color:var(--md-sys-color-primary)]" fill="none">

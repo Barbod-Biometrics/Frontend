@@ -168,16 +168,16 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
                       onClick={() => handleSelect(item.id)}
                       title={isCollapsed ? item.label : undefined}
                       className={clsx(
-                        "group flex w-full items-center rounded-[10px] text-sm transition-colors duration-200",
-                        isCollapsed
-                          ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
-                          : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
-                        isActive
-                          ? "text-[color:var(--md-sys-color-primary)]"
-                          : "text-[color:var(--md-sys-color-on-surface)]",
-                        !isCollapsed &&
-                          "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
-                      )}
+                      "group flex w-full items-center rounded-[10px] text-sm transition-colors transition-shadow duration-200",
+                      isCollapsed
+                        ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
+                        : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
+                      isActive
+                        ? "text-[color:var(--md-sys-color-primary)]"
+                        : "text-[color:var(--md-sys-color-on-surface)]",
+                      "hover:shadow-[var(--elevation-1)]",
+                      "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
+                    )}
                     >
                       <div className="flex items-center gap-2">
                         <ItemIconFrame active={isActive}>{item.icon}</ItemIconFrame>
@@ -205,12 +205,13 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
             aria-label="خروج"
             title={isCollapsed ? "خروج" : undefined}
             className={clsx(
-              "group flex w-full items-center rounded-[10px] text-sm transition-colors duration-200",
+              "group flex w-full items-center rounded-[10px] text-sm transition-colors transition-shadow duration-200",
               isCollapsed
                 ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
                 : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
               "text-[color:var(--md-sys-color-error)]",
-              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+              "hover:shadow-[var(--elevation-1)]",
+              "hover:bg-[color:var(--md-sys-color-error)]/10",
             )}
           >
             <div className="flex items-center gap-2">

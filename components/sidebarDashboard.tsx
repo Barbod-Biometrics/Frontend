@@ -312,8 +312,8 @@ export function SidebarDashboard({
     };
   }, [activeBusiness, currentProfile]);
   const isApprovedProfile = resolvedProfile?.status === "approved";
-  const showBusinessNameHeader = !isCollapsed && isApprovedProfile;
-  const businessNameLabel = showBusinessNameHeader ? resolvedProfile?.title ?? "" : "";
+  const headerTitle =
+    isApprovedProfile && resolvedProfile?.title ? resolvedProfile.title : "کسب و کار";
    useEffect(() => {
     if (!businessProfiles.length) return;
     
@@ -453,11 +453,11 @@ export function SidebarDashboard({
         <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
             className={clsx(
-              "relative flex items-center gap-3 pb-1.5 pt-7.5 justify-center transition-colors",
+              "relative flex items-center gap-3 py-7.5 justify-center transition-colors",
               isCollapsed ? "px-4" : "pr-4 pl-16",
               "border-[color:var(--md-sys-color-outline-variant)]",
               !isCollapsed &&
-                "cursor-pointer rounded-xl before:absolute before:inset-x-0 before:top-7 before:bottom-1 before:rounded-xl before:bg-transparent before:pointer-events-none before:transition-colors before:content-[''] hover:before:bg-[color:var(--md-sys-color-surface-container-highest)]/60",
+                "cursor-pointer rounded-xl before:absolute before:inset-x-0 before:inset-y-7.5 before:rounded-xl before:bg-transparent before:pointer-events-none before:transition-colors before:content-[''] hover:before:bg-[color:var(--md-sys-color-surface-container-highest)]/60",
             )}
             onClick={() => {
               if (isCollapsed) return;
@@ -474,7 +474,7 @@ export function SidebarDashboard({
                   setIsSwitcherOpen((open) => !open);
                 }}
                 className={clsx(
-                  "absolute left-3 top-4/6 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
+                  "absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
                   "border-[color:var(--md-sys-color-outline-variant)]",
                   "bg-[color:var(--md-sys-color-surface-container-high)]",
                   "hover:text-[color:var(--md-sys-color-primary)] hover:border-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
@@ -496,35 +496,14 @@ export function SidebarDashboard({
                   variant="caption"
                   className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
                 >
-                  کسب و کار
+                  {headerTitle}
                 </Typography>
               </div>
             </div>
           </div>
 
-          {/* Business name header with toggle (separator always visible) */}
-          <div
-            className={clsx(
-              "flex items-center border-b border-[color:var(--md-sys-color-outline-variant)] transition-all duration-200",
-              isCollapsed ? "gap-0 px-0 py-0" : "gap-3 px-4 py-3",
-            )}
-          >
-            {showBusinessNameHeader && (
-              <div
-                className={clsx(
-                  "min-w-0 transition-all duration-200",
-                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
-                )}
-              >
-                <Typography
-                  variant="caption"
-                  className="text-sm font-semibold text-[color:var(--md-sys-color-primary)]"
-                >
-                  {businessNameLabel}
-                </Typography>
-              </div>
-            )}
-          </div>
+          {/* Divider below the header row */}
+          <div className="border-b border-[color:var(--md-sys-color-outline-variant)]" />
 
           {isSwitcherOpen && (
             <div
@@ -719,13 +698,13 @@ export function SidebarDashboard({
                           }
                         }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
+                          "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors transition-shadow duration-200 justify-between gap-2",
                           isItemActiveAndEnabled
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
                           isItemDisabled && "cursor-not-allowed opacity-50",
-                          !isCollapsed &&
-                            !isItemDisabled &&
+                          !isItemDisabled && "hover:shadow-[var(--elevation-1)]",
+                          !isItemDisabled &&
                             "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
@@ -826,9 +805,10 @@ export function SidebarDashboard({
             aria-label="خروج"
             title={isCollapsed ? "خروج" : undefined}
             className={clsx(
-              "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
+              "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors transition-shadow duration-200 justify-between gap-2",
               "text-[color:var(--md-sys-color-error)]",
-              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+              "hover:shadow-[var(--elevation-1)]",
+              "hover:bg-[color:var(--md-sys-color-error)]/10",
             )}
           >
             <div className="flex items-center gap-2">

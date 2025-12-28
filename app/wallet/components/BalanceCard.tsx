@@ -77,7 +77,7 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
     ? 'bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950'
     : 'bg-gradient-to-br from-white to-slate-100';
 
-  const textColor = theme === Theme.DARK ? 'text-white' : 'text-gray-900';
+  const textColor = 'text-white';
   
   const badgeBgSecure = theme === Theme.DARK 
     ? 'bg-emerald-500/20' 

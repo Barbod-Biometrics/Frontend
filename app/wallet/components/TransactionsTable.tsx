@@ -167,24 +167,24 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[color:var(--md-sys-color-outline-variant)]">
-                  <th className="text-right p-4">
+                <tr>
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.description[language]}
                     </Typography>
                   </th>
                  
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.amount[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.date[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.status[language]}
                     </Typography>
@@ -197,15 +197,15 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                   return (
                     <tr
                       key={transaction.id}
-                      className="border-b border-[color:var(--md-sys-color-outline-variant)]/30 hover:bg-[color:var(--md-sys-color-surface-container-high)] transition-colors"
+                      className="hover:bg-[color:var(--md-sys-color-surface-container-high)] transition-colors"
                     >
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <Typography variant="body-md">
                           {transaction.description}
                         </Typography>
                       </td>
                       
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <Typography
                           variant="body-md"
                           className={
@@ -221,12 +221,12 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                           </Typography>
                         </Typography>
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <Typography variant="body-md">
                           {formatDate(transaction.date)}
                         </Typography>
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full ${statusColors.bg} ${statusColors.text}`}>
                           <div className={`w-2 h-2 rounded-full ${statusColors.dot}`}></div>
                           <Typography variant="caption">

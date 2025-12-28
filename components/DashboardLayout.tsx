@@ -41,9 +41,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       />
 
      
-      <div 
+      <div
         className={`transition-all duration-300 pt-16 min-h-screen ${
-          collapsed ? 'pl-20' : 'pl-64'
+          collapsed ? "mr-[76px] pr-4" : "mr-[210px] pr-6"
         }`}
       >
         {children}

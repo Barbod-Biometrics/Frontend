@@ -69,7 +69,7 @@ export default function TransactionsPagination({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Showing info */}
         <div>
-          <Typography variant="body-sm" className="text-muted">
+          <Typography variant="body-sm" tone="muted">
             {translations.showing[language]} {startIndex } {translations.to[language]} {endIndex} {translations.ofItems[language]} {totalItems} {translations.items[language]}
           </Typography>
         </div>
@@ -123,9 +123,9 @@ export default function TransactionsPagination({
                 (pageNumber === currentPage + 2 && currentPage < totalPages - 2)
               ) {
                 return (
-                  <span key={pageNumber} className="px-2 text-muted">
+                  <Typography key={pageNumber} component="span" variant="body-sm" tone="muted" className="px-2">
                     ...
-                  </span>
+                  </Typography>
                 );
               }
               return null;
@@ -157,7 +157,7 @@ export default function TransactionsPagination({
         
         {/* Page info */}
         <div>
-          <Typography variant="body-sm" className="text-muted">
+          <Typography variant="body-sm" tone="muted">
             {translations.page[language]} {currentPage} {translations.of[language]} {totalPages}
           </Typography>
         </div>

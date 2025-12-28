@@ -143,7 +143,7 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
   };
 
   return (
-    <Card variant="filled" className="overflow-hidden mt-10">
+    <Card variant="contrast" className="overflow-hidden mt-10">
       <div className="p-6 border-b border-[color:var(--md-sys-color-outline-variant)]">
         <Typography variant="h5">
           {translations.transactions[language]}
@@ -152,13 +152,13 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
 
       {isLoading ? (
         <div className="p-8 text-center">
-          <Typography variant="body-md" className="text-muted">
+          <Typography variant="body-md" tone="muted">
             {translations.loading[language]}
           </Typography>
         </div>
       ) : displayTransactions.length === 0 ? (
         <div className="p-8 text-center">
-          <Typography variant="body-md" className="text-muted">
+          <Typography variant="body-md" tone="muted">
             {translations.noTransactions[language]}
           </Typography>
         </div>
@@ -169,23 +169,23 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
               <thead>
                 <tr className="border-b border-[color:var(--md-sys-color-outline-variant)]">
                   <th className="text-right p-4">
-                    <Typography variant="body-md" className="text-muted font-normal">
+                    <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.description[language]}
                     </Typography>
                   </th>
                  
                   <th className="text-right p-4">
-                    <Typography variant="body-md" className="text-muted font-normal">
+                    <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.amount[language]}
                     </Typography>
                   </th>
                   <th className="text-right p-4">
-                    <Typography variant="body-md" className="text-muted font-normal">
+                    <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.date[language]}
                     </Typography>
                   </th>
                   <th className="text-right p-4">
-                    <Typography variant="body-md" className="text-muted font-normal">
+                    <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.status[language]}
                     </Typography>
                   </th>
@@ -216,9 +216,9 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                         >
                           {transaction.type === 'deposit' ? '+' : '-'}
                           {formatNumber(transaction.amount)}
-                          <span className="text-sm text-muted mr-1">
+                          <Typography component="span" variant="body-sm" tone="muted" className="mr-1">
                             {translations.currency[language]}
-                          </span>
+                          </Typography>
                         </Typography>
                       </td>
                       <td className="p-4">

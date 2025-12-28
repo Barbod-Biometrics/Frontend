@@ -77,7 +77,12 @@ export default function StatsCards() {
   return (
     <>
       {stats.map((stat, index) => (
-        <Card key={index} variant="filled" hover className="p-5 group relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px]">
+        <Card
+          key={index}
+          variant="contrast"
+          hover
+          className="p-5 group relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px]"
+        >
           {/* Background gradient effect - subtle on hover */}
           <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-3 transition-opacity duration-300`} />
           
@@ -92,7 +97,7 @@ export default function StatsCards() {
               </div>
               
               <div className="flex-1">
-                <Typography variant="body-md" className="text-muted font-medium">
+                <Typography variant="body-md" tone="muted" className="font-medium">
                   {stat.title}
                 </Typography>
               </div>

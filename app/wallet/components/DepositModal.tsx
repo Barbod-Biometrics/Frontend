@@ -160,7 +160,7 @@ export default function DepositModal({ isOpen, onClose, onDepositSuccess, profil
             </Button>
           </div>
 
-          <Typography variant="body-lg" className="mb-8 text-muted"> 
+          <Typography variant="body-lg" tone="muted" className="mb-8"> 
             {translations.description[language]}
           </Typography>
 

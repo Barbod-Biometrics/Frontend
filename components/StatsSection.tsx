@@ -98,7 +98,7 @@ export function StatsSection() {
       <Container className="relative space-y-10">
         <div className="pointer-events-none absolute inset-0 opacity-60 blur-3xl [background:radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(99,102,241,0.14),transparent_45%)]" />
 
-        <div className={cn("relative max-w-4xl space-y-3", isRtl ? "text-right" : "text-left")}>
+        <div className="relative mx-auto max-w-4xl space-y-3 text-center">
           {copy.badge ? (
             <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-outline-variant)]/60 bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--md-sys-color-on-surface-variant)]">
               {copy.badge}

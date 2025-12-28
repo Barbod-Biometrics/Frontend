@@ -4,11 +4,13 @@ import React from 'react';
 import { cn } from '../../lib/utils';
 
 type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body-lg' | 'body-md' | 'body-sm' | 'caption';
+type Tone = 'auto' | 'default' | 'muted' | 'strong';
 
 interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
     variant?: Variant;
     component?: React.ElementType;
     gradient?: boolean;
+    tone?: Tone;
 }
 
 export function Typography({
@@ -17,6 +19,7 @@ export function Typography({
     className,
     children,
     gradient = false,
+    tone = 'auto',
     ...props
 }: TypographyProps) {
     const Component = component ||
@@ -40,14 +43,20 @@ export function Typography({
         muted: 'text-muted-foreground',
     };
 
-    // Default color logic: Headings are default, body is often muted but let's stick to default for now and let className override
-    const defaultColor = variant.startsWith('h') ? colors.default : colors.muted;
+    const toneClass = (() => {
+        if (tone === 'auto') {
+            return variant.startsWith('h') ? colors.default : colors.muted;
+        }
+        if (tone === 'default') return colors.default;
+        if (tone === 'muted') return colors.muted;
+        return 'text-[color:var(--md-sys-color-on-surface)]';
+    })();
 
     return (
         <Component
             className={cn(
                 styles[variant],
-                !gradient && defaultColor,
+                !gradient && toneClass,
                 gradient && 'text-brand-gradient',
                 className
             )}

@@ -5,7 +5,7 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "elevated" | "filled" | "outlined";
+  variant?: "elevated" | "filled" | "outlined" | "contrast";
   hover?: boolean;
 }
 
@@ -15,6 +15,8 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       elevated: "bg-card shadow-[var(--elevation-2)]",
       filled: "bg-card border border-border/20",
       outlined: "bg-transparent border border-border/60",
+      contrast:
+        "bg-[color:var(--md-sys-color-surface-container-high)] border border-[color:var(--md-sys-color-outline-variant)]/60 shadow-[var(--elevation-1)]",
     };
 
     return (

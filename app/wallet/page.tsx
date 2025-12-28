@@ -274,7 +274,7 @@ export default function WalletPage() {
                 </Typography>
               </div>
             </div>
-            <Typography variant="body-lg" className="text-muted">
+            <Typography variant="body-lg" tone="muted">
               {translations.pageDescription[language]}
             </Typography>
           </div>

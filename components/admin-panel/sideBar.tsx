@@ -1,10 +1,14 @@
 ﻿"use client";
 
 import clsx from "clsx";
-import { Briefcase, PhoneCall } from "lucide-react";
+import { Briefcase, LogOut, PhoneCall } from "lucide-react";
 import { useState, type ReactElement, type ReactNode } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
+import { clearClientStorage } from "../../lib/auth-storage";
+import { clearAuthState } from "../../store/loginSlice";
 
 type AdminNavItem = {
   id: "manageBusinessRequests" | "manageContactUsRequests";
@@ -66,12 +70,27 @@ const AdminShieldIcon = ({ className }: { className?: string }) => (
 
 export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemAction }: AdminSidebarProps) {
   const [internalActive, setInternalActive] = useState<AdminNavItem["id"]>("manageBusinessRequests");
+  const dispatch = useDispatch();
+  const router = useRouter();
   const isCollapsed = Boolean(collapsed);
   const resolvedActive = activeItemId ?? internalActive;
 
   const handleSelect = (id: AdminNavItem["id"]) => {
     if (!activeItemId) setInternalActive(id);
     onSelectItemAction?.(id);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await clearClientStorage();
+    } finally {
+      dispatch(clearAuthState());
+      if (typeof window !== "undefined") {
+        window.location.replace("/");
+      } else {
+        router.replace("/");
+      }
+    }
   };
 
   return (
@@ -85,23 +104,36 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
       )}
     >
       <div className="relative flex flex-col h-full">
-        <div className="flex flex-col items-stretch gap-3 border-b border-[color:var(--md-sys-color-outline-variant)] px-4 pb-4 pt-6">
-          <div className="flex items-center gap-3 min-w-0 flex-1 justify-start">
-            <ItemIconFrame active>
+        <div
+          className={clsx(
+            "flex flex-col px-4 items-stretch gap-3 border-b border-[color:var(--md-sys-color-outline-variant)] pb-4 pt-6",
+          )}
+        >
+          <div
+            className={clsx(
+              "flex items-center min-w-0 flex-1 justify-start",
+              isCollapsed ? "gap-2" : "gap-3",
+            )}
+          >
+            <span className="flex-shrink-0">
+              <ItemIconFrame active>
               <AdminShieldIcon />
             </ItemIconFrame>
+            </span>
             <div
               className={clsx(
                 "min-w-0 transition-all duration-200 text-right",
                 isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
               )}
             >
-              <Typography
-                variant="caption"
-                className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
-              >
+              {!isCollapsed && (
+                <Typography
+                  variant="caption"
+                  className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                >
                 ادمین
               </Typography>
+              )}
             </div>
           </div>
         </div>
@@ -160,6 +192,36 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
               })}
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-[color:var(--md-sys-color-outline-variant)] px-2 py-3">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            aria-label="خروج"
+            className={clsx(
+              "group flex w-full items-center rounded-[10px] text-sm transition-colors duration-200",
+              isCollapsed
+                ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
+                : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
+              "text-[color:var(--md-sys-color-error)]",
+              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <ItemIconFrame>
+                <LogOut className="h-5 w-5 text-[color:var(--md-sys-color-error)]" strokeWidth={1.8} />
+              </ItemIconFrame>
+              <div
+                className={clsx(
+                  "min-w-0 truncate text-right font-medium transition-all duration-150",
+                  isCollapsed ? "opacity-0 w-auto pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                خروج
+              </div>
+            </div>
+          </Button>
         </div>
       </div>
     </aside>

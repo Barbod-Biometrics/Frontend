@@ -4,6 +4,7 @@ import React from "react";
 import { ReactNode, useEffect, useState } from "react";
 import clsx from "clsx";
 import { ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
@@ -41,6 +42,12 @@ const services: ServiceCard[] = [
   },
 ];
 
+const serviceRoutes: Record<string, string> = {
+  "face-recognition": "/services/face-recognition",
+  "liveness-detection": "/services/liveness",
+  "smart-ocr": "/services/ocr",
+};
+
 interface ServiceIntroProps {
   onBack?: () => void;
   onContinue?: (serviceId: string) => void;
@@ -49,6 +56,7 @@ interface ServiceIntroProps {
 }
 
 export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }: ServiceIntroProps) {
+  const router = useRouter();
   const [activeId, setActiveId] = useState<string>(initialServiceId ?? services[0]?.id ?? "");
 
   useEffect(() => {
@@ -56,6 +64,13 @@ export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }
       setActiveId(initialServiceId);
     }
   }, [initialServiceId]);
+
+  const handleServiceNavigate = (serviceId: string) => {
+    const route = serviceRoutes[serviceId];
+    if (route) {
+      router.push(route);
+    }
+  };
 
   const handleContinue = () => {
     onContinue?.(activeId);
@@ -127,6 +142,7 @@ export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }
                       onClick={(event) => {
                         event.stopPropagation();
                         setActiveId(service.id);
+                        handleServiceNavigate(service.id);
                       }}
                       className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--md-sys-color-on-surface)] transition hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/40"
                     >

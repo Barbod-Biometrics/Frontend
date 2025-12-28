@@ -1,7 +1,8 @@
 "use client";
 
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 import { AuthSidebar } from "../../components/business-auth/sideBar";
 import { AccountType } from "../../components/business-auth/accountType";
 import { PersonalInfo } from "../../components/business-auth/personalInfo";
@@ -9,7 +10,6 @@ import { BusinessInfo } from "../../components/business-auth/businessInfo";
 import { LocationInfo } from "../../components/business-auth/locationInfo";
 import { ServiceIntro } from "../../components/business-auth/serviceIntro";
 import { InfoChecking } from "../../components/business-auth/infoChecking";
-import { Button } from "../../components/ui/Button";
 import { Typography } from "../../components/ui/Typography";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -40,7 +40,10 @@ const PROFILE_STORAGE_PREFIX = "business-profile-id";
 const getProfileStorageKey = (phone?: string | null) =>
   phone ? `${PROFILE_STORAGE_PREFIX}-${phone}` : PROFILE_STORAGE_PREFIX;
 const STEP_STORAGE_PREFIX = "business-profile-step";
-const CONNECTION_ERROR_TEXT = "در برقراری ارتباط با سرور مشکلی پیش آمد. لطفاً بعداً دوباره تلاش کنید.";
+const CONNECTION_ERROR_TEXT = "در ارتباط با سرور خطایی رخ داد";
+const SUCCESS_TOAST_TEXT = "حساب با موفقیت ایجاد شد";
+const TOAST_HIDE_DELAY_MS = 2600;
+const NAVIGATE_DELAY_MS = 900;
 const VALID_STEPS: StepId[] = [
   "account-type",
   "personal-info",
@@ -117,10 +120,89 @@ function BusinessAuthPage({
   const profileId = profile?.id;
   const [currentAccountType, setCurrentAccountType] = useState<AccountKind>("legal");
   const accountType = profile?.type;
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; tone: "success" | "error" } | null>(null);
+  const toastTimeoutRef = useRef<number | null>(null);
+  const navigateTimeoutRef = useRef<number | null>(null);
   const phoneNumber = typeof window !== "undefined" ? getPhoneNumber() : null;
   const hasHydratedStep = useRef(false);
   const lastProfileId = useRef<string | null>(null);
+  const { personal, business, location, services } = completedSections;
+  const hasAccountInfo = Boolean(profile?.id && profile?.name?.trim() && profile?.type);
+  const isAdminContext = useMemo(() => {
+    if (isAdminCreationFlow) return true;
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(ADMIN_PANEL_RETURN_KEY) === ADMIN_PANEL_BUSINESS_VIEW;
+    } catch {
+      return false;
+    }
+  }, [isAdminCreationFlow]);
+
+  const allowedStepIds = useMemo<StepId[]>(() => {
+    const allowed: StepId[] = ["account-type"];
+    if (!hasAccountInfo) return allowed;
+    allowed.push("personal-info");
+    if (!personal) return allowed;
+    allowed.push("business-info");
+    if (!business) return allowed;
+    allowed.push("location");
+    if (!location) return allowed;
+    allowed.push("services-intro");
+    if (!services) return allowed;
+    allowed.push("review-info");
+    return allowed;
+  }, [hasAccountInfo, personal, business, location, services]);
+
+  const allowedStepSet = useMemo(() => new Set<StepId>(allowedStepIds), [allowedStepIds]);
+
+  const disabledStepIds = useMemo(
+    () => VALID_STEPS.filter((step) => !allowedStepSet.has(step)),
+    [allowedStepSet],
+  );
+
+  const latestAllowedStep = useMemo(() => {
+    for (let i = VALID_STEPS.length - 1; i >= 0; i -= 1) {
+      const step = VALID_STEPS[i];
+      if (allowedStepSet.has(step)) return step;
+    }
+    return DEFAULT_ITEM_ID;
+  }, [allowedStepSet]);
+
+  const clearToastTimeout = () => {
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+      toastTimeoutRef.current = null;
+    }
+  };
+
+  const clearNavigateTimeout = () => {
+    if (navigateTimeoutRef.current) {
+      window.clearTimeout(navigateTimeoutRef.current);
+      navigateTimeoutRef.current = null;
+    }
+  };
+
+  const showToast = (message: string, tone: "success" | "error") => {
+    setToast({ message, tone });
+    clearToastTimeout();
+    if (typeof window !== "undefined") {
+      toastTimeoutRef.current = window.setTimeout(() => setToast(null), TOAST_HIDE_DELAY_MS);
+    }
+  };
+
+  const resolveErrorMessage = (error: unknown) => {
+    if (typeof error === "string" && error.trim()) return error;
+    if (error instanceof Error && error.message) return error.message;
+    return CONNECTION_ERROR_TEXT;
+  };
+
+  const handleExit = () => {
+    if (isAdminContext) {
+      router.push("/admin");
+    } else {
+      router.push("/user");
+    }
+  };
 
   const persistStep = (step: StepId, id?: string) => {
     if (!id || typeof window === "undefined") return;
@@ -142,6 +224,13 @@ function BusinessAuthPage({
       // ignore storage errors
     }
   }, [isAdminCreationFlow]);
+
+  useEffect(() => {
+    return () => {
+      clearToastTimeout();
+      clearNavigateTimeout();
+    };
+  }, []);
 
   useEffect(() => {
     const profileStorageKey = getProfileStorageKey(phoneNumber);
@@ -193,6 +282,13 @@ function BusinessAuthPage({
   }, [activeItemId, profileId]);
 
   useEffect(() => {
+    if (!isValidStep(activeItemId)) return;
+    if (!allowedStepSet.has(activeItemId)) {
+      setActiveStep(latestAllowedStep);
+    }
+  }, [activeItemId, allowedStepSet, latestAllowedStep]);
+
+  useEffect(() => {
     if (accountType) {
       setCurrentAccountType(accountType);
     }
@@ -204,7 +300,7 @@ function BusinessAuthPage({
     const hasExistingDraft =
       Boolean(profile?.id) && Boolean(profile?.type) && Boolean(profile?.name?.trim());
     setCurrentAccountType(selectedType);
-    setErrorMessage(null);
+    setToast(null);
 
     if (hasExistingDraft) {
       setActiveStep("personal-info");
@@ -221,7 +317,7 @@ function BusinessAuthPage({
       setActiveStep("personal-info");
     } catch (error) {
       console.error(error);
-      setErrorMessage(CONNECTION_ERROR_TEXT);
+      showToast(resolveErrorMessage(error), "error");
     }
   };
 
@@ -231,7 +327,7 @@ function BusinessAuthPage({
       setActiveStep("business-info");
     } catch (error) {
       console.error(error);
-      setErrorMessage(CONNECTION_ERROR_TEXT);
+      showToast(resolveErrorMessage(error), "error");
     }
   };
 
@@ -241,7 +337,7 @@ function BusinessAuthPage({
       setActiveStep("location");
     } catch (error) {
       console.error(error);
-      setErrorMessage(CONNECTION_ERROR_TEXT);
+      showToast(resolveErrorMessage(error), "error");
     }
   };
 
@@ -251,7 +347,7 @@ function BusinessAuthPage({
       setActiveStep("services-intro");
     } catch (error) {
       console.error(error);
-      setErrorMessage(CONNECTION_ERROR_TEXT);
+      showToast(resolveErrorMessage(error), "error");
     }
   };
 
@@ -268,18 +364,34 @@ function BusinessAuthPage({
         } catch {
           // ignore storage errors
         }
-        router.push("/test-admin-panel");
+        showToast(SUCCESS_TOAST_TEXT, "success");
+        clearNavigateTimeout();
+        if (typeof window !== "undefined") {
+          navigateTimeoutRef.current = window.setTimeout(() => {
+            router.push("/admin");
+          }, NAVIGATE_DELAY_MS);
+        } else {
+          router.push("/admin");
+        }
         return;
       }
-      router.push("/test-sidebar");
+      showToast(SUCCESS_TOAST_TEXT, "success");
+      clearNavigateTimeout();
+      if (typeof window !== "undefined") {
+        navigateTimeoutRef.current = window.setTimeout(() => {
+          router.push("/user");
+        }, NAVIGATE_DELAY_MS);
+      } else {
+        router.push("/user");
+      }
     } catch (error) {
       console.error(error);
-      setErrorMessage(CONNECTION_ERROR_TEXT);
+      showToast(resolveErrorMessage(error), "error");
     }
   };
 
   const handleSidebarSelect = (step: string) => {
-    if (isValidStep(step)) {
+    if (isValidStep(step) && allowedStepSet.has(step)) {
       setActiveStep(step);
     }
   };
@@ -302,6 +414,7 @@ function BusinessAuthPage({
     case "personal-info":
       content = (
         <PersonalInfo
+          accountType={currentAccountType}
           initialData={profile?.personalInfo}
           isLoading={statuses.personalInfo === "loading"}
           onBack={() => setActiveStep("account-type")}
@@ -372,6 +485,32 @@ function BusinessAuthPage({
   return (
     <>
       <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
+        {toast && (
+          <div
+            className="pointer-events-none fixed left-1/2 top-6 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2"
+            role={toast.tone === "error" ? "alert" : "status"}
+            aria-live={toast.tone === "error" ? "assertive" : "polite"}
+          >
+            <div
+              className={
+                "rounded-xl border px-6 py-3 text-center text-sm font-semibold shadow-[var(--elevation-3)] backdrop-blur-sm " +
+                (toast.tone === "error"
+                  ? "border-red-200 bg-red-50 text-red-700"
+                  : "border-emerald-200 bg-emerald-50 text-emerald-700")
+              }
+            >
+              {toast.message}
+            </div>
+          </div>
+        )}
+        <button
+          type="button"
+          aria-label="بستن"
+          onClick={handleExit}
+          className="absolute left-6 top-6 z-40 flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface-variant)] shadow-[var(--elevation-1)] transition hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50"
+        >
+          <X className="h-5 w-5" aria-hidden />
+        </button>
         <div
           dir="rtl"
           className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-stretch gap-6 px-6 py-10 md:ml-auto md:mr-0 md:flex-row md:items-start md:justify-end"
@@ -381,6 +520,7 @@ function BusinessAuthPage({
               activeItemId={activeItemId}
               onItemSelect={handleSidebarSelect}
               accountType={currentAccountType}
+              disabledItemIds={disabledStepIds}
             />
           </div>
 
@@ -388,54 +528,6 @@ function BusinessAuthPage({
         </div>
       </main>
 
-      {errorMessage && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-          role="alertdialog"
-          aria-modal="true"
-          onClick={() => setErrorMessage(null)}
-        >
-          <div
-            className="w-full max-w-md rounded-[24px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] p-6 shadow-[var(--elevation-3)]"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1">
-                <Typography
-                  variant="body-lg"
-                  className="font-semibold text-[color:var(--md-sys-color-on-surface)]"
-                >
-                  بروز خطا در ایجاد پروفایل
-                </Typography>
-                <Typography
-                  variant="body-sm"
-                  className="text-[color:var(--md-sys-color-on-surface-variant)] leading-6"
-                >
-                  {errorMessage}
-                </Typography>
-              </div>
-              <button
-                type="button"
-                onClick={() => setErrorMessage(null)}
-                className="rounded-full p-2 text-[color:var(--md-sys-color-on-surface-variant)] transition hover:bg-[color:var(--md-sys-color-primary)]/10 hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50"
-                aria-label="بستن"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="mt-5 flex justify-end">
-              <Button
-                type="button"
-                onClick={() => setErrorMessage(null)}
-                className="min-w-[120px]"
-              >
-                باشه
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

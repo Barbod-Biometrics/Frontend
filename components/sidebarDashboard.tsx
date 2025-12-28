@@ -11,12 +11,22 @@ import {
 import clsx from "clsx";
 import { Typography } from "./ui/Typography";
 import { Button } from "./ui/Button";
-import { ChevronDown, ChevronLeft, FileText, Fingerprint, PlusCircle, ScanFace } from "lucide-react";
-import { useRouter } from "next/navigation";
+import {
+  ChevronDown,
+  ChevronLeft,
+  FileText,
+  Fingerprint,
+  LogOut,
+  PlusCircle,
+  ScanFace,
+} from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import type { ProfileListItem } from "../lib/api/userProfiles";
 import { useDispatch, useSelector } from "react-redux"; 
-import { setCurrentProfile, selectProfileById } from "../store/selectedProfileSlice";
+import { selectProfileById, setCurrentProfile } from "../store/selectedProfileSlice";
 import { resetWalletForProfileChange } from "../store/walletSlice";
+import { clearClientStorage } from "../lib/auth-storage";
+import { clearAuthState } from "../store/loginSlice";
 
 type NavSubItem = {
   id: string;
@@ -29,6 +39,7 @@ type NavItem = {
   label: string;
   icon: ReactElement;
   children?: NavSubItem[];
+  onClick?: () => void;
 };
 
 type NavSection = {
@@ -103,7 +114,12 @@ const normalizeBusinessStatus = (value?: string): BusinessStatus => {
   if (normalized.includes("progress") || normalized.includes("draft")) return "in-progress";
   if (normalized.includes("pending") || normalized.includes("wait") || normalized.includes("review"))
     return "pending";
-  if (normalized.includes("approved") || normalized.includes("accept")) return "approved";
+  if (
+    normalized.includes("approved") ||
+    normalized.includes("accept") ||
+    normalized.includes("verified")
+  )
+    return "approved";
   if (normalized.includes("reject")) return "rejected";
   return "pending";
 };
@@ -241,6 +257,7 @@ export function SidebarDashboard({
   isAdminView?: boolean;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const dispatch = useDispatch();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
@@ -248,6 +265,10 @@ export function SidebarDashboard({
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
    const currentProfile = useSelector((state: any) => state.selectedProfile?.currentProfile);
+  const profileLookup = useMemo(
+    () => new Map((businessProfilesProp ?? []).map((profile) => [profile.id, profile])),
+    [businessProfilesProp],
+  );
   const businessProfiles = useMemo<BusinessProfileSummary[]>(() => {
     if (businessProfilesProp?.length) {
       return businessProfilesProp.map((item) => ({
@@ -262,10 +283,23 @@ export function SidebarDashboard({
   const [activeBusinessId, setActiveBusinessId] = useState<string | null>(
     businessProfiles[0]?.id ?? null,
   );
+  const handleLogout = async () => {
+    try {
+      await clearClientStorage();
+    } finally {
+      dispatch(clearAuthState());
+      if (typeof window !== "undefined") {
+        window.location.replace("/");
+      } else {
+        router.replace("/");
+      }
+    }
+  };
   const activeBusiness = useMemo(
     () => businessProfiles.find((profile) => profile.id === activeBusinessId) ?? null,
     [activeBusinessId, businessProfiles],
   );
+  const isApprovedProfile = activeBusiness?.status === "approved";
   const showBusinessNameHeader = !isCollapsed && activeBusiness?.status === "approved";
   const businessNameLabel = showBusinessNameHeader ? activeBusiness?.title ?? "" : "";
    useEffect(() => {
@@ -284,6 +318,30 @@ export function SidebarDashboard({
     if (!businessProfiles.length) return;
     setActiveBusinessId((prev) => prev ?? businessProfiles[0]?.id ?? null);
   }, [businessProfiles]);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const normalizedPath = pathname.replace(/\/$/, "");
+    if (normalizedPath === "/business-info") {
+      setActiveItemId("business-info");
+      return;
+    }
+    if (normalizedPath === "/wallet") {
+      setActiveItemId("transactions");
+      return;
+    }
+    if (normalizedPath.startsWith("/services/face-recognition")) {
+      setActiveItemId("face");
+      return;
+    }
+    if (normalizedPath.startsWith("/services/liveness")) {
+      setActiveItemId("liveness");
+      return;
+    }
+    if (normalizedPath.startsWith("/services/ocr")) {
+      setActiveItemId("ocr");
+    }
+  }, [pathname]);
   const switcherRef = useRef<HTMLDivElement | null>(null);
 
   const sections = useMemo<NavSection[]>(
@@ -297,11 +355,13 @@ export function SidebarDashboard({
             id: "business-info",
             label: "اطلاعات کسب و کار",
             icon: <HomeIcon />,
+             onClick: () => router.push('/business-info')
           },
           {
             id: "transactions",
             label: "کیف پول",
             icon: <TransferIcon />,
+             onClick: () => router.push('/wallet')
           },
         ],
       },
@@ -320,7 +380,7 @@ export function SidebarDashboard({
         items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon /> }],
       },
     ],
-    [],
+    [router],
   );
 
 
@@ -474,7 +534,12 @@ export function SidebarDashboard({
                       type="button"
                       key={profile.id}
                       onClick={() => {
-                        dispatch(selectProfileById(profile.id));
+                        const fullProfile = profileLookup.get(profile.id);
+                        if (fullProfile) {
+                          dispatch(setCurrentProfile(fullProfile));
+                        } else {
+                          dispatch(selectProfileById(profile.id));
+                        }
                           
                         
                           dispatch(resetWalletForProfileChange());
@@ -547,12 +612,27 @@ export function SidebarDashboard({
             "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface-container)]",
           )}
         >
-          {sections.map((section) => (
-            <div key={section.id} className="mb-6 last:mb-0">
+          {sections.map((section) => {
+            const isSectionLocked =
+              !isApprovedProfile && (section.id === "business" || section.id === "services");
+            const isSectionActive = section.items.some(
+              (item) =>
+                item.id === activeItemId ||
+                (item.children?.some((child) => child.id === activeItemId) ?? false),
+            );
+            const showSectionActive = isSectionActive && !isSectionLocked;
+
+            return (
+              <div key={section.id} className="mb-6 last:mb-0">
               {!isCollapsed && (
                 <Typography
                   variant="caption"
-                  className="mb-2 px-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                  className={clsx(
+                    "mb-2 px-2 text-sm font-semibold",
+                    showSectionActive
+                      ? "text-[color:var(--md-sys-color-primary)]"
+                      : "text-[color:var(--md-sys-color-on-surface)]",
+                  )}
                 >
                   {section.title}
                 </Typography>
@@ -561,18 +641,25 @@ export function SidebarDashboard({
               <div className="space-y-1.5">
                 {section.items.map((item) => {
                   const hasChildren = !!item.children?.length;
+                  const isItemDisabled = isSectionLocked;
                   const isGroupOpen = hasChildren ? openGroups.has(item.id) : false;
                   const isItemActive =
                     activeItemId === item.id ||
                     (hasChildren && item.children!.some((sub) => sub.id === activeItemId));
+                  const isItemActiveAndEnabled = isItemActive && !isItemDisabled;
 
                   return (
                     <div key={item.id}>
                       {/* Main item row */}
                       <Button
                         variant="ghost"
+                        disabled={isItemDisabled}
                         onClick={() => {
-                          if (hasChildren) {
+                         if (isItemDisabled) return;
+                         if (item.onClick) {
+                            setActiveItemId(item.id);
+                            item.onClick();
+                          } else if (hasChildren) {
                             toggleGroup(item.id);
                             setActiveItemId(item.id);
                           } else {
@@ -581,15 +668,17 @@ export function SidebarDashboard({
                         }}
                         className={clsx(
                           "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
-                          isItemActive
+                          isItemActiveAndEnabled
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
+                          isItemDisabled && "cursor-not-allowed opacity-50",
                           !isCollapsed &&
+                            !isItemDisabled &&
                             "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <ItemIconFrame active={isItemActive}>{item.icon}</ItemIconFrame>
+                          <ItemIconFrame active={isItemActiveAndEnabled}>{item.icon}</ItemIconFrame>
                           <div
                             className={clsx(
                               "min-w-0 truncate text-right font-medium transition-all duration-150",
@@ -673,8 +762,36 @@ export function SidebarDashboard({
                   );
                 })}
               </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="border-t border-[color:var(--md-sys-color-outline-variant)] px-2 py-3">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            aria-label="خروج"
+            className={clsx(
+              "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors duration-200 justify-between gap-2",
+              "text-[color:var(--md-sys-color-error)]",
+              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <ItemIconFrame>
+                <LogOut className="h-5 w-5 text-[color:var(--md-sys-color-error)]" />
+              </ItemIconFrame>
+              <div
+                className={clsx(
+                  "min-w-0 truncate text-right font-medium transition-all duration-150",
+                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                )}
+              >
+                خروج
+              </div>
             </div>
-          ))}
+          </Button>
         </div>
       </div>
     </aside>

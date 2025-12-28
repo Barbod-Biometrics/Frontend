@@ -43,7 +43,11 @@ export default function OTPForm({ masked }: { masked?: string }) {
 
   const handleSubmit = async () => {
     if (!canSubmit) {
-      setLocalError(isFa ? "کد شش رقمی را وارد کنید." : "Enter the 6-digit code to continue.");
+      setLocalError(
+        isFa
+          ? "کد شش رقمی را وارد کنید."
+          : "Enter the 6-digit code to continue."
+      );
       return;
     }
 
@@ -51,7 +55,12 @@ export default function OTPForm({ masked }: { masked?: string }) {
     try {
       const tokens = await dispatch(verifyOtpThunk(code)).unwrap();
       saveAuth(tokens);
-      router.push("/");
+      // Redirect based on role after successful verification
+      if (tokens?.is_admin) {
+        router.push("/admin");
+      } else {
+        router.push("/user");
+      }
     } catch {
       // handled by authError
     }
@@ -215,7 +224,13 @@ export default function OTPForm({ masked }: { masked?: string }) {
           onClick={handleSubmit}
           disabled={!canSubmit || isSubmitting}
         >
-          {isSubmitting ? (isFa ? "لطفا صبر کنید..." : "Please wait...") : isFa ? "تایید" : "Submit"}
+          {isSubmitting
+            ? isFa
+              ? "لطفا صبر کنید..."
+              : "Please wait..."
+            : isFa
+            ? "تایید"
+            : "Submit"}
         </Button>
 
         <div className="flex flex-col items-center gap-2">

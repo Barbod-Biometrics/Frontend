@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { requestOtp, verifyOtp, VerifyOtpResponse } from "../lib/auth-api";
-import { saveAuth } from "../lib/auth-storage";
+import { getAccessToken, getIsAdmin, saveAuth } from "../lib/auth-storage";
 import type { RootState } from "./store";
 
 type Step = "login" | "otp";
@@ -12,6 +12,7 @@ interface LoginState {
   isSubmitting: boolean;
   isHovered: boolean;
   isAdmin?: boolean;
+  hydrated: boolean;
 }
 
 const initialState: LoginState = {
@@ -21,6 +22,7 @@ const initialState: LoginState = {
   isSubmitting: false,
   isHovered: false,
   isAdmin: undefined,
+  hydrated: false,
 };
 
 const toMessage = (error: unknown, fallback: string) => {
@@ -45,10 +47,7 @@ export const requestOtpThunk = createAsyncThunk<
     await requestOtp(phoneNumber);
   } catch (error) {
     return rejectWithValue(
-      toMessage(
-        error,
-        "Unable to send the code right now. Please try again."
-      )
+      toMessage(error, "Unable to send the code right now. Please try again.")
     );
   }
 });
@@ -86,10 +85,7 @@ export const resendOtpThunk = createAsyncThunk<
     await requestOtp(phoneNumber);
   } catch (error) {
     return rejectWithValue(
-      toMessage(
-        error,
-        "Unable to send the code right now. Please try again."
-      )
+      toMessage(error, "Unable to send the code right now. Please try again.")
     );
   }
 });
@@ -101,12 +97,34 @@ const loginSlice = createSlice({
     setIsHovered(state, action: PayloadAction<boolean>) {
       state.isHovered = action.payload;
     },
+    hydrateFromStorage(state) {
+      if (typeof window === "undefined") return;
+      const token = getAccessToken();
+      const isAdmin = getIsAdmin();
+      if (token && typeof isAdmin === "boolean") {
+        state.isAdmin = isAdmin;
+        state.step = "otp";
+      } else {
+        state.isAdmin = undefined;
+      }
+      // mark that we've checked persistent storage
+      state.hydrated = true;
+    },
     resetLogin(state) {
       state.step = "login";
       state.phoneNumber = "";
       state.authError = null;
       state.isSubmitting = false;
       state.isHovered = false;
+    },
+    clearAuthState(state) {
+      state.step = "login";
+      state.phoneNumber = "";
+      state.authError = null;
+      state.isSubmitting = false;
+      state.isHovered = false;
+      state.isAdmin = undefined;
+      state.hydrated = true;
     },
   },
   extraReducers: (builder) => {
@@ -138,6 +156,8 @@ const loginSlice = createSlice({
         state.isAdmin = payload?.is_admin ?? false;
         // persist tokens and related info
         if (payload) saveAuth(payload);
+        // mark authenticated state as checked
+        state.hydrated = true;
       })
       .addCase(verifyOtpThunk.rejected, (state, action) => {
         state.isSubmitting = false;
@@ -164,12 +184,16 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setIsHovered, resetLogin } = loginSlice.actions;
+export const { setIsHovered, resetLogin, hydrateFromStorage, clearAuthState } =
+  loginSlice.actions;
 
 export const selectLogin = (state: RootState) => state.login;
 export const selectMaskedPhone = (state: RootState) =>
   maskPhoneNumber(state.login.phoneNumber);
 
 export const selectIsAdmin = (state: RootState) => state.login.isAdmin;
+export const selectIsAuthenticated = (state: RootState) =>
+  typeof state.login.isAdmin !== "undefined";
+export const selectIsHydrated = (state: RootState) => state.login.hydrated;
 
 export default loginSlice.reducer;

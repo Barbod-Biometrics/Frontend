@@ -1,30 +1,38 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import clsx from "clsx";
 import { X } from "lucide-react";
-import { AdminSidebar } from "../../components/admin-panel/sideBar";
-import { SidebarDashboard } from "../../components/sidebarDashboard";
-import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
-import { Header } from "./header";
-import BusinessRequests from "../../components/admin-panel/manage-requests/businessRequests";
-import ContactSalesRequests from "../../components/admin-panel/manage-requests/contactSalesRequests";
-import { ContactInfo } from "../user-contact/components/ContactInfo";
-import { Typography } from "../../components/ui/Typography";
+import { AdminSidebar } from "./admin-panel/sideBar";
+import { SidebarDashboard } from "./sidebarDashboard";
+import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
+import { Header } from "../app/test-admin-panel/header";
+import BusinessRequests from "./admin-panel/manage-requests/businessRequests";
+import ContactSalesRequests from "./admin-panel/manage-requests/contactSalesRequests";
+import { usePathname } from "next/navigation";
+import { ContactInfo } from "../app/user-contact/components/ContactInfo";
+import { Typography } from "./ui/Typography";
 
 type PanelView = "admin" | "business";
 
 const ADMIN_PANEL_RETURN_KEY = "admin-panel-return-view";
 const ADMIN_PANEL_BUSINESS_VIEW = "business";
 
-export default function Page() {
+type AdminPanelLayoutProps = {
+  children?: ReactNode;
+};
+
+export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
+  const pathname = usePathname();
   const [panelView, setPanelView] = useState<PanelView>("admin");
   const [collapsed, setCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState<"manageBusinessRequests" | "manageContactUsRequests">(
     "manageBusinessRequests",
   );
-  const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
+  const normalizedPath = (pathname ?? "").replace(/\/$/, "");
+  const showDefaultAdminView = normalizedPath === "/admin";
 
   useEffect(() => {
     try {
@@ -93,8 +101,14 @@ export default function Page() {
               collapsed ? "mr-[76px] pr-4" : "mr-[210px] pr-6",
             )}
           >
-            {activeItem === "manageBusinessRequests" && <BusinessRequests />}
-            {activeItem === "manageContactUsRequests" && <ContactSalesRequests />}
+            {showDefaultAdminView ? (
+              <>
+                {activeItem === "manageBusinessRequests" && <BusinessRequests />}
+                {activeItem === "manageContactUsRequests" && <ContactSalesRequests />}
+              </>
+            ) : (
+              children
+            )}
           </div>
         </>
       ) : (

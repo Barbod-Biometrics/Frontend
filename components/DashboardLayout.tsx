@@ -2,9 +2,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
 import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
+import FaultyTerminal from "./FaultyTerminal";
+import { RootState } from "../store/store";
+import { Theme } from "../types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,6 +17,8 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  const isLight = theme === Theme.LIGHT;
 
   useEffect(() => {
     let mounted = true;
@@ -31,22 +37,33 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, []);
 
   return (
-    <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <Header collapsed={collapsed} onToggleAction={() => setCollapsed((s) => !s)} />
+    <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)] overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <FaultyTerminal
+          className="opacity-35"
+          tint="#3b82f6"
+          backgroundColor={isLight ? "#ffffff" : "#0c0f16"}
+          scale={1.8}
+          mouseReact
+        />
+      </div>
 
-      <SidebarDashboard
-        collapsed={collapsed}
-        onToggleAction={(next) => setCollapsed(next)}
-        businessProfiles={profiles}
-      />
+      <div className="relative z-10">
+        <Header collapsed={collapsed} onToggleAction={() => setCollapsed((s) => !s)} />
 
-     
-      <div
-        className={`transition-all duration-300 pt-16 min-h-screen ${
-          collapsed ? "mr-[76px] pr-4" : "mr-[210px] pr-6"
-        }`}
-      >
-        {children}
+        <SidebarDashboard
+          collapsed={collapsed}
+          onToggleAction={(next) => setCollapsed(next)}
+          businessProfiles={profiles}
+        />
+
+        <div
+          className={`transition-all duration-300 pt-16 min-h-screen ${
+            collapsed ? "mr-[76px] pr-4" : "mr-[210px] pr-6"
+          }`}
+        >
+          {children}
+        </div>
       </div>
     </main>
   );

@@ -202,7 +202,12 @@ export default function WalletPage() {
           return (
             <Container size="xl">
               <Section spacing="md">
-                <div className="flex justify-center items-center h-64">
+                <div className="flex flex-col items-center justify-center h-64 gap-4">
+                  <div
+                    className="h-10 w-10 rounded-full border-4 border-[color:var(--md-sys-color-primary)] border-t-transparent animate-spin"
+                    role="status"
+                    aria-label="Loading"
+                  />
                   <Typography variant="body-lg">
                     {translations.loadingProfiles[language]}
                   </Typography>

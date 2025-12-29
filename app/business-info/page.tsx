@@ -50,7 +50,12 @@ function BusinessInfoContent() {
     return (
       <Section spacing="md">
         <Container size="xl">
-          <div className="flex items-center justify-center h-96">
+          <div className="flex flex-col items-center justify-center h-96 gap-4">
+            <div
+              className="h-10 w-10 rounded-full border-4 border-[color:var(--md-sys-color-primary)] border-t-transparent animate-spin"
+              role="status"
+              aria-label="Loading"
+            />
             <Typography variant="h4" className="text-[color:var(--text-primary)]">
               در حال بارگذاری اطلاعات کسب‌وکار...
             </Typography>

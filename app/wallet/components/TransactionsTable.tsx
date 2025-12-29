@@ -171,11 +171,11 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
         </div>
       ) : (
         <>
-          <div className="max-h-[32vh] overflow-x-auto overflow-y-auto">
-            <table className="w-full border-collapse">
-              <thead className="border-b border-[color:var(--md-sys-color-outline)]/70">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
                 <tr>
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.description[language]}
                     </Typography>
@@ -206,13 +206,13 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                       key={transaction.id}
                       className="hover:bg-[color:var(--md-sys-color-surface-container-high)] transition-colors"
                     >
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <Typography variant="body-md">
                           {transaction.description}
                         </Typography>
                       </td>
                       
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <Typography
                           variant="body-md"
                           className={
@@ -228,12 +228,12 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                           </Typography>
                         </Typography>
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <Typography variant="body-md">
                           {formatDate(transaction.date)}
                         </Typography>
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
                         <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full ${statusColors.bg} ${statusColors.text}`}>
                           <div className={`w-2 h-2 rounded-full ${statusColors.dot}`}></div>
                           <Typography variant="caption">

@@ -104,7 +104,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
     >
       {/* Logo with subtle animation */}
       <div className="transform transition-transform duration-300 hover:scale-110">
-        <Logo />
+        <Logo size="xlarge" />
       </div>
 
       {/* Brand name with gradient */}
@@ -153,7 +153,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
       </p>
 
       {/* Input section with enhanced styling - Force LTR for consistent left-to-right progression */}
-      <div className="flex w-full max-w-md flex-col items-center justify-center gap-5 sm:gap-6 mt-2">
+      <div className="flex w-full max-w-md flex-col items-center justify-center gap-5 sm:gap-6 mt-4">
         <div
           className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap"
           dir="ltr"

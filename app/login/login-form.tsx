@@ -223,7 +223,7 @@ function LoginForm({ onSubmit }: LoginFormProps) {
     >
       {/* Logo with subtle animation */}
       <div className="transform transition-transform duration-300 hover:scale-110">
-        <Logo />
+        <Logo size="xlarge" />
       </div>
 
       {/* Brand name with gradient */}

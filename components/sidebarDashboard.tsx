@@ -367,7 +367,7 @@ export function SidebarDashboard({
       },
       {
         id: "services",
-        title: "سرویس ها",
+        title: "",
         items: [
           { id: "face", label: "احراز هویت چهره", icon: <ScanFace className="h-5 w-5" /> },
           { id: "liveness", label: "تشخیص زنده بودن", icon: <Fingerprint className="h-5 w-5" /> },
@@ -425,10 +425,10 @@ export function SidebarDashboard({
   };
 
   return (
-    <aside
+      <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 z-30 h-[calc(108vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
+        "fixed right-0 top-14 z-30 h-[calc(100vh-3.5rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
         "border-[color:var(--md-sys-color-outline-variant)]",
         isCollapsed ? "w-[62px]" : "w-[200px]",
       )}
@@ -624,7 +624,7 @@ export function SidebarDashboard({
 
             return (
               <div key={section.id} className="mb-6 last:mb-0">
-              {!isCollapsed && (
+              {!isCollapsed && section.title && (
                 <Typography
                   variant="caption"
                   className={clsx(

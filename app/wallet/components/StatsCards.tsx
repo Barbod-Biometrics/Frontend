@@ -3,13 +3,15 @@
 
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
-import { Language } from '../../../types';
+import { Language, Theme } from '../../../types';
 import { Card } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import { Wallet, CreditCard, Receipt } from 'lucide-react';
 
 export default function StatsCards() {
   const language = useSelector((state: RootState) => state.language.language);
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  const isLight = theme === Theme.LIGHT;
   const { totalDeposits, totalWithdrawals, transactionCount } = useSelector(
     (state: RootState) => state.wallet
   );
@@ -81,7 +83,9 @@ export default function StatsCards() {
           key={index}
           variant="contrast"
           hover
-          className="p-4 group relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px]"
+          className={`p-4 group relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px] ${
+            isLight ? "bg-white border border-[color:var(--md-sys-color-outline-variant)]" : ""
+          }`}
         >
           {/* Background gradient effect - subtle on hover */}
           <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-3 transition-opacity duration-300`} />

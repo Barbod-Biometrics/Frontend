@@ -612,7 +612,9 @@ export function SidebarDashboard({
             "[&::-webkit-scrollbar-thumb]:border-[color:var(--md-sys-color-surface-container)]",
           )}
         >
-          {sections.map((section) => {
+          {sections.map((section, index) => {
+            const hasTitle = Boolean(section.title);
+            const nextHasTitle = Boolean(sections[index + 1]?.title);
             const isSectionLocked =
               !isApprovedProfile && (section.id === "business" || section.id === "services");
             const isSectionActive = section.items.some(
@@ -621,14 +623,24 @@ export function SidebarDashboard({
                 (item.children?.some((child) => child.id === activeItemId) ?? false),
             );
             const showSectionActive = isSectionActive && !isSectionLocked;
+            const sectionGap = hasTitle
+              ? nextHasTitle
+                ? "mb-5"
+                : "mb-2"
+              : nextHasTitle
+              ? "mb-4"
+              : "mb-2";
 
             return (
-              <div key={section.id} className="mb-6 last:mb-0">
+              <div
+                key={section.id}
+                className={clsx(sectionGap, "last:mb-0")}
+              >
               {!isCollapsed && section.title && (
                 <Typography
                   variant="caption"
                   className={clsx(
-                    "mb-2 px-2 text-sm font-semibold",
+                    "mb-1 px-2 text-sm font-semibold",
                     showSectionActive
                       ? "text-[color:var(--md-sys-color-primary)]"
                       : "text-[color:var(--md-sys-color-on-surface)]",

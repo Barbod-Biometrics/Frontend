@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
+import GradientText from "./GradientText";
 import { Button } from "./ui/Button";
 import { Section } from "./ui/Section";
 import { Container } from "./ui/Container";
@@ -70,6 +71,10 @@ export function Hero({ language, theme, dir }: HeroProps) {
   const contentDir = dir ?? (language === Language.FA ? "rtl" : "ltr");
   const copy = heroCopy[language];
   const isFa = language === Language.FA;
+  const gradientColors =
+    theme === Theme.LIGHT
+      ? ["#1e3a8a", "#4079ff", "#1e3a8a", "#4079ff", "#1e3a8a"]
+      : ["#e0f2ff", "#60a5fa", "#ffffff", "#60a5fa", "#e0f2ff"];
 
   const handlePrimaryClick = () => {
     if (!isAuthenticated) {
@@ -106,9 +111,14 @@ export function Hero({ language, theme, dir }: HeroProps) {
           <div className="flex flex-grow flex-col items-center justify-center space-y-8 lg:space-y-10">
             <Typography variant="h1" component="h1">
               <span className="mb-2 block lg:mb-4">{copy.headingTop}</span>
-              <span className="text-brand-gradient">
+              <GradientText
+                colors={gradientColors}
+                animationSpeed={3}
+                showBorder={false}
+                className="font-bold leading-[1.35] pb-[0.08em]"
+              >
                 {copy.headingHighlight}
-              </span>
+              </GradientText>
             </Typography>
 
             <Typography

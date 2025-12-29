@@ -174,17 +174,17 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                     </Typography>
                   </th>
                  
-                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
+                  <th className="text-right p-4">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.amount[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
+                  <th className="text-right p-4">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.date[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
+                  <th className="text-right p-4">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.status[language]}
                     </Typography>

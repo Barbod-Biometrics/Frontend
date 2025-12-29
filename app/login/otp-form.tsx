@@ -109,18 +109,18 @@ export default function OTPForm({ masked }: { masked?: string }) {
 
       {/* Brand name with gradient */}
       <p
-        className={`text-3xl sm:text-4xl font-bold ${
+        className={`text-4xl sm:text-5xl font-bold ${
           isLight
             ? "bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 bg-clip-text text-transparent"
             : "bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent"
         } ${isFa ? "font-vazirmatn" : ""}`}
       >
-        Barbod
+        {isFa ? "باربد" : "Barbod"}
       </p>
 
       {/* Title with emphasis */}
       <p
-        className={`text-4xl sm:text-5xl font-extrabold drop-shadow-lg ${
+        className={`text-3xl sm:text-4xl font-extrabold drop-shadow-lg ${
           isLight ? "text-gray-900" : "text-white"
         } ${isFa ? "font-vazirmatn" : ""}`}
       >

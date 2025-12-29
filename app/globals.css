@@ -329,3 +329,107 @@ html.font-orbitron body * {
 .shape-full {
   border-radius: var(--radius-full);
 }
+
+/* Business auth date picker */
+.business-auth-date-picker.rmdp-wrapper {
+  background-color: var(--md-sys-color-surface);
+  border: none;
+  border-radius: 20px;
+  box-shadow: var(--elevation-2);
+  padding: 0.75rem;
+}
+
+.business-auth-date-picker .rmdp-calendar {
+  padding: 0 !important;
+}
+
+.business-auth-date-picker .rmdp-header,
+.business-auth-date-picker .rmdp-panel-header {
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  margin-top: 0 !important;
+  color: var(--md-sys-color-on-surface);
+}
+
+.business-auth-date-picker .rmdp-header-values {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 600;
+}
+
+.business-auth-date-picker .rmdp-week-day {
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 600;
+}
+
+.business-auth-date-picker .rmdp-day span {
+  border-radius: 12px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.business-auth-date-picker .rmdp-day.rmdp-deactive span {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.business-auth-date-picker .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.business-auth-date-picker .rmdp-day.rmdp-selected span:not(.highlight) {
+  background-color: var(--md-sys-color-primary);
+  box-shadow: var(--elevation-1);
+  color: var(--md-sys-color-on-primary);
+}
+
+.business-auth-date-picker .rmdp-day.rmdp-today span {
+  border: 1px solid var(--md-sys-color-primary);
+}
+
+.business-auth-date-picker .rmdp-month-picker,
+.business-auth-date-picker .rmdp-year-picker {
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+.business-auth-date-picker .rmdp-month-picker .rmdp-day,
+.business-auth-date-picker .rmdp-year-picker .rmdp-day {
+  border-radius: 12px;
+  color: var(--md-sys-color-on-surface);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.business-auth-date-picker .rmdp-month-picker .rmdp-day.rmdp-deactive,
+.business-auth-date-picker .rmdp-year-picker .rmdp-day.rmdp-deactive,
+.business-auth-date-picker .rmdp-month-picker .rmdp-day.rmdp-disabled,
+.business-auth-date-picker .rmdp-year-picker .rmdp-day.rmdp-disabled {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.business-auth-date-picker .rmdp-month-picker .rmdp-day:hover,
+.business-auth-date-picker .rmdp-year-picker .rmdp-day:hover {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.business-auth-date-picker .rmdp-month-picker .rmdp-day.rmdp-selected,
+.business-auth-date-picker .rmdp-year-picker .rmdp-day.rmdp-selected {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.business-auth-date-picker .rmdp-arrow-container {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 10px;
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.business-auth-date-picker .rmdp-arrow {
+  border-color: var(--md-sys-color-primary);
+}
+
+.business-auth-date-picker .rmdp-arrow-container:hover {
+  background-color: var(--md-sys-color-primary-container);
+}
+
+.business-auth-date-picker .rmdp-arrow-container:hover .rmdp-arrow {
+  border-color: var(--md-sys-color-on-primary-container);
+}

@@ -172,33 +172,33 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
       ) : (
         <>
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
+            <table className="w-full border-separate border-spacing-0">
+              <thead className="bg-[color:var(--md-sys-color-surface-container-low)]">
                 <tr>
-                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline)]/70">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline-variant)]">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.description[language]}
                     </Typography>
                   </th>
                  
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline-variant)]">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.amount[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline-variant)]">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.date[language]}
                     </Typography>
                   </th>
-                  <th className="text-right p-4">
+                  <th className="text-right p-4 border-b border-[color:var(--md-sys-color-outline-variant)]">
                     <Typography variant="body-md" tone="muted" className="font-normal">
                       {translations.status[language]}
                     </Typography>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[color:var(--md-sys-color-outline)]/60">
+              <tbody className="divide-y divide-[color:var(--md-sys-color-outline-variant)] border-b border-[color:var(--md-sys-color-outline-variant)]">
                 {displayTransactions.map((transaction) => {
                   const statusColors = getStatusColor(transaction.status);
                   return (
@@ -206,13 +206,13 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                       key={transaction.id}
                       className="hover:bg-[color:var(--md-sys-color-surface-container-high)] transition-colors"
                     >
-                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
+                      <td className="p-4">
                         <Typography variant="body-md">
                           {transaction.description}
                         </Typography>
                       </td>
                       
-                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
+                      <td className="p-4">
                         <Typography
                           variant="body-md"
                           className={
@@ -228,12 +228,12 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                           </Typography>
                         </Typography>
                       </td>
-                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
+                      <td className="p-4">
                         <Typography variant="body-md">
                           {formatDate(transaction.date)}
                         </Typography>
                       </td>
-                      <td className="p-4 border-b border-[color:var(--md-sys-color-outline)]/60">
+                      <td className="p-4">
                         <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full ${statusColors.bg} ${statusColors.text}`}>
                           <div className={`w-2 h-2 rounded-full ${statusColors.dot}`}></div>
                           <Typography variant="caption">

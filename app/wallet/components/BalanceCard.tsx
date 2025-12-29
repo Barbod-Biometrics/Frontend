@@ -111,7 +111,7 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
     <Card
       variant="elevated"
       hover
-      className={`p-8 h-full flex flex-col relative overflow-hidden group border border-[color:var(--md-sys-color-outline-variant)]/70 ${cardGradient}`}
+      className={`p-6 h-full flex flex-col relative overflow-hidden group border border-[color:var(--md-sys-color-outline-variant)]/70 ${cardGradient}`}
     >
      
       <div className={`absolute inset-0 bg-gradient-to-br ${
@@ -129,13 +129,13 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
       
       <div className="relative z-10">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-6">
           <Typography variant="body-lg" tone="muted" className="mb-2">
             {translations.availableBalance[language]}
           </Typography>
           
           {/* Large balance amount */}
-          <div className="flex items-baseline gap-3 mb-6">
+          <div className="flex items-baseline gap-3 mb-4">
             <Typography variant="h1" className={`font-bold ${balanceGradient} bg-clip-text text-transparent`}>
               {formatNumber(balance)}
             </Typography>
@@ -145,7 +145,7 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
           </div>
           
           {/* Features */}
-          <div className="flex flex-wrap gap-4 mb-6">
+          <div className="flex flex-wrap gap-3 mb-4">
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${badgeBgSecure} ${badgeTextSecure}`}>
               <Shield className="w-4 h-4" />
               <Typography variant="caption" className="font-medium">
@@ -162,7 +162,7 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
         </div>
 
         {/* Last updated */}
-        <div className={`mb-8 p-4 rounded-xl ${infoBoxBg} backdrop-blur-sm border ${infoBoxBorder}`}>
+        <div className={`mb-5 p-4 rounded-xl ${infoBoxBg} backdrop-blur-sm border ${infoBoxBorder}`}>
           <div className="flex items-center justify-between">
             <Typography variant="body-sm" tone="muted">
               {translations.lastUpdated[language]}
@@ -181,7 +181,7 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
             iconLeading={<ArrowUpRight className="w-5 h-5" />}
             onClick={onDepositClick}
             disabled={disabled}
-            className={`w-full justify-center py-5 text-lg font-bold rounded-xl 
+            className={`w-full justify-center py-4 text-base sm:text-lg font-bold rounded-xl 
                       bg-gradient-to-r from-blue-600 to-indigo-600 
                       hover:from-blue-700 hover:to-indigo-700 
                       shadow-xl hover:shadow-2xl 

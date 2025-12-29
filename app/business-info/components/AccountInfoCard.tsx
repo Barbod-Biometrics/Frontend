@@ -57,14 +57,14 @@ export function AccountInfoCard({
   const isBusiness = accountType === 'حقوقی';
 
   return (
-    <Card variant="filled" hover className="p-6">
+    <Card variant="filled" hover className="p-5 h-full">
      
-      <div className="flex items-center justify-between mb-5 pb-4 border-b border-[color:var(--outline-variant)]">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-[color:var(--outline-variant)]">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-lg ${isBusiness ? 'bg-blue-500/10' : 'bg-purple-500/10'}`}>
             <Building2 className={`w-5 h-5 ${isBusiness ? 'text-blue-500' : 'text-purple-500'}`} />
           </div>
-          <Typography variant="h5" className="text-[color:var(--text-primary)] font-semibold">
+          <Typography variant="h6" className="text-[color:var(--text-primary)] font-semibold">
             اطلاعات حساب
           </Typography>
         </div>
@@ -76,7 +76,7 @@ export function AccountInfoCard({
       </div>
       
     
-      <div className="space-y-6">
+      <div className="space-y-4">
       
         <div>
           <Typography variant="caption" className="text-[color:var(--text-secondary)] block mb-2">

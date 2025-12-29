@@ -2,11 +2,16 @@
 
 import React from 'react';
 
-export function Logo({ size = 'medium' }: { size?: 'small' | 'medium' | 'large' }) {
+export function Logo({
+  size = 'medium',
+}: {
+  size?: 'small' | 'medium' | 'large' | 'xlarge';
+}) {
   const dimensions = {
     small: 'h-8 w-8',
     medium: 'h-10 w-10',
     large: 'h-12 w-12',
+    xlarge: 'h-16 w-16',
   };
 
   return (

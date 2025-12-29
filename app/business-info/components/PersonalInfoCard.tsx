@@ -25,21 +25,21 @@ export function PersonalInfoCard({
   const title = isBusinessAccount ? 'اطلاعات نماینده' : 'اطلاعات شخصی';
 
   return (
-    <Card variant="filled" hover className="p-6">
+    <Card variant="filled" hover className="p-5 h-full">
      
-      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[color:var(--outline-variant)]">
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--outline-variant)]">
         <div className={`p-2 rounded-lg ${isBusinessAccount ? 'bg-purple-500/10' : 'bg-teal-500/10'}`}>
           <User className={`w-5 h-5 ${isBusinessAccount ? 'text-purple-500' : 'text-teal-500'}`} />
         </div>
-        <Typography variant="h5" className="text-[color:var(--text-primary)] font-semibold">
+        <Typography variant="h6" className="text-[color:var(--text-primary)] font-semibold">
           {title}
         </Typography>
       </div>
       
       
-      <div className="space-y-6">
+      <div className="space-y-4">
        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Typography variant="caption" className="text-[color:var(--text-secondary)] block mb-2">
               نام
@@ -60,7 +60,7 @@ export function PersonalInfoCard({
         </div>
         
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Hash className="w-4 h-4 text-[color:var(--text-secondary)]" />

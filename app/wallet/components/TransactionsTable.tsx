@@ -5,7 +5,7 @@ import  { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../store/store';
 import {  setCurrentPage,  goToNextPage,  goToPrevPage, fetchWalletTransactions} from '../../../store/walletSlice';
-import { Language } from '../../../types';
+import { Language, Theme } from '../../../types';
 import { Card } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import TransactionsPagination from './TransactionsPagination';
@@ -17,6 +17,8 @@ interface TransactionsTableProps {
 export default function TransactionsTable({ loading: propLoading }: TransactionsTableProps) {
   const dispatch = useDispatch<AppDispatch>();
   const language = useSelector((state: RootState) => state.language.language);
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  const isLight = theme === Theme.LIGHT;
   const { 
     transactions, 
     currentPage, 
@@ -143,21 +145,26 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
   };
 
   return (
-    <Card variant="contrast" className="overflow-hidden mt-10">
-      <div className="p-6 border-b border-[color:var(--md-sys-color-outline-variant)]">
+    <Card
+      variant="contrast"
+      className={`overflow-hidden mt-4 ${
+        isLight ? "bg-white border border-[color:var(--md-sys-color-outline-variant)]" : ""
+      }`}
+    >
+      <div className="p-5 border-b border-[color:var(--md-sys-color-outline-variant)]">
         <Typography variant="h5">
           {translations.transactions[language]}
         </Typography>
       </div>
 
       {isLoading ? (
-        <div className="p-8 text-center">
+        <div className="p-6 text-center">
           <Typography variant="body-md" tone="muted">
             {translations.loading[language]}
           </Typography>
         </div>
       ) : displayTransactions.length === 0 ? (
-        <div className="p-8 text-center">
+        <div className="p-6 text-center">
           <Typography variant="body-md" tone="muted">
             {translations.noTransactions[language]}
           </Typography>
@@ -191,7 +198,7 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[color:var(--md-sys-color-outline)]/60">
                 {displayTransactions.map((transaction) => {
                   const statusColors = getStatusColor(transaction.status);
                   return (

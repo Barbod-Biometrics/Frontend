@@ -3,13 +3,15 @@
 
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
-import { Language } from '../../../types';
+import { Language, Theme } from '../../../types';
 import { Card } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import { Wallet, CreditCard, Receipt } from 'lucide-react';
 
 export default function StatsCards() {
   const language = useSelector((state: RootState) => state.language.language);
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  const isLight = theme === Theme.LIGHT;
   const { totalDeposits, totalWithdrawals, transactionCount } = useSelector(
     (state: RootState) => state.wallet
   );
@@ -81,13 +83,15 @@ export default function StatsCards() {
           key={index}
           variant="contrast"
           hover
-          className="p-5 group relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px]"
+          className={`p-4 group relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px] ${
+            isLight ? "bg-white border border-[color:var(--md-sys-color-outline-variant)]" : ""
+          }`}
         >
           {/* Background gradient effect - subtle on hover */}
           <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-3 transition-opacity duration-300`} />
           
           <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-4 mb-3">
               <div className={`relative p-3 rounded-xl ${stat.bgColor} ${stat.ringColor} ring-1 ring-inset transition-all duration-300 group-hover:scale-105`}>
                 {/* Subtle shine effect */}
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

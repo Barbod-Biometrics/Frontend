@@ -75,7 +75,7 @@ function BusinessInfoContent() {
       <Section spacing="none" className="py-4 sm:py-6">
         <Container size="xl">
           <div className="flex flex-col items-center justify-center h-72 gap-4">
-            <Typography variant="h4" className="text-center text-rose-500">
+            <Typography variant="h4" className="text-center text-[color:var(--md-sys-color-error)]">
               {error || 'خطا در بارگذاری اطلاعات'}
             </Typography>
             <Button variant="primary" onClick={refreshProfile}>

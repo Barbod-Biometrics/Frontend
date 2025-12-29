@@ -21,9 +21,9 @@ export function BusinessDetailsCard({
   return (
     <Card variant="filled" hover className="p-5 h-full">
     
-      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--outline-variant)]">
-        <div className="p-2 rounded-lg bg-amber-500/10">
-          <Briefcase className="w-5 h-5 text-amber-500" />
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--md-sys-color-outline-variant)]">
+        <div className="p-2 rounded-lg bg-[color:var(--md-sys-color-primary-container)]">
+          <Briefcase className="w-5 h-5 text-[color:var(--md-sys-color-on-primary-container)]" />
         </div>
         <Typography variant="h6" className="text-[color:var(--text-primary)] font-semibold">
           اطلاعات کسب‌وکار
@@ -35,12 +35,12 @@ export function BusinessDetailsCard({
        
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Building className="w-4 h-4 text-amber-500" />
+            <Building className="w-4 h-4 text-[color:var(--md-sys-color-on-surface-variant)]" />
             <Typography variant="caption" className="text-[color:var(--text-secondary)]">
               نام برند / شرکت
             </Typography>
           </div>
-          <Typography variant="body-lg" className="text-amber-500 font-medium">
+          <Typography variant="body-lg" className="text-[color:var(--md-sys-color-on-surface)] font-medium">
             {brandName}
           </Typography>
         </div>
@@ -77,7 +77,7 @@ export function BusinessDetailsCard({
         {websiteUrl && (
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Globe className="w-4 h-4 text-blue-500" />
+              <Globe className="w-4 h-4 text-[color:var(--md-sys-color-primary)]" />
               <Typography variant="caption" className="text-[color:var(--text-secondary)]">
                 وب‌سایت رسمی
               </Typography>
@@ -88,7 +88,7 @@ export function BusinessDetailsCard({
               rel="noopener noreferrer"
               className="group inline-block"
             >
-              <Typography variant="body-md" className="text-blue-500 font-medium group-hover:text-blue-600 transition-colors">
+              <Typography variant="body-md" className="text-[color:var(--md-sys-color-primary)] font-medium group-hover:opacity-80 transition-opacity">
                 {websiteUrl}
               </Typography>
             </a>

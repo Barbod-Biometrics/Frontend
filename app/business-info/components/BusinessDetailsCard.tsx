@@ -19,19 +19,19 @@ export function BusinessDetailsCard({
   businessNationalId
 }: BusinessDetailsCardProps) {
   return (
-    <Card variant="filled" hover className="p-6.5">
+    <Card variant="filled" hover className="p-5 h-full">
     
-      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[color:var(--outline-variant)]">
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--outline-variant)]">
         <div className="p-2 rounded-lg bg-amber-500/10">
           <Briefcase className="w-5 h-5 text-amber-500" />
         </div>
-        <Typography variant="h5" className="text-[color:var(--text-primary)] font-semibold">
+        <Typography variant="h6" className="text-[color:var(--text-primary)] font-semibold">
           اطلاعات کسب‌وکار
         </Typography>
       </div>
       
      
-      <div className="space-y-6">
+      <div className="space-y-4">
        
         <div>
           <div className="flex items-center gap-2 mb-2">

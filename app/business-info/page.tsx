@@ -48,9 +48,9 @@ function BusinessInfoContent() {
 
   if (loading) {
     return (
-      <Section spacing="md">
+      <Section spacing="none" className="py-4 sm:py-6">
         <Container size="xl">
-          <div className="flex flex-col items-center justify-center h-96 gap-4">
+          <div className="flex flex-col items-center justify-center h-72 gap-4">
             <div
               className="h-10 w-10 rounded-full border-4 border-[color:var(--md-sys-color-primary)] border-t-transparent animate-spin"
               role="status"
@@ -72,9 +72,9 @@ function BusinessInfoContent() {
 
   if (error || !processedData) {
     return (
-      <Section spacing="md">
+      <Section spacing="none" className="py-4 sm:py-6">
         <Container size="xl">
-          <div className="flex flex-col items-center justify-center h-96 gap-4">
+          <div className="flex flex-col items-center justify-center h-72 gap-4">
             <Typography variant="h4" className="text-center text-rose-500">
               {error || 'خطا در بارگذاری اطلاعات'}
             </Typography>
@@ -91,59 +91,49 @@ function BusinessInfoContent() {
   const accountTypeLabel = isBusinessAccount ? 'حقوقی' : 'حقیقی';
 
   return (
-    <Section spacing="md">
+    <Section spacing="none" className="py-4 sm:py-6">
       <Container size="xl">
-        
-        <div className="mb-8 mt-6">
-          <Typography variant="h2" className="text-[color:var(--text-primary)] mb-2">
+        <div className="mb-4 mt-3">
+          <Typography variant="h3" className="text-[color:var(--text-primary)] mb-2">
             اطلاعات کسب‌وکار
           </Typography>
-          <Typography variant="body-md" className="text-[color:var(--text-secondary)]">
+          <Typography variant="body-sm" className="text-[color:var(--text-secondary)]">
             مشاهده و مدیریت اطلاعات پروفایل انتخاب شده
           </Typography>
         </div>
-        
-       
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-         
-          <div className="space-y-6">
-            <AccountInfoCard
-              accountName={accountInfo.name}
-              accountType={accountTypeLabel}
-              isActive={accountInfo.isActive}
-              verificationStatus={accountInfo.verificationStatus}
-            />
-            
-            <PersonalInfoCard
-              firstName={personalInfo.firstName}
-              lastName={personalInfo.lastName}
-              nationalId={personalInfo.nationalId}
-              dob={personalInfo.dob}
-              mobileNumber={personalInfo.mobileNumber}
-              isBusinessAccount={isBusinessAccount}
-            />
-          </div>
-          
-        
-          <div className="space-y-6">
-           
-            <BusinessDetailsCard
-              brandName={businessInfo.brandName}
-              fieldOfWork={businessInfo.fieldOfWork}
-              websiteUrl={businessInfo.websiteUrl}
-              businessNationalId={businessInfo.businessNationalId}
-            />
-            
-            <AddressCard
-              address={locationInfo.address}
-              city={locationInfo.city}
-              province={locationInfo.province}
-              postalCode={locationInfo.postalCode}
-              fixedPhone={locationInfo.fixedPhone}
-              unit={locationInfo.unit}
-              plate_number={locationInfo.plateNumber}
-            />
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+          <AccountInfoCard
+            accountName={accountInfo.name}
+            accountType={accountTypeLabel}
+            isActive={accountInfo.isActive}
+            verificationStatus={accountInfo.verificationStatus}
+          />
+
+          <PersonalInfoCard
+            firstName={personalInfo.firstName}
+            lastName={personalInfo.lastName}
+            nationalId={personalInfo.nationalId}
+            dob={personalInfo.dob}
+            mobileNumber={personalInfo.mobileNumber}
+            isBusinessAccount={isBusinessAccount}
+          />
+
+          <BusinessDetailsCard
+            brandName={businessInfo.brandName}
+            fieldOfWork={businessInfo.fieldOfWork}
+            websiteUrl={businessInfo.websiteUrl}
+            businessNationalId={businessInfo.businessNationalId}
+          />
+
+          <AddressCard
+            address={locationInfo.address}
+            city={locationInfo.city}
+            province={locationInfo.province}
+            postalCode={locationInfo.postalCode}
+            fixedPhone={locationInfo.fixedPhone}
+            unit={locationInfo.unit}
+            plate_number={locationInfo.plateNumber}
+          />
         </div>
       </Container>
     </Section>

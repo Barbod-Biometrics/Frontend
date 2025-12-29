@@ -143,28 +143,28 @@ export default function TransactionsTable({ loading: propLoading }: Transactions
   };
 
   return (
-    <Card variant="contrast" className="overflow-hidden mt-10">
-      <div className="p-6 border-b border-[color:var(--md-sys-color-outline-variant)]">
+    <Card variant="contrast" className="overflow-hidden mt-4">
+      <div className="p-5 border-b border-[color:var(--md-sys-color-outline-variant)]">
         <Typography variant="h5">
           {translations.transactions[language]}
         </Typography>
       </div>
 
       {isLoading ? (
-        <div className="p-8 text-center">
+        <div className="p-6 text-center">
           <Typography variant="body-md" tone="muted">
             {translations.loading[language]}
           </Typography>
         </div>
       ) : displayTransactions.length === 0 ? (
-        <div className="p-8 text-center">
+        <div className="p-6 text-center">
           <Typography variant="body-md" tone="muted">
             {translations.noTransactions[language]}
           </Typography>
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
+          <div className="max-h-[32vh] overflow-x-auto overflow-y-auto">
             <table className="w-full">
               <thead>
                 <tr>

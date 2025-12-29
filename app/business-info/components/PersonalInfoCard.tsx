@@ -27,9 +27,9 @@ export function PersonalInfoCard({
   return (
     <Card variant="filled" hover className="p-5 h-full">
      
-      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--outline-variant)]">
-        <div className={`p-2 rounded-lg ${isBusinessAccount ? 'bg-purple-500/10' : 'bg-teal-500/10'}`}>
-          <User className={`w-5 h-5 ${isBusinessAccount ? 'text-purple-500' : 'text-teal-500'}`} />
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--md-sys-color-outline-variant)]">
+        <div className="p-2 rounded-lg bg-[color:var(--md-sys-color-primary-container)]">
+          <User className="w-5 h-5 text-[color:var(--md-sys-color-on-primary-container)]" />
         </div>
         <Typography variant="h6" className="text-[color:var(--text-primary)] font-semibold">
           {title}
@@ -89,12 +89,12 @@ export function PersonalInfoCard({
       
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Phone className="w-4 h-4 text-blue-500" />
+            <Phone className="w-4 h-4 text-[color:var(--md-sys-color-primary)]" />
             <Typography variant="caption" className="text-[color:var(--text-secondary)]">
               شماره تماس
             </Typography>
           </div>
-          <Typography variant="body-lg" className="text-blue-500 font-medium">
+          <Typography variant="body-lg" className="text-[color:var(--md-sys-color-primary)] font-medium">
             {mobileNumber}
           </Typography>
         </div>

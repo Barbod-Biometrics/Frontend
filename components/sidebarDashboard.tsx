@@ -313,7 +313,7 @@ export function SidebarDashboard({
   }, [activeBusiness, currentProfile]);
   const isApprovedProfile = resolvedProfile?.status === "approved";
   const headerTitle =
-    isApprovedProfile && resolvedProfile?.title ? resolvedProfile.title : "کسب و کار";
+    isApprovedProfile && resolvedProfile?.title ? resolvedProfile.title : "کسب‌وکار";
    useEffect(() => {
     if (!businessProfiles.length) return;
     
@@ -360,18 +360,18 @@ export function SidebarDashboard({
     () => [
       {
         id: "business",
-        title: "کسب و کار",
+        title: "کسب‌وکار",
         headerIcon: <BadgeIcon />,
         items: [
           {
             id: "business-info",
-            label: "اطلاعات کسب و کار",
+            label: "اطلاعات کسب‌وکار",
             icon: <HomeIcon />,
              onClick: () => router.push('/business-info')
           },
           {
             id: "transactions",
-            label: "کیف پول",
+            label: "کیف‌پول",
             icon: <TransferIcon />,
              onClick: () => router.push('/wallet')
           },
@@ -382,7 +382,7 @@ export function SidebarDashboard({
         title: "سرویس ها",
         items: [
           { id: "face", label: "احراز هویت چهره", icon: <ScanFace className="h-5 w-5" /> },
-          { id: "liveness", label: "تشخیص زنده بودن", icon: <Fingerprint className="h-5 w-5" /> },
+          { id: "liveness", label: "تشخیص زنده‌بودن", icon: <Fingerprint className="h-5 w-5" /> },
           { id: "ocr", label: "OCR مدارک", icon: <FileText className="h-5 w-5" /> },
         ],
       },
@@ -467,7 +467,7 @@ export function SidebarDashboard({
             {!isCollapsed && (
               <button
                 type="button"
-                aria-label="مشاهده فهرست کسب‌ و کارها"
+                aria-label="مشاهده فهرست کسب‌وکارها"
                 aria-expanded={isSwitcherOpen}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -526,7 +526,7 @@ export function SidebarDashboard({
               >
                 {businessProfiles.length === 0 && (
                   <div className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] px-4 py-3 text-sm text-[color:var(--md-sys-color-on-surface-variant)] text-right">
-                    هیچ کسب‌ و کاری یافت نشد.
+                    هیچ کسب‌وکاری یافت نشد.
                   </div>
                 )}
                 {businessProfiles.map((profile) => {
@@ -580,8 +580,8 @@ export function SidebarDashboard({
                       {canContinue && (
                         <button
                           type="button"
-                          title="تکمیل کسب و کار"
-                          aria-label="تکمیل کسب و کار"
+                          title="تکمیل کسب‌وکار"
+                          aria-label="تکمیل کسب‌وکار"
                           onClick={() => {
                             if (isAdminView && typeof window !== "undefined") {
                               window.localStorage.setItem(
@@ -623,7 +623,7 @@ export function SidebarDashboard({
                   className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-[color:var(--md-sys-color-primary)] transition hover:bg-[color:var(--md-sys-color-primary)]/8"
                 >
                   <PlusCircle className="h-5 w-5" />
-                  ساخت کسب و کار جدید
+                  ساخت کسب‌وکار جدید
                 </button>
               </div>
             </div>

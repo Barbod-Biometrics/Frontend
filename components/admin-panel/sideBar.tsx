@@ -25,7 +25,7 @@ type AdminSidebarProps = {
 const navItems: AdminNavItem[] = [
   {
     id: "manageBusinessRequests",
-    label: "کسب و کار",
+    label: "کسب‌وکار",
     icon: <Briefcase className="h-5 w-5" strokeWidth={1.8} />,
   },
   {

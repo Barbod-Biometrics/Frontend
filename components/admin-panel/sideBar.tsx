@@ -25,7 +25,7 @@ type AdminSidebarProps = {
 const navItems: AdminNavItem[] = [
   {
     id: "manageBusinessRequests",
-    label: "کسب و کار",
+    label: "کسب‌وکار",
     icon: <Briefcase className="h-5 w-5" strokeWidth={1.8} />,
   },
   {
@@ -98,9 +98,11 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
       dir="rtl"
       aria-label="ناوبری ادمین"
       className={clsx(
-        "fixed right-0 top-14 z-30 h-[calc(108vh-8rem)] border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-all duration-300 flex flex-col overflow-visible",
+        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-[width,transform] duration-300 flex flex-col",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed ? "w-[57px]" : "w-[200px]",
+        isCollapsed
+          ? "w-[min(85vw,320px)] overflow-hidden translate-x-full pointer-events-none sm:pointer-events-auto sm:translate-x-0 sm:w-[57px]"
+          : "w-[min(85vw,320px)] translate-x-0 overflow-visible sm:w-[200px]",
       )}
     >
       <div className="relative flex flex-col h-full">
@@ -109,12 +111,12 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
             "flex flex-col px-4 items-stretch gap-3 border-b border-[color:var(--md-sys-color-outline-variant)] pb-4 pt-6",
           )}
         >
-          <div
-            className={clsx(
-              "flex items-center min-w-0 flex-1 justify-start",
-              isCollapsed ? "gap-2" : "gap-3",
-            )}
-          >
+        <div
+          className={clsx(
+            "flex items-center min-w-0 flex-1 justify-start",
+            isCollapsed ? "gap-2" : "gap-3",
+          )}
+        >
             <span className="flex-shrink-0">
               <ItemIconFrame active>
               <AdminShieldIcon />
@@ -160,34 +162,36 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
               {navItems.map((item) => {
                 const isActive = resolvedActive === item.id;
                 return (
-                  <Button
-                    key={item.id}
-                    variant="ghost"
-                    onClick={() => handleSelect(item.id)}
-                    className={clsx(
-                      "group flex w-full items-center rounded-[10px] text-sm transition-colors duration-200",
+                  <div key={item.id} title={isCollapsed ? item.label : undefined}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => handleSelect(item.id)}
+                      title={isCollapsed ? item.label : undefined}
+                      className={clsx(
+                      "group flex w-full items-center rounded-[10px] text-sm transition-colors transition-shadow duration-200",
                       isCollapsed
                         ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
                         : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
                       isActive
                         ? "text-[color:var(--md-sys-color-primary)]"
                         : "text-[color:var(--md-sys-color-on-surface)]",
-                      !isCollapsed &&
-                        "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
+                      "hover:shadow-[var(--elevation-1)]",
+                      "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                     )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ItemIconFrame active={isActive}>{item.icon}</ItemIconFrame>
-                      <div
-                        className={clsx(
-                          "min-w-0 truncate text-right font-medium transition-all duration-150",
-                          isCollapsed ? "opacity-0 w-auto pointer-events-none" : "opacity-100 w-auto",
-                        )}
-                      >
-                        {item.label}
+                    >
+                      <div className="flex items-center gap-2">
+                        <ItemIconFrame active={isActive}>{item.icon}</ItemIconFrame>
+                        <div
+                          className={clsx(
+                            "min-w-0 truncate text-right font-medium transition-all duration-150",
+                            isCollapsed ? "opacity-0 w-auto pointer-events-none" : "opacity-100 w-auto",
+                          )}
+                        >
+                          {item.label}
+                        </div>
                       </div>
-                    </div>
-                  </Button>
+                    </Button>
+                  </div>
                 );
               })}
             </div>
@@ -199,13 +203,15 @@ export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemActi
             variant="ghost"
             onClick={handleLogout}
             aria-label="خروج"
+            title={isCollapsed ? "خروج" : undefined}
             className={clsx(
-              "group flex w-full items-center rounded-[10px] text-sm transition-colors duration-200",
+              "group flex w-full items-center rounded-[10px] text-sm transition-colors transition-shadow duration-200",
               isCollapsed
                 ? "justify-start gap-0 px-2 py-1.5 h-[47px]"
                 : "justify-between gap-2 px-3.5 py-2 min-h-[47px]",
               "text-[color:var(--md-sys-color-error)]",
-              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+              "hover:shadow-[var(--elevation-1)]",
+              "hover:bg-[color:var(--md-sys-color-error)]/10",
             )}
           >
             <div className="flex items-center gap-2">

@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   bootstrapBusinessProfile,
   createBusinessProfile,
+  resetBusinessProfile,
   saveBusinessInfo,
   saveLocationInfo,
   savePersonalInfo,
@@ -231,6 +232,12 @@ function BusinessAuthPage({
       clearNavigateTimeout();
     };
   }, []);
+
+  useEffect(() => {
+    if (forceNewProfile) {
+      dispatch(resetBusinessProfile());
+    }
+  }, [dispatch, forceNewProfile]);
 
   useEffect(() => {
     const profileStorageKey = getProfileStorageKey(phoneNumber);

@@ -277,7 +277,7 @@ export function PersonalInfo({
 
             <div className="flex justify-center">
               <DatePickerCalendar
-                className="font-vazirmatn"
+                className="business-auth-date-picker font-vazirmatn"
                 value={parsedBirthDate || undefined}
                 onChange={handleBirthDateSelect}
                 calendar={persian}

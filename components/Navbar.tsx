@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Menu, X, Sun, Moon, ChevronDown } from "lucide-react";
@@ -73,6 +73,7 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
   const dispatch = useDispatch();
   const router = useRouter();
   const theme = useSelector((state: RootState) => state.theme.theme);
@@ -140,23 +141,43 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!navRef.current || typeof ResizeObserver === "undefined") return;
+
+    const updateHeight = () => {
+      const height = navRef.current?.offsetHeight ?? 0;
+      document.documentElement.style.setProperty(
+        "--navbar-height",
+        `${height}px`
+      );
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(navRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
   const surfaceClass = isScrolled
-    ? "bg-[color:var(--md-sys-color-surface-container)]/80 backdrop-blur-md shadow-[var(--elevation-2)] rounded-full mx-4 mt-4 top-4 border border-[color:var(--md-sys-color-outline-variant)]"
+    ? "bg-[color:var(--md-sys-color-surface-container)]/90 backdrop-blur-md shadow-[var(--elevation-2)] border-b border-[color:var(--md-sys-color-outline-variant)]"
     : "bg-transparent border-b border-transparent";
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`sticky z-50 transition-all duration-300 ${surfaceClass} ${
-        isFa ? "font-vazirmatn" : ""
-      }`}
-      dir={dir}
-    >
-      <div className="relative">
-        <Container className={`${isScrolled ? "py-3.5" : "py-5"}`}>
-          <div className="flex items-center justify-between gap-8">
-            <div className="flex items-center gap-10">
+    <div className={isFa ? "font-vazirmatn" : ""} dir={dir}>
+      <div
+        aria-hidden="true"
+        className="w-full"
+        style={{ height: "var(--navbar-height, 88px)" }}
+      />
+      <nav
+        ref={navRef}
+        className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${surfaceClass}`}
+      >
+        <motion.div initial={{ y: -100 }} animate={{ y: 0 }} className="relative">
+          <Container className={`${isScrolled ? "py-3.5" : "py-5"}`}>
+            <div className="flex items-center justify-between gap-8">
+              <div className="flex items-center gap-10">
               <Button
                 variant="ghost"
                 size="icon"
@@ -282,56 +303,57 @@ export function Navbar({ onNavigate = () => {} }: NavbarProps) {
             </div>
           </div>
         </Container>
-      </div>
+      </motion.div>
 
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-[color:var(--border-hairline)] bg-[color:var(--surface-elevated)] shadow-[var(--shadow-md)] overflow-hidden"
-          >
-            <div className="space-y-3 px-4 py-4">
-              {navItems.map((item) => (
-                <div key={item.label}>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-[color:var(--border-hairline)] bg-[color:var(--surface-elevated)] shadow-[var(--shadow-md)] overflow-hidden"
+            >
+              <div className="space-y-3 px-4 py-4">
+                {navItems.map((item) => (
+                  <div key={item.label}>
+                    <Button
+                      variant="ghost"
+                      onClick={() => !item.children && handleNavClick(item.href)}
+                      className="w-full justify-start px-4 py-3 text-base text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
+                    >
+                      {item.label}
+                    </Button>
+                    {item.children && (
+                      <div className="mt-1 space-y-1 pl-4">
+                        {item.children.map((child) => (
+                          <Button
+                            key={child.label}
+                            variant="ghost"
+                            onClick={() => handleNavClick(child.href)}
+                            className="w-full justify-start px-4 py-3 text-base text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
+                          >
+                            {child.label}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                <div className="grid gap-2 pt-2">
                   <Button
-                    variant="ghost"
-                    onClick={() => !item.children && handleNavClick(item.href)}
-                    className="w-full justify-start px-4 py-3 text-base text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
+                    size="lg"
+                    className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
+                    onClick={handleLoginClick}
                   >
-                    {item.label}
+                    {copy.signup}
                   </Button>
-                  {item.children && (
-                    <div className="mt-1 space-y-1 pl-4">
-                      {item.children.map((child) => (
-                        <Button
-                          key={child.label}
-                          variant="ghost"
-                          onClick={() => handleNavClick(child.href)}
-                          className="w-full justify-start px-4 py-3 text-base text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)]"
-                        >
-                          {child.label}
-                        </Button>
-                      ))}
-                    </div>
-                  )}
                 </div>
-              ))}
-              <div className="grid gap-2 pt-2">
-                <Button
-                  size="lg"
-                  className="w-full rounded-[var(--radius-md)] text-base shadow-[var(--shadow-sm)] h-14"
-                  onClick={handleLoginClick}
-                >
-                  {copy.signup}
-                </Button>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+    </div>
   );
 }
 

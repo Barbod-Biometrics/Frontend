@@ -98,6 +98,10 @@ html {
 
   --brand-gradient: linear-gradient(135deg, #ffffff, var(--md-sys-color-primary));
   --button-gradient: var(--brand-gradient);
+  --star-button-bg-from: #ffffff;
+  --star-button-bg-to: #f8fafc;
+  --star-button-text: #0c0f16;
+  --star-button-border: #e5e7eb;
   color-scheme: dark;
 }
 
@@ -160,6 +164,10 @@ html {
 
   --brand-gradient: linear-gradient(135deg, #000000, var(--md-sys-color-primary));
   --button-gradient: var(--md-sys-color-secondary);
+  --star-button-bg-from: #0c0f16;
+  --star-button-bg-to: #111827;
+  --star-button-text: #ffffff;
+  --star-button-border: #1f2937;
   color-scheme: light;
 }
 
@@ -193,6 +201,14 @@ html {
 
 * {
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 body {
@@ -295,6 +311,42 @@ html.font-orbitron body * {
   animation-delay: 1s;
 }
 
+@keyframes star-movement-bottom {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100%, 0%);
+    opacity: 0;
+  }
+}
+
+@keyframes star-movement-top {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100%, 0%);
+    opacity: 0;
+  }
+}
+
+.animate-star-movement-bottom {
+  animation: star-movement-bottom linear infinite alternate;
+}
+
+.animate-star-movement-top {
+  animation: star-movement-top linear infinite alternate;
+}
+
+.star-border__content {
+  border: 1px solid var(--star-button-border);
+  background: linear-gradient(180deg, var(--star-button-bg-from), var(--star-button-bg-to));
+  color: var(--star-button-text);
+}
+
 /* Material 3 Utilities */
 .surface-container {
   background-color: var(--md-sys-color-surface-container);
@@ -319,4 +371,13 @@ html.font-orbitron body * {
 
 .shape-full {
   border-radius: var(--radius-full);
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

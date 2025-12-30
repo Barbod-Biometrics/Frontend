@@ -7,6 +7,7 @@ import { Hero } from "../components/Hero";
 import { Navbar } from "../components/Navbar";
 import { SalesConnector } from "../components/SalesConnector";
 import { ServicesSection } from "../components/ServicesSection";
+import { ScrollToTopButton } from "../components/ScrollToTopButton";
 import { StatsSection } from "../components/StatsSection";
 import { BiometricSignature } from "../components/BiometricSignature";
 import { Container } from "../components/ui/Container";
@@ -38,6 +39,7 @@ export default function Home() {
       </main>
 
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 }

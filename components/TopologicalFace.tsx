@@ -21,6 +21,7 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>(0);
+  const sizeRef = useRef({ width: 0, height: 0 });
 
   // Refs for animation state
   const rotationRef = useRef({ x: 0, y: 0 });
@@ -45,7 +46,11 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
     if (!ctx) return;
 
     // --- Configuration ---
-    const BASE_PARTICLES = 800;
+    const resolveParticleCount = (base: number) => {
+      if (base < 420) return 360;
+      if (base < 640) return 520;
+      return 700;
+    };
 
     const PALETTE = {
       [Theme.DARK]: {
@@ -62,12 +67,13 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
       }
     };
 
-    const createPoints = (radius: number) => {
+    const createPoints = (radius: number, count: number) => {
+      const total = Math.max(2, count);
       const points: Point3D[] = [];
       const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
 
-      for (let i = 0; i < BASE_PARTICLES; i++) {
-        const y = 1 - (i / (BASE_PARTICLES - 1)) * 2; // y goes from 1 to -1
+      for (let i = 0; i < total; i++) {
+        const y = 1 - (i / (total - 1)) * 2; // y goes from 1 to -1
         const radiusAtY = Math.sqrt(1 - y * y); // radius at y
         const theta = phi * i; // golden angle increment
 
@@ -90,6 +96,7 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
 
     const updateGeometry = () => {
       const base = Math.min(container.clientWidth, container.clientHeight);
+      const particleCount = resolveParticleCount(base);
       const radius = Math.max(180, Math.min(360, base * 0.38));
 
       geometryRef.current = {
@@ -101,7 +108,7 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
         scanSpeed: Math.max(1.1, radius * 0.005),
       };
 
-      pointsRef.current = createPoints(radius);
+      pointsRef.current = createPoints(radius, particleCount);
       scanYRef.current = -radius * 0.7;
     };
 
@@ -109,8 +116,11 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
     const updateDimensions = () => {
       if (!container) return;
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = container.clientWidth * dpr;
-      canvas.height = container.clientHeight * dpr;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      sizeRef.current = { width, height };
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       updateGeometry();
     };
@@ -119,8 +129,8 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
     // --- Render Loop ---
     const render = (time: number) => {
       if (!container) return;
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      const { width, height } = sizeRef.current;
+      if (!width || !height) return;
       const colors = PALETTE[theme];
       const {
         radius,
@@ -234,10 +244,10 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
       });
 
       ctx.restore();
-      animationRef.current = requestAnimationFrame(() => render(performance.now()));
+      animationRef.current = requestAnimationFrame(render);
     };
 
-    animationRef.current = requestAnimationFrame(() => render(performance.now()));
+    animationRef.current = requestAnimationFrame(render);
 
     // --- Interaction ---
     const handleMouseMove = (e: MouseEvent) => {

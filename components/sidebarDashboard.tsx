@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useEffect,
@@ -388,7 +388,7 @@ export function SidebarDashboard({
       },
       {
         id: "support",
-        title: "ارتباط با پشتیبانی",
+        title: "",
         items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon /> }],
       },
     ],
@@ -653,14 +653,7 @@ export function SidebarDashboard({
                 (item.children?.some((child) => child.id === activeItemId) ?? false),
             );
             const showSectionActive = isSectionActive && !isSectionLocked;
-            const sectionGap = hasTitle
-              ? nextHasTitle
-                ? "mb-5"
-                : "mb-2"
-              : nextHasTitle
-              ? "mb-4"
-              : "mb-2";
-
+            const sectionGap = "mb-1.5";
             return (
               <div
                 key={section.id}
@@ -842,3 +835,6 @@ export function SidebarDashboard({
     </aside>
   );
 }
+
+
+

@@ -2,6 +2,7 @@
 
 import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
+import { cn } from "../lib/utils";
 
 type Vec2 = [number, number];
 
@@ -447,7 +448,7 @@ export default function FaultyTerminal({
   return (
     <div
       ref={containerRef}
-      className={`w-full h-full relative overflow-hidden ${className ?? ""}`}
+      className={cn("w-full h-full relative overflow-hidden", className)}
       style={style}
       {...rest}
     />

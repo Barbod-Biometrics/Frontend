@@ -93,6 +93,11 @@ export function Hero({ language, theme, dir }: HeroProps) {
     }
   };
 
+  const primaryVariant = isFa ? "star" : "monochrome";
+  const primaryClassName = isFa
+    ? "min-w-[180px] lg:min-w-[200px]"
+    : "h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-0 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16";
+
   return (
     <Section
       spacing="lg"
@@ -140,9 +145,9 @@ export function Hero({ language, theme, dir }: HeroProps) {
           <div className="mt-auto flex w-full flex-col items-center pt-12 lg:pt-20">
             <div className="flex flex-col gap-6 pb-12 sm:flex-row sm:justify-center lg:pb-16">
               <Button
-                variant="monochrome"
+                variant={primaryVariant}
                 size="lg"
-                className="h-14 min-w-[180px] rounded-full px-12 text-lg shadow-[var(--elevation-2)] transition-all hover:-translate-y-0 hover:shadow-[var(--elevation-3)] lg:h-16 lg:px-16"
+                className={primaryClassName}
                 onClick={handlePrimaryClick}
               >
                 {copy.primaryCta}

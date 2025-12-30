@@ -134,7 +134,7 @@ export default function GradientText({
         </motion.div>
       )}
       <motion.div
-        className="inline-block relative z-2 text-transparent bg-clip-text"
+        className="inline-block relative z-[2] text-transparent bg-clip-text"
         style={{
           ...gradientStyle,
           backgroundPosition,
@@ -142,7 +142,7 @@ export default function GradientText({
         }}
       >
         {children}
-      </motion.div>
+      </motion.div>{" "}
     </motion.div>
   );
 }

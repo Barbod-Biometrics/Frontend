@@ -182,6 +182,7 @@ export function ServicesSection() {
 
   const [activeId, setActiveId] = useState<ServiceId>(services[0].id);
   const timeoutRef = useRef<number | null>(null);
+  const tabListRef = useRef<HTMLDivElement | null>(null);
 
   const serviceHref: Partial<Record<ServiceId, string>> = {
     face: "/services/face-recognition",
@@ -201,6 +202,20 @@ export function ServicesSection() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [activeId, services]);
+
+  useEffect(() => {
+    const container = tabListRef.current;
+    if (!container || container.scrollWidth <= container.clientWidth) return;
+
+    const activeButton = container.querySelector<HTMLButtonElement>(
+      `[data-service-id="${activeId}"]`
+    );
+    activeButton?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [activeId]);
 
   const handleTabClick = (id: ServiceId) => {
     setActiveId(id);
@@ -244,7 +259,10 @@ export function ServicesSection() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:justify-center md:items-stretch gap-6 mb-12">
+        <div
+          ref={tabListRef}
+          className="hide-scrollbar mb-12 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-px-4 -mx-4 px-4 lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0 lg:justify-center lg:items-stretch lg:snap-none"
+        >
           {services.map((service) => {
             const isActive = activeId === service.id;
             return (
@@ -254,7 +272,8 @@ export function ServicesSection() {
                 variant="ghost"
                 size="md"
                 onClick={() => handleTabClick(service.id)}
-                className={`relative group min-w-[220px] flex-1 h-auto px-8 py-6 whitespace-normal rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left justify-start hover:bg-transparent
+                data-service-id={service.id}
+                className={`relative group min-w-[240px] sm:min-w-[220px] shrink-0 lg:shrink snap-center lg:flex-1 h-auto px-8 py-6 whitespace-normal rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left justify-start hover:bg-transparent
                   ${isActive
                     ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
                     : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
@@ -335,26 +354,25 @@ export function ServicesSection() {
                   </Typography>
 
                   <div className="flex flex-wrap items-center gap-3" dir={dir}>
-                    <Button
-                      variant="secondary"
-                      className="px-10 py-4 rounded-full text-base font-medium group h-12"
-                      disabled={isComingSoonService || !learnMoreHref}
-                      onClick={() => {
-                        if (learnMoreHref) router.push(learnMoreHref);
-                      }}
-                      iconTrailing={
-                        <span
-                          className={`transition-transform duration-200 ${dir === "rtl"
-                            ? "group-hover:-translate-x-1"
-                            : "group-hover:translate-x-1"
-                            }`}
-                        >
-                          {ctaArrow}
-                        </span>
-                      }
-                    >
-                      {copy.button}
-                    </Button>
+                    {!isComingSoonService && learnMoreHref ? (
+                      <Button
+                        variant="secondary"
+                        className="px-10 py-4 rounded-full text-base font-medium group h-12"
+                        onClick={() => router.push(learnMoreHref)}
+                        iconTrailing={
+                          <span
+                            className={`transition-transform duration-200 ${dir === "rtl"
+                              ? "group-hover:-translate-x-1"
+                              : "group-hover:translate-x-1"
+                              }`}
+                          >
+                            {ctaArrow}
+                          </span>
+                        }
+                      >
+                        {copy.button}
+                      </Button>
+                    ) : null}
                     {isComingSoonService ? (
                       <ComingSoonBadge
                         label={comingSoonLabel}

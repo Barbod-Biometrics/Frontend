@@ -320,3 +320,12 @@ html.font-orbitron body * {
 .shape-full {
   border-radius: var(--radius-full);
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

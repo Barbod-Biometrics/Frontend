@@ -75,6 +75,10 @@ export function Hero({ language, theme, dir }: HeroProps) {
     theme === Theme.LIGHT
       ? ["#1e3a8a", "#4079ff", "#1e3a8a", "#4079ff", "#1e3a8a"]
       : ["#e0f2ff", "#60a5fa", "#ffffff", "#60a5fa", "#e0f2ff"];
+  const highlightGlow =
+    theme === Theme.LIGHT
+      ? "drop-shadow-[0_0_18px_rgba(37,99,235,0.35)]"
+      : "drop-shadow-[0_0_22px_rgba(96,165,250,0.45)]";
 
   const handlePrimaryClick = () => {
     if (!isAuthenticated) {
@@ -96,8 +100,8 @@ export function Hero({ language, theme, dir }: HeroProps) {
       dir={contentDir}
     >
       <Container className="relative z-10 flex min-h-[800px] flex-col items-center overflow-visible text-center">
-        <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
-          <div className="h-[1100px] w-[220%] max-w-none -translate-y-32 opacity-85 md:h-[1400px] md:-translate-y-48">
+        <div className="pointer-events-none absolute inset-0 -z-10 flex items-end justify-center overflow-hidden lg:items-center lg:overflow-visible">
+          <div className="h-[980px] w-[220%] max-w-none translate-y-0 opacity-85 sm:h-[1120px] sm:w-[210%] sm:-translate-y-12 lg:h-[1300px] lg:w-[220%] lg:-translate-y-32 xl:h-[1500px] xl:-translate-y-48">
             <TopologicalFace theme={theme} />
           </div>
         </div>
@@ -115,7 +119,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
                 colors={gradientColors}
                 animationSpeed={3}
                 showBorder={false}
-                className="font-bold leading-[1.35] pb-[0.08em]"
+                className={`font-bold leading-[1.35] pb-[0.08em] ${highlightGlow}`}
               >
                 {copy.headingHighlight}
               </GradientText>

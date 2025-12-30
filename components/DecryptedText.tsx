@@ -38,7 +38,9 @@ export default function DecryptedText({
   const [displayText, setDisplayText] = useState<string>(text);
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const [isScrambling, setIsScrambling] = useState<boolean>(false);
-  const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set());
+  const [revealedIndices, setRevealedIndices] = useState<Set<number>>(
+    new Set()
+  );
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const [isInView, setIsInView] = useState<boolean>(false);
   const containerRef = useRef<HTMLSpanElement>(null);
@@ -120,7 +122,9 @@ export default function DecryptedText({
         .map((char, i) => {
           if (char === " ") return " ";
           if (currentRevealed.has(i)) return originalText[i];
-          return availableChars[Math.floor(Math.random() * availableChars.length)];
+          return availableChars[
+            Math.floor(Math.random() * availableChars.length)
+          ];
         })
         .join("");
     };
@@ -243,8 +247,7 @@ export default function DecryptedText({
       {...hoverProps}
       {...props}
     >
-      <span className="sr-only">{displayText}</span>
-
+      <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {displayText.split("").map((char, index) => {
           const isRevealedOrDone =
@@ -252,7 +255,7 @@ export default function DecryptedText({
 
           return (
             <span
-              key={`${char}-${index}`}
+              key={index}
               className={isRevealedOrDone ? className : encryptedClassName}
             >
               {char}

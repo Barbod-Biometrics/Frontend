@@ -12,6 +12,7 @@ import { Container } from "./ui/Container";
 import { Typography } from "./ui/Typography";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 
 type ServiceId = "face" | "liveness" | "ocr" | "voice";
 
@@ -181,6 +182,7 @@ export function ServicesSection() {
   const copy = titles[language];
 
   const [activeId, setActiveId] = useState<ServiceId>(services[0].id);
+  const [isDesktop, setIsDesktop] = useState(false);
   const timeoutRef = useRef<number | null>(null);
   const tabListRef = useRef<HTMLDivElement | null>(null);
 
@@ -191,6 +193,25 @@ export function ServicesSection() {
   };
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (event?: MediaQueryListEvent) => {
+      setIsDesktop(event ? event.matches : media.matches);
+    };
+    handleChange();
+    if (media.addEventListener) {
+      media.addEventListener("change", handleChange);
+      return () => media.removeEventListener("change", handleChange);
+    }
+    media.addListener(handleChange);
+    return () => media.removeListener(handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      return;
+    }
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(() => {
       const currentIdx = services.findIndex((s) => s.id === activeId);
@@ -201,9 +222,10 @@ export function ServicesSection() {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [activeId, services]);
+  }, [activeId, services, isDesktop]);
 
   useEffect(() => {
+    if (!isDesktop) return;
     const container = tabListRef.current;
     if (!container || container.scrollWidth <= container.clientWidth) return;
 
@@ -215,7 +237,7 @@ export function ServicesSection() {
       inline: "center",
       block: "nearest",
     });
-  }, [activeId]);
+  }, [activeId, isDesktop]);
 
   const handleTabClick = (id: ServiceId) => {
     setActiveId(id);
@@ -259,9 +281,105 @@ export function ServicesSection() {
           </motion.div>
         </div>
 
+        <div className="lg:hidden">
+          <Accordion
+            type="single"
+            value={activeId}
+            onValueChange={(value) => {
+              if (!value) return;
+              setActiveId(value as ServiceId);
+            }}
+            className="space-y-4"
+            dir={dir}
+          >
+            {services.map((service) => {
+              const isActive = activeId === service.id;
+              const isComingSoonService = service.id === "voice";
+              const itemHref = serviceHref[service.id];
+              return (
+                <AccordionItem
+                  key={service.id}
+                  value={service.id}
+                  className={`border-b-0 overflow-hidden rounded-[var(--radius-xl)] border border-[color:var(--md-sys-color-outline-variant)]/30 ${
+                    isActive
+                      ? "bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-1)]"
+                      : "bg-[color:var(--md-sys-color-surface-container-low)]"
+                  }`}
+                >
+                  <AccordionTrigger
+                    className={`px-5 py-4 text-base font-semibold no-underline hover:no-underline ${
+                      dir === "rtl" ? "flex-row-reverse text-right" : "text-left"
+                    }`}
+                  >
+                    <span
+                      className={`flex items-center gap-3 ${
+                        dir === "rtl" ? "flex-row-reverse" : ""
+                      }`}
+                    >
+                      <span
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--md-sys-color-surface)] shadow-[var(--elevation-1)]"
+                        style={{ color: iconColor(service, isActive) }}
+                      >
+                        {React.isValidElement(service.icon)
+                          ? React.cloneElement(service.icon as React.ReactElement<any>, {
+                              className: "w-6 h-6",
+                            })
+                          : service.icon}
+                      </span>
+                      <span>{service.title}</span>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-5">
+                    <Typography
+                      variant="body-md"
+                      className="text-[color:var(--md-sys-color-on-surface-variant)]"
+                    >
+                      {service.description}
+                    </Typography>
+                    <div
+                      className={`mt-4 flex flex-wrap items-center gap-3 ${
+                        dir === "rtl" ? "justify-end" : ""
+                      }`}
+                      dir={dir}
+                    >
+                      {!isComingSoonService && itemHref ? (
+                        <Button
+                          variant="secondary"
+                          className="px-8 py-3 rounded-full text-sm font-medium group h-11"
+                          onClick={() => router.push(itemHref)}
+                          iconTrailing={
+                            <span
+                              className={`transition-transform duration-200 ${
+                                dir === "rtl"
+                                  ? "group-hover:-translate-x-1"
+                                  : "group-hover:translate-x-1"
+                              }`}
+                            >
+                              {ctaArrow}
+                            </span>
+                          }
+                        >
+                          {copy.button}
+                        </Button>
+                      ) : null}
+                      {isComingSoonService ? (
+                        <ComingSoonBadge
+                          label={comingSoonLabel}
+                          accentHex={service.colorFrom}
+                          dir={dir}
+                        />
+                      ) : null}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+        </div>
+
         <div
           ref={tabListRef}
-          className="hide-scrollbar mb-12 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-px-4 -mx-4 px-4 lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0 lg:justify-center lg:items-stretch lg:snap-none"
+          className="hide-scrollbar mb-12 hidden lg:flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-px-4 -mx-4 px-4 lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0 lg:justify-center lg:items-stretch lg:snap-none"
         >
           {services.map((service) => {
             const isActive = activeId === service.id;
@@ -292,16 +410,17 @@ export function ServicesSection() {
                   >
                     {React.isValidElement(service.icon)
                       ? React.cloneElement(
-                        service.icon as React.ReactElement<any>,
-                        { className: "w-7 h-7" }
-                      )
+                          service.icon as React.ReactElement<any>,
+                          { className: "w-7 h-7" }
+                        )
                       : service.icon}
                   </span>
                   <span
-                    className={`font-semibold transition-colors duration-300 ${isActive
-                      ? "text-[color:var(--md-sys-color-on-surface)]"
-                      : "text-[color:var(--md-sys-color-on-surface-variant)]"
-                      }`}
+                    className={`font-semibold transition-colors duration-300 ${
+                      isActive
+                        ? "text-[color:var(--md-sys-color-on-surface)]"
+                        : "text-[color:var(--md-sys-color-on-surface-variant)]"
+                    }`}
                   >
                     {service.title}
                   </span>
@@ -329,288 +448,291 @@ export function ServicesSection() {
           })}
         </div>
 
-        <Card className="relative rounded-[32px] shadow-[var(--elevation-2)] overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/20 animate-float-delayed">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[480px]">
-            {/* Text content section - now first */}
-            <div className="flex flex-col justify-center p-8 lg:p-16 order-2 lg:order-1">
+        <div className="hidden lg:block">
+          <Card className="relative rounded-[32px] shadow-[var(--elevation-2)] overflow-hidden border border-[color:var(--md-sys-color-outline-variant)]/20 animate-float-delayed">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[480px]">
+              {/* Text content section - now first */}
+              <div className="flex flex-col justify-center p-8 lg:p-16 order-2 lg:order-1">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentService.id}
+                    initial={{ opacity: 0, x: dir === "rtl" ? -28 : 28 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: dir === "rtl" ? 28 : -28 }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                    className="flex flex-col gap-6 items-start w-full"
+                  >
+                    <Typography variant="h3" className="leading-tight">
+                      {currentService.title}
+                    </Typography>
+
+                    <Typography
+                      variant="body-lg"
+                      className="min-h-[84px] font-light text-[color:var(--md-sys-color-on-surface-variant)]"
+                    >
+                      {currentService.description}
+                    </Typography>
+
+                    <div className="flex flex-wrap items-center gap-3" dir={dir}>
+                      {!isComingSoonService && learnMoreHref ? (
+                        <Button
+                          variant="secondary"
+                          className="px-10 py-4 rounded-full text-base font-medium group h-12"
+                          onClick={() => router.push(learnMoreHref)}
+                          iconTrailing={
+                            <span
+                              className={`transition-transform duration-200 ${
+                                dir === "rtl"
+                                  ? "group-hover:-translate-x-1"
+                                  : "group-hover:translate-x-1"
+                              }`}
+                            >
+                              {ctaArrow}
+                            </span>
+                          }
+                        >
+                          {copy.button}
+                        </Button>
+                      ) : null}
+                      {isComingSoonService ? (
+                        <ComingSoonBadge
+                          label={comingSoonLabel}
+                          accentHex={currentService.colorFrom}
+                          dir={dir}
+                        />
+                      ) : null}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Gradient animation section - now second */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentService.id}
-                  initial={{ opacity: 0, x: dir === "rtl" ? -28 : 28 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: dir === "rtl" ? 28 : -28 }}
-                  transition={{ duration: 0.45, ease: "easeOut" }}
-                  className="flex flex-col gap-6 items-start w-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="h-64 lg:h-full w-full relative overflow-hidden order-1 lg:order-2"
                 >
-                  <Typography variant="h3" className="leading-tight">
-                    {currentService.title}
-                  </Typography>
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: currentService.imageGradient }}
+                  />
+                  <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
-                  <Typography
-                    variant="body-lg"
-                    className="min-h-[84px] font-light text-[color:var(--md-sys-color-on-surface-variant)]"
-                  >
-                    {currentService.description}
-                  </Typography>
+                  {/* Minimal, professional service animations */}
+                  <div className="absolute inset-0 flex items-center justify-center p-12 lg:p-16">
+                    {/* Face Verification - Simple Biometric Scanner */}
+                    {currentService.id === "face" && (
+                      <div className="relative w-full max-w-md aspect-square">
+                        <svg className="w-full h-full" viewBox="0 0 300 300">
+                          {/* Face outline */}
+                          <motion.rect
+                            x="75"
+                            y="50"
+                            width="150"
+                            height="200"
+                            rx="75"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.3)"
+                            strokeWidth="2"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
+                          />
 
-                  <div className="flex flex-wrap items-center gap-3" dir={dir}>
-                    {!isComingSoonService && learnMoreHref ? (
-                      <Button
-                        variant="secondary"
-                        className="px-10 py-4 rounded-full text-base font-medium group h-12"
-                        onClick={() => router.push(learnMoreHref)}
-                        iconTrailing={
-                          <span
-                            className={`transition-transform duration-200 ${dir === "rtl"
-                              ? "group-hover:-translate-x-1"
-                              : "group-hover:translate-x-1"
-                              }`}
-                          >
-                            {ctaArrow}
-                          </span>
-                        }
-                      >
-                        {copy.button}
-                      </Button>
-                    ) : null}
-                    {isComingSoonService ? (
-                      <ComingSoonBadge
-                        label={comingSoonLabel}
-                        accentHex={currentService.colorFrom}
-                        dir={dir}
-                      />
-                    ) : null}
+                          {/* Corner brackets */}
+                          {[
+                            [75, 50],
+                            [225, 50],
+                            [75, 250],
+                            [225, 250],
+                          ].map(([x, y], i) => (
+                            <motion.g key={i}>
+                              <line
+                                x1={x}
+                                y1={y}
+                                x2={x + (i % 2 === 0 ? 20 : -20)}
+                                y2={y}
+                                stroke="rgba(255,255,255,0.6)"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                              />
+                              <line
+                                x1={x}
+                                y1={y}
+                                x2={x}
+                                y2={y + (i < 2 ? 20 : -20)}
+                                stroke="rgba(255,255,255,0.6)"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                              />
+                            </motion.g>
+                          ))}
+
+                          {/* Scanning beam */}
+                          <motion.rect
+                            x="75"
+                            y="35"
+                            width="150"
+                            height="3"
+                            fill="rgba(255,255,255,0.7)"
+                            style={{ filter: "blur(1px)" }}
+                            animate={{ y: [15, 215, 15] }}
+                            transition={{
+                              duration: 2.2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Liveness Detection - Subtle Pulse */}
+                    {currentService.id === "liveness" && (
+                      <div className="relative w-full max-w-md aspect-square flex items-center justify-center">
+                        <svg className="w-full h-full" viewBox="0 0 200 200">
+                          {/* Expanding rings */}
+                          {[...Array(3)].map((_, i) => (
+                            <motion.circle
+                              key={i}
+                              cx="100"
+                              cy="100"
+                              r="40"
+                              fill="none"
+                              stroke="rgba(255,255,255,0.35)"
+                              strokeWidth="2"
+                              initial={{ r: 40, opacity: 0 }}
+                              animate={{
+                                r: [40, 80],
+                                opacity: [0.55, 0],
+                              }}
+                              transition={{
+                                duration: 2.2,
+                                repeat: Infinity,
+                                delay: i * 0.65,
+                                ease: "easeOut",
+                              }}
+                            />
+                          ))}
+
+                          {/* Center dot */}
+                          <motion.circle
+                            cx="100"
+                            cy="100"
+                            r="12"
+                            fill="rgba(255,255,255,0.9)"
+                            animate={{
+                              scale: [1, 1.1, 1],
+                              opacity: [0.9, 1, 0.9],
+                            }}
+                            transition={{
+                              duration: 1.6,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                            style={{ transformOrigin: "100px 100px" }}
+                          />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* OCR - Clean Document Scanner */}
+                    {currentService.id === "ocr" && (
+                      <div className="relative w-full max-w-sm">
+                        <svg className="w-full" viewBox="0 0 200 260">
+                          {/* Document */}
+                          <rect
+                            x="30"
+                            y="30"
+                            width="140"
+                            height="200"
+                            rx="4"
+                            fill="rgba(255,255,255,0.08)"
+                            stroke="rgba(255,255,255,0.4)"
+                            strokeWidth="2"
+                          />
+
+                          {/* Text lines */}
+                          {[...Array(8)].map((_, i) => (
+                            <motion.line
+                              key={i}
+                              x1="50"
+                              y1={60 + i * 20}
+                              x2="150"
+                              y2={60 + i * 20}
+                              stroke="rgba(255,255,255,0.3)"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              initial={{ pathLength: 0 }}
+                              animate={{ pathLength: 1 }}
+                              transition={{ duration: 0.55, delay: i * 0.06 }}
+                            />
+                          ))}
+
+                          {/* Scanning beam */}
+                          <motion.line
+                            x1="30"
+                            y1="30"
+                            x2="170"
+                            y2="30"
+                            stroke="rgba(255,255,255,0.8)"
+                            strokeWidth="2"
+                            style={{ filter: "blur(1px)" }}
+                            animate={{ y1: [30, 230], y2: [30, 230] }}
+                            transition={{
+                              duration: 1.8,
+                              repeat: Infinity,
+                              ease: "linear",
+                            }}
+                          />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Voice - Smooth Waveform */}
+                    {currentService.id === "voice" && (
+                      <div className="relative w-full max-w-lg h-40">
+                        <svg className="w-full h-full" viewBox="0 0 400 100">
+                          {/* Waveform bars */}
+                          {[...Array(20)].map((_, i) => {
+                            const height = 20 + Math.sin(i * 0.6) * 15;
+                            return (
+                              <motion.rect
+                                key={i}
+                                x={10 + i * 19}
+                                y={50 - height / 2}
+                                width="12"
+                                height={height}
+                                rx="6"
+                                fill="rgba(255,255,255,0.6)"
+                                animate={{
+                                  scaleY: [1, 1.35 + Math.sin(i * 0.4) * 0.25, 1],
+                                }}
+                                transition={{
+                                  duration: 1.2,
+                                  repeat: Infinity,
+                                  delay: i * 0.05,
+                                  ease: "easeInOut",
+                                }}
+                                style={{
+                                  transformOrigin: `${10 + i * 19 + 6}px 50px`,
+                                }}
+                              />
+                            );
+                          })}
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
-
-            {/* Gradient animation section - now second */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentService.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="h-64 lg:h-full w-full relative overflow-hidden order-1 lg:order-2"
-              >
-                <div
-                  className="absolute inset-0"
-                  style={{ background: currentService.imageGradient }}
-                />
-                <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-
-                {/* Minimal, professional service animations */}
-                <div className="absolute inset-0 flex items-center justify-center p-12 lg:p-16">
-                  {/* Face Verification - Simple Biometric Scanner */}
-                  {currentService.id === "face" && (
-                    <div className="relative w-full max-w-md aspect-square">
-                      <svg className="w-full h-full" viewBox="0 0 300 300">
-                        {/* Face outline */}
-                        <motion.rect
-                          x="75"
-                          y="50"
-                          width="150"
-                          height="200"
-                          rx="75"
-                          fill="none"
-                          stroke="rgba(255,255,255,0.3)"
-                          strokeWidth="2"
-                          initial={{ pathLength: 0 }}
-                          animate={{ pathLength: 1 }}
-                          transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
-                        />
-
-                        {/* Corner brackets */}
-                        {[
-                          [75, 50],
-                          [225, 50],
-                          [75, 250],
-                          [225, 250],
-                        ].map(([x, y], i) => (
-                          <motion.g key={i}>
-                            <line
-                              x1={x}
-                              y1={y}
-                              x2={x + (i % 2 === 0 ? 20 : -20)}
-                              y2={y}
-                              stroke="rgba(255,255,255,0.6)"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                            />
-                            <line
-                              x1={x}
-                              y1={y}
-                              x2={x}
-                              y2={y + (i < 2 ? 20 : -20)}
-                              stroke="rgba(255,255,255,0.6)"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                            />
-                          </motion.g>
-                        ))}
-
-                        {/* Scanning beam */}
-                        <motion.rect
-                          x="75"
-                          y="35"
-                          width="150"
-                          height="3"
-                          fill="rgba(255,255,255,0.7)"
-                          style={{ filter: "blur(1px)" }}
-                          animate={{ y: [15, 215, 15] }}
-                          transition={{
-                            duration: 2.2,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                          }}
-                        />
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* Liveness Detection - Subtle Pulse */}
-                  {currentService.id === "liveness" && (
-                    <div className="relative w-full max-w-md aspect-square flex items-center justify-center">
-                      <svg className="w-full h-full" viewBox="0 0 200 200">
-                        {/* Expanding rings */}
-                        {[...Array(3)].map((_, i) => (
-                          <motion.circle
-                            key={i}
-                            cx="100"
-                            cy="100"
-                            r="40"
-                            fill="none"
-                            stroke="rgba(255,255,255,0.35)"
-                            strokeWidth="2"
-                            initial={{ r: 40, opacity: 0 }}
-                            animate={{
-                              r: [40, 80],
-                              opacity: [0.55, 0],
-                            }}
-                            transition={{
-                              duration: 2.2,
-                              repeat: Infinity,
-                              delay: i * 0.65,
-                              ease: "easeOut",
-                            }}
-                          />
-                        ))}
-
-                        {/* Center dot */}
-                        <motion.circle
-                          cx="100"
-                          cy="100"
-                          r="12"
-                          fill="rgba(255,255,255,0.9)"
-                          animate={{
-                            scale: [1, 1.1, 1],
-                            opacity: [0.9, 1, 0.9],
-                          }}
-                          transition={{
-                            duration: 1.6,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                          }}
-                          style={{ transformOrigin: "100px 100px" }}
-                        />
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* OCR - Clean Document Scanner */}
-                  {currentService.id === "ocr" && (
-                    <div className="relative w-full max-w-sm">
-                      <svg className="w-full" viewBox="0 0 200 260">
-                        {/* Document */}
-                        <rect
-                          x="30"
-                          y="30"
-                          width="140"
-                          height="200"
-                          rx="4"
-                          fill="rgba(255,255,255,0.08)"
-                          stroke="rgba(255,255,255,0.4)"
-                          strokeWidth="2"
-                        />
-
-                        {/* Text lines */}
-                        {[...Array(8)].map((_, i) => (
-                          <motion.line
-                            key={i}
-                            x1="50"
-                            y1={60 + i * 20}
-                            x2="150"
-                            y2={60 + i * 20}
-                            stroke="rgba(255,255,255,0.3)"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            initial={{ pathLength: 0 }}
-                            animate={{ pathLength: 1 }}
-                            transition={{ duration: 0.55, delay: i * 0.06 }}
-                          />
-                        ))}
-
-                        {/* Scanning beam */}
-                        <motion.line
-                          x1="30"
-                          y1="30"
-                          x2="170"
-                          y2="30"
-                          stroke="rgba(255,255,255,0.8)"
-                          strokeWidth="2"
-                          style={{ filter: "blur(1px)" }}
-                          animate={{ y1: [30, 230], y2: [30, 230] }}
-                          transition={{
-                            duration: 1.8,
-                            repeat: Infinity,
-                            ease: "linear",
-                          }}
-                        />
-                      </svg>
-                    </div>
-                  )}
-
-                  {/* Voice - Smooth Waveform */}
-                  {currentService.id === "voice" && (
-                    <div className="relative w-full max-w-lg h-40">
-                      <svg className="w-full h-full" viewBox="0 0 400 100">
-                        {/* Waveform bars */}
-                        {[...Array(20)].map((_, i) => {
-                          const height = 20 + Math.sin(i * 0.6) * 15;
-                          return (
-                            <motion.rect
-                              key={i}
-                              x={10 + i * 19}
-                              y={50 - height / 2}
-                              width="12"
-                              height={height}
-                              rx="6"
-                              fill="rgba(255,255,255,0.6)"
-                              animate={{
-                                scaleY: [1, 1.35 + Math.sin(i * 0.4) * 0.25, 1],
-                              }}
-                              transition={{
-                                duration: 1.2,
-                                repeat: Infinity,
-                                delay: i * 0.05,
-                                ease: "easeInOut",
-                              }}
-                              style={{
-                                transformOrigin: `${10 + i * 19 + 6}px 50px`,
-                              }}
-                            />
-                          );
-                        })}
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </Container>
       <style jsx>{`
         @keyframes serviceProgress {

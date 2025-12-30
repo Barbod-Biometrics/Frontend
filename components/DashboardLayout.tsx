@@ -4,12 +4,12 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import DashboardTerminalBackground from "./DashboardTerminalBackground";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
 import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
 import type { RootState } from "../store/store";
 import { selectIsAdmin } from "../store/loginSlice";
-import { Theme } from "../types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -45,8 +45,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     () => persistedSidebarMobileOpen
   );
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
-  const theme = useSelector((state: RootState) => state.theme.theme);
-  const isLight = theme === Theme.LIGHT;
 
   useEffect(() => {
     let mounted = true;
@@ -103,36 +101,40 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <Header
-        collapsed={collapsed}
-        onToggleAction={handleToggle}
-        isAdmin={isAdminUser}
-        isInAdminPanel={false}
-        onPanelSwitchAction={() => router.push("/admin")}
-      />
+      <DashboardTerminalBackground />
 
-      <SidebarDashboard
-        collapsed={collapsed}
-        onToggleAction={(next) => {
-          if (isMobile) {
-            const open = !next;
-            persistedSidebarMobileOpen = open;
-            setMobileOpen(open);
-          } else {
-            persistedSidebarCollapsed = next;
-            setCollapsedDesktop(next);
-          }
-        }}
-        businessProfiles={profiles}
-        isAdminView={isAdminUser}
-      />
+      <div className="relative z-10">
+        <Header
+          collapsed={collapsed}
+          onToggleAction={handleToggle}
+          isAdmin={isAdminUser}
+          isInAdminPanel={false}
+          onPanelSwitchAction={() => router.push("/admin")}
+        />
 
-      <div 
-        className={`transition-all duration-300 pt-16 min-h-screen ${
-          collapsed ? 'pr-0 sm:pr-20' : 'pr-0 sm:pr-64'
-        }`}
-      >
-        {shouldHideContent ? null : children}
+        <SidebarDashboard
+          collapsed={collapsed}
+          onToggleAction={(next) => {
+            if (isMobile) {
+              const open = !next;
+              persistedSidebarMobileOpen = open;
+              setMobileOpen(open);
+            } else {
+              persistedSidebarCollapsed = next;
+              setCollapsedDesktop(next);
+            }
+          }}
+          businessProfiles={profiles}
+          isAdminView={isAdminUser}
+        />
+
+        <div
+          className={`transition-all duration-300 pt-16 min-h-screen ${
+            collapsed ? "pr-0 sm:pr-20" : "pr-0 sm:pr-64"
+          }`}
+        >
+          {shouldHideContent ? null : children}
+        </div>
       </div>
     </main>
   );

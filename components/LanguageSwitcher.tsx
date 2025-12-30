@@ -31,7 +31,7 @@ export function LanguageSwitcher() {
 
       {isOpen && (
         <div 
-          className={`absolute mt-2 w-52 rounded-xl bg-[color:var(--bg-base)] border border-[color:var(--border-subtle)] shadow-[var(--shadow-md)] backdrop-blur-none focus:outline-none z-50 ${dir === 'rtl' ? 'left-0 origin-top-left' : 'right-0 origin-top-right'}`}
+          className={`absolute mt-2 w-52 rounded-[var(--radius-lg)] overflow-hidden bg-[color:var(--bg-base)] border border-[color:var(--border-subtle)] shadow-[var(--shadow-md)] backdrop-blur-none focus:outline-none z-50 ${dir === 'rtl' ? 'left-0 origin-top-left' : 'right-0 origin-top-right'}`}
         >
           <div className="py-1">
             <div className={`px-4 py-2 text-sm text-[color:var(--text-secondary)] border-b border-[color:var(--border-hairline)] ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
@@ -47,7 +47,7 @@ export function LanguageSwitcher() {
                     setLanguage(option.value);
                     setIsOpen(false);
                 }}
-                className={`w-full h-auto min-w-0 justify-between px-4 py-2 text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)] ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}
+                className={`w-full h-auto min-w-0 justify-between px-4 py-2 rounded-[var(--radius-lg)] text-sm text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)] ${dir === 'rtl' ? 'flex-row-reverse' : ''}`}
               >
                 <div className={`flex flex-col ${dir === 'rtl' ? 'items-end' : 'items-start'}`}>
                   <span className="font-medium">{option.label}</span>

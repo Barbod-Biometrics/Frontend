@@ -9,6 +9,7 @@ import { Header } from "../app/test-sidebar/header";
 import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
 import type { RootState } from "../store/store";
 import { selectIsAdmin } from "../store/loginSlice";
+import { Theme } from "../types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

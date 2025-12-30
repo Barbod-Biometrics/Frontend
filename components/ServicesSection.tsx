@@ -228,6 +228,9 @@ export function ServicesSection() {
     if (!isDesktop) return;
     const container = tabListRef.current;
     if (!container || container.scrollWidth <= container.clientWidth) return;
+    const rect = container.getBoundingClientRect();
+    const isVisible = rect.bottom > 0 && rect.top < window.innerHeight;
+    if (!isVisible) return;
 
     const activeButton = container.querySelector<HTMLButtonElement>(
       `[data-service-id="${activeId}"]`

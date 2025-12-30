@@ -219,10 +219,7 @@ export function ServicesSection() {
   return (
     <Section dir={dir}>
       <Container>
-        <div
-          className="text-center md:text-start mb-12"
-          style={{ textAlign: dir === "rtl" ? "right" : "left" }}
-        >
+        <div className="mb-12 text-center">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -240,7 +237,7 @@ export function ServicesSection() {
           >
             <Typography
               variant="body-lg"
-              className="max-w-3xl text-[color:var(--md-sys-color-on-surface-variant)]"
+              className="mx-auto max-w-3xl text-center text-[color:var(--md-sys-color-on-surface-variant)]"
             >
               {copy.sub}
             </Typography>

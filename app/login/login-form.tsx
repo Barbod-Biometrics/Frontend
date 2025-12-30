@@ -33,7 +33,7 @@ function LabeledInput({
   isLight,
 }: LabeledInputProps) {
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-2 w-full">
       <label
         className={`text-base sm:text-lg font-semibold ${
           isLight ? "text-gray-700" : "text-white/90"
@@ -92,7 +92,7 @@ function SubmitButton({ label, isFa, onClick, disabled }: SubmitButtonProps) {
       size="lg"
       onClick={onClick}
       disabled={disabled}
-      className="w-full h-12 sm:h-14 rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full h-12 sm:h-14 rounded-md sm:rounded-xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <span className={`font-bold ${isFa ? "font-vazirmatn" : ""}`}>
         {label}
@@ -127,7 +127,7 @@ const loginCopy: Record<
     title: "ورود",
     phoneLabel: "شماره موبایل",
     submitButton: "ارسال کد",
-    brandName: "Barbod",
+    brandName: "باربد",
     phonePlaceholder: "09123456789",
     errorInvalid: "لطفا شماره موبایل معتبر وارد کنید (۱۱ رقم و شروع با ۰۹)",
     errorRequired: "شماره موبایل الزامی است",
@@ -223,12 +223,12 @@ function LoginForm({ onSubmit }: LoginFormProps) {
     >
       {/* Logo with subtle animation */}
       <div className="transform transition-transform duration-300 hover:scale-110">
-        <Logo />
+        <Logo size="xlarge" />
       </div>
 
       {/* Brand name with gradient */}
       <p
-        className={`text-3xl sm:text-4xl font-bold ${
+        className={`text-4xl sm:text-5xl font-bold ${
           isLight
             ? "bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 bg-clip-text text-transparent"
             : "bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent"
@@ -239,7 +239,7 @@ function LoginForm({ onSubmit }: LoginFormProps) {
 
       {/* Title with emphasis */}
       <p
-        className={`text-4xl sm:text-5xl font-extrabold drop-shadow-lg ${
+        className={`text-3xl sm:text-4xl font-extrabold drop-shadow-lg ${
           isLight ? "text-gray-900" : "text-white"
         } ${isFa ? "font-vazirmatn" : ""}`}
       >

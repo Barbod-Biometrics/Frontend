@@ -73,13 +73,11 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
   };
 
 
-  const cardGradient = theme === Theme.DARK 
-    ? 'bg-gradient-to-br from-slate-900 to-gray-900' 
-    : 'bg-gradient-to-br from-slate-50 to-gray-100';
+  const cardGradient = theme === Theme.DARK
+    ? 'bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950'
+    : 'bg-gradient-to-br from-white to-slate-100';
 
-  const textColor = theme === Theme.DARK ? 'text-white' : 'text-gray-900';
-  const mutedTextColor = theme === Theme.DARK ? 'text-gray-300' : 'text-gray-600';
-  const lightTextColor = theme === Theme.DARK ? 'text-gray-400' : 'text-gray-500';
+  const textColor = 'text-white';
   
   const badgeBgSecure = theme === Theme.DARK 
     ? 'bg-emerald-500/20' 
@@ -97,12 +95,12 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
     ? 'text-blue-300' 
     : 'text-blue-600';
 
-  const infoBoxBg = theme === Theme.DARK 
-    ? 'bg-white/5' 
+  const infoBoxBg = theme === Theme.DARK
+    ? 'bg-white/10'
     : 'bg-gray-900/5';
   
-  const infoBoxBorder = theme === Theme.DARK 
-    ? 'border-white/10' 
+  const infoBoxBorder = theme === Theme.DARK
+    ? 'border-white/20'
     : 'border-gray-900/10';
 
   const balanceGradient = theme === Theme.DARK 
@@ -110,7 +108,11 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
     : 'bg-gradient-to-r from-gray-900 to-gray-700';
 
   return (
-    <Card variant="elevated" hover className={`p-8 h-full flex flex-col relative overflow-hidden group ${cardGradient}`}>
+    <Card
+      variant="elevated"
+      hover
+      className={`p-6 h-full flex flex-col relative overflow-hidden group border border-[color:var(--md-sys-color-outline-variant)]/70 ${cardGradient}`}
+    >
      
       <div className={`absolute inset-0 bg-gradient-to-br ${
         theme === Theme.DARK 
@@ -127,23 +129,23 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
       
       <div className="relative z-10">
         {/* Header */}
-        <div className="mb-10">
-          <Typography variant="body-lg" className={`${mutedTextColor} mb-2`}>
+        <div className="mb-6">
+          <Typography variant="body-lg" tone="muted" className="mb-2">
             {translations.availableBalance[language]}
           </Typography>
           
           {/* Large balance amount */}
-          <div className="flex items-baseline gap-3 mb-6">
+          <div className="flex items-baseline gap-3 mb-4">
             <Typography variant="h1" className={`font-bold ${balanceGradient} bg-clip-text text-transparent`}>
               {formatNumber(balance)}
             </Typography>
-            <Typography variant="h3" className={`text-3xl font-normal ${lightTextColor}`}>
+            <Typography variant="h3" tone="muted" className="text-3xl font-normal">
               {translations.currency[language]}
             </Typography>
           </div>
           
           {/* Features */}
-          <div className="flex flex-wrap gap-4 mb-6">
+          <div className="flex flex-wrap gap-3 mb-4">
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${badgeBgSecure} ${badgeTextSecure}`}>
               <Shield className="w-4 h-4" />
               <Typography variant="caption" className="font-medium">
@@ -160,12 +162,12 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
         </div>
 
         {/* Last updated */}
-        <div className={`mb-8 p-4 rounded-xl ${infoBoxBg} backdrop-blur-sm border ${infoBoxBorder}`}>
+        <div className={`mb-5 p-4 rounded-xl ${infoBoxBg} backdrop-blur-sm border ${infoBoxBorder}`}>
           <div className="flex items-center justify-between">
-            <Typography variant="body-sm" className={lightTextColor}>
+            <Typography variant="body-sm" tone="muted">
               {translations.lastUpdated[language]}
             </Typography>
-            <Typography variant="body-sm" className={`font-medium ${mutedTextColor}`}>
+            <Typography variant="body-sm" tone="default" className="font-medium">
               {formatLastUpdated(lastUpdated)}
             </Typography>
           </div>
@@ -179,7 +181,7 @@ export default function BalanceCard({ onDepositClick ,disabled = false}: Balance
             iconLeading={<ArrowUpRight className="w-5 h-5" />}
             onClick={onDepositClick}
             disabled={disabled}
-            className={`w-full justify-center py-5 text-lg font-bold rounded-xl 
+            className={`w-full justify-center py-4 text-base sm:text-lg font-bold rounded-xl 
                       bg-gradient-to-r from-blue-600 to-indigo-600 
                       hover:from-blue-700 hover:to-indigo-700 
                       shadow-xl hover:shadow-2xl 

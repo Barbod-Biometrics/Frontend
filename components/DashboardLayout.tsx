@@ -44,6 +44,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     () => persistedSidebarMobileOpen
   );
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
+  const theme = useSelector((state: RootState) => state.theme.theme);
+  const isLight = theme === Theme.LIGHT;
 
   useEffect(() => {
     let mounted = true;

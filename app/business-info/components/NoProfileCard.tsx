@@ -21,14 +21,14 @@ export function NoProfileCard() {
         </div>
         
        
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 mb-6">
+        <div className="bg-[color:var(--md-sys-color-surface-container-high)] border border-[color:var(--md-sys-color-outline-variant)] rounded-xl p-6 mb-6">
           <div className="flex items-start gap-4">
-            <AlertCircle className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-6 h-6 text-[color:var(--md-sys-color-primary)] flex-shrink-0 mt-0.5" />
             <div>
-              <Typography variant="h6" className="text-yellow-800 dark:text-yellow-300 mb-2">
+              <Typography variant="h6" className="text-[color:var(--md-sys-color-on-surface)] mb-2">
                 هیچ کسب‌وکاری یافت نشد
               </Typography>
-              <Typography variant="body-md" className="text-yellow-700 dark:text-yellow-400 mb-4">
+              <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface-variant)] mb-4">
                 برای مشاهده اطلاعات کسب‌وکار، ابتدا باید یک کسب‌وکار ایجاد کنید.
               </Typography>
             </div>

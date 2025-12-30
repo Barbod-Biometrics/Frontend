@@ -28,34 +28,34 @@ export function AddressCard({
   const fullAddress = `${province}، ${city}، ${address}،پلاک ${plate_number}،واحد${unit}`;
 
   return (
-    <Card variant="filled" hover className="p-6">
+    <Card variant="filled" hover className="p-5 h-full">
       
-      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[color:var(--outline-variant)]">
-        <div className="p-2 rounded-lg bg-emerald-500/10">
-          <MapPin className="w-5 h-5 text-emerald-500" />
+      <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--md-sys-color-outline-variant)]">
+        <div className="p-2 rounded-lg bg-[color:var(--md-sys-color-primary-container)]">
+          <MapPin className="w-5 h-5 text-[color:var(--md-sys-color-on-primary-container)]" />
         </div>
-        <Typography variant="h5" className="text-[color:var(--text-primary)] font-semibold">
+        <Typography variant="h6" className="text-[color:var(--text-primary)] font-semibold">
           آدرس کسب‌وکار
         </Typography>
       </div>
       
     
-      <div className="space-y-6">
+      <div className="space-y-4">
        
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Navigation className="w-4 h-4 text-emerald-500" />
+            <Navigation className="w-4 h-4 text-[color:var(--md-sys-color-primary)]" />
             <Typography variant="caption" className="text-[color:var(--text-secondary)]">
               آدرس کامل
             </Typography>
           </div>
-          <Typography variant="body-md" className="text-emerald-500 font-medium leading-relaxed">
+          <Typography variant="body-md" className="text-[color:var(--md-sys-color-on-surface)] font-medium leading-6">
             {fullAddress}
           </Typography>
         </div>
         
        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Mailbox className="w-4 h-4 text-[color:var(--text-secondary)]" />
@@ -70,12 +70,12 @@ export function AddressCard({
           
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Phone className="w-4 h-4 text-blue-500" />
+              <Phone className="w-4 h-4 text-[color:var(--md-sys-color-primary)]" />
               <Typography variant="caption" className="text-[color:var(--text-secondary)]">
                 تلفن ثابت
               </Typography>
             </div>
-            <Typography variant="body-md" className="text-blue-500 font-medium">
+            <Typography variant="body-md" className="text-[color:var(--md-sys-color-primary)] font-medium">
               {fixedPhone}
             </Typography>
           </div>

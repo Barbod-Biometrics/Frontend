@@ -17,6 +17,14 @@ interface LocationInfoProps {
 
 type LocationForm = LocationPayload;
 const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
+const POSTAL_CODE_LENGTH = 10;
+const POSTAL_CODE_LENGTH_ERROR = "کد پستی 10 رقمی است";
+
+const normalizeDigits = (value: string) =>
+  value
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[^0-9]/g, "");
 
 const provinceCityMap = provincesAndCities as Record<string, string[]>;
 const provinceOptions = Object.keys(provinceCityMap);
@@ -138,10 +146,10 @@ export function LocationInfo({
       address: form.address.trim(),
       province: form.province.trim(),
       city: form.city.trim(),
-      fixedPhone: form.fixedPhone.trim(),
-      postalCode: form.postalCode.trim(),
-      plateNumber: form.plateNumber.trim(),
-      unit: form.unit.trim(),
+      fixedPhone: normalizeDigits(form.fixedPhone),
+      postalCode: normalizeDigits(form.postalCode),
+      plateNumber: normalizeDigits(form.plateNumber),
+      unit: normalizeDigits(form.unit),
     };
 
     const nextErrors: Partial<Record<keyof LocationForm, string>> = {};
@@ -150,6 +158,14 @@ export function LocationInfo({
         nextErrors[key] = REQUIRED_FIELD_ERROR;
       }
     });
+
+    if (
+      !nextErrors.postalCode &&
+      trimmed.postalCode &&
+      !new RegExp(`^\\d{${POSTAL_CODE_LENGTH}}$`).test(trimmed.postalCode)
+    ) {
+      nextErrors.postalCode = POSTAL_CODE_LENGTH_ERROR;
+    }
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -223,12 +239,12 @@ export function LocationInfo({
                       className="w-full rounded-xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface-container)] px-4 py-2 text-sm text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
                     />
                   </div>
-                  <div className="max-h-52 overflow-y-auto py-2">
+                  <div className="max-h-52 overflow-y-auto py-2 dropdown-scrollbar">
                     {!provinceQuery && (
                       <button
                         type="button"
                         onClick={() => handleProvinceSelect("")}
-                        className="w-full px-4 py-2 text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)] transition hover:bg-[color:var(--md-sys-color-surface-variant)]/40"
+                        className="w-full px-4 py-2 text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)] transition hover:bg-[color:var(--md-sys-color-primary)]/10"
                       >
                         انتخاب استان
                       </button>
@@ -244,8 +260,8 @@ export function LocationInfo({
                             className={
                               "w-full px-4 py-2 text-right text-sm transition " +
                               (isSelected
-                                ? "bg-[color:var(--md-sys-color-primary)]/15 text-[color:var(--md-sys-color-primary)]"
-                                : "text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-surface-variant)]/40")
+                                ? "bg-[color:var(--md-sys-color-primary)]/15 text-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-primary)]/20"
+                                : "text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-primary)]/10")
                             }
                           >
                             {province}
@@ -313,12 +329,12 @@ export function LocationInfo({
                       className="w-full rounded-xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface-container)] px-4 py-2 text-sm text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
                     />
                   </div>
-                  <div className="max-h-52 overflow-y-auto py-2">
+                  <div className="max-h-52 overflow-y-auto py-2 dropdown-scrollbar">
                     {!cityQuery && (
                       <button
                         type="button"
                         onClick={() => handleCitySelect("")}
-                        className="w-full px-4 py-2 text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)] transition hover:bg-[color:var(--md-sys-color-surface-variant)]/40"
+                        className="w-full px-4 py-2 text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)] transition hover:bg-[color:var(--md-sys-color-primary)]/10"
                       >
                         انتخاب شهر
                       </button>
@@ -334,8 +350,8 @@ export function LocationInfo({
                             className={
                               "w-full px-4 py-2 text-right text-sm transition " +
                               (isSelected
-                                ? "bg-[color:var(--md-sys-color-primary)]/15 text-[color:var(--md-sys-color-primary)]"
-                                : "text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-surface-variant)]/40")
+                                ? "bg-[color:var(--md-sys-color-primary)]/15 text-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-primary)]/20"
+                                : "text-[color:var(--md-sys-color-on-surface)] hover:bg-[color:var(--md-sys-color-primary)]/10")
                             }
                           >
                             {city}
@@ -387,7 +403,7 @@ export function LocationInfo({
               dir="ltr"
               type="tel"
               value={form.fixedPhone}
-              onChange={(event) => handleChange("fixedPhone", event.target.value)}
+              onChange={(event) => handleChange("fixedPhone", normalizeDigits(event.target.value))}
               placeholder="01312345678"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -407,7 +423,7 @@ export function LocationInfo({
               inputMode="numeric"
               maxLength={10}
               value={form.postalCode}
-              onChange={(event) => handleChange("postalCode", event.target.value)}
+              onChange={(event) => handleChange("postalCode", normalizeDigits(event.target.value))}
             placeholder="0133456789"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
@@ -431,7 +447,7 @@ export function LocationInfo({
               dir="ltr"
               type="text"
               value={form.plateNumber}
-              onChange={(event) => handleChange("plateNumber", event.target.value)}
+              onChange={(event) => handleChange("plateNumber", normalizeDigits(event.target.value))}
               placeholder="12"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -450,7 +466,7 @@ export function LocationInfo({
               dir="ltr"
               inputMode="numeric"
               value={form.unit}
-              onChange={(event) => handleChange("unit", event.target.value)}
+              onChange={(event) => handleChange("unit", normalizeDigits(event.target.value))}
               placeholder="4"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />

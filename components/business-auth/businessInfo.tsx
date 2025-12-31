@@ -29,6 +29,12 @@ const isValidWebsiteUrl = (value: string) => {
   }
 };
 
+const normalizeDigits = (value: string) =>
+  value
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[^0-9]/g, "");
+
 const activityOptions: { value: string; label: string }[] = [
   { value: "", label: "انتخاب حوزه فعالیت" },
   { value: "online-store", label: "فروشگاه آنلاین" },
@@ -81,7 +87,7 @@ export function BusinessInfo({
       brandName: form.brandName.trim(),
       fieldOfWork: form.fieldOfWork.trim(),
       websiteUrl: form.websiteUrl.trim(),
-      businessNationalId: (form.businessNationalId ?? "").trim(),
+      businessNationalId: normalizeDigits(form.businessNationalId ?? ""),
     };
 
     const nextErrors: Partial<Record<keyof BusinessInfoForm, string>> = {};
@@ -153,8 +159,12 @@ export function BusinessInfo({
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              maxLength={11}
               value={form.businessNationalId ?? ""}
-              onChange={(event) => handleChange("businessNationalId", event.target.value)}
+              onChange={(event) =>
+                handleChange("businessNationalId", normalizeDigits(event.target.value))
+              }
               placeholder="10345678901"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -199,9 +209,11 @@ export function BusinessInfo({
             وب‌ سایت
           </label>
           <div className="relative">
-            <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface-variant)]">
-              آدرس:
-            </span>
+            {!form.websiteUrl && (
+              <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-xs font-semibold text-[color:var(--md-sys-color-on-surface-variant)]">
+                آدرس:
+              </span>
+            )}
             <input
               dir="ltr"
               type="url"

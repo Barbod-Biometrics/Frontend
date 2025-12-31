@@ -211,6 +211,29 @@ html {
   display: none;
 }
 
+.dropdown-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+  scrollbar-gutter: stable;
+  -ms-overflow-style: auto;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  display: block;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--md-sys-color-outline-variant);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
 body {
   background: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);

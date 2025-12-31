@@ -18,6 +18,7 @@ import { Navbar } from "../../components/Navbar";
 import { Button } from "../../components/ui/Button";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
+import { normalizeNumericInput, toPersianDigits } from "../../lib/numberFormat";
 
 const copy: Record<
   Language,
@@ -146,7 +147,7 @@ export default function SalesContactPage() {
                   <Field label={c.labels.firstName} placeholder={c.labels.firstName} />
                   <Field label={c.labels.lastName} placeholder={c.labels.lastName} />
                 </div>
-                <Field label={c.labels.phone} placeholder={phonePlaceholder} />
+                <Field label={c.labels.phone} placeholder={phonePlaceholder} numeric maxLength={11} />
                 <Field label={c.labels.company} placeholder={c.labels.company} />
                 <Field
                   label={c.labels.email}
@@ -207,12 +208,22 @@ function Field({
   placeholder,
   optionalTag,
   multiline,
+  numeric,
+  maxLength,
 }: {
   label: string;
   placeholder: string;
   optionalTag?: string;
   multiline?: boolean;
+  numeric?: boolean;
+  maxLength?: number;
 }) {
+  const handleNumericInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const target = event.currentTarget;
+    const normalized = normalizeNumericInput(target.value, maxLength);
+    target.value = toPersianDigits(normalized);
+  };
+
   return (
     <div className="space-y-2">
       <label className="text-sm font-semibold text-[color:var(--text-primary)]">
@@ -231,6 +242,9 @@ function Field({
         <input
           type="text"
           placeholder={placeholder}
+          inputMode={numeric ? "numeric" : undefined}
+          pattern={numeric ? "[0-9]*" : undefined}
+          onInput={numeric ? handleNumericInput : undefined}
           className="h-12 w-full rounded-xl border border-[color:var(--border-subtle)] bg-[color:var(--surface-elevated)] px-4 text-sm text-[color:var(--text-primary)] placeholder:text-[color:var(--text-secondary)] focus:border-[color:var(--brand-azure)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]/50"
         />
       )}

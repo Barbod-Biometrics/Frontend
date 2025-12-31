@@ -25,10 +25,14 @@ export function AddressCard({
   plate_number
 }: AddressCardProps) {
   
-  const fullAddress = `${province}، ${city}، ${address}،پلاک ${plate_number}،واحد${unit}`;
+  const addressParts = [province, city, address].filter(Boolean);
+  const extraParts: string[] = [];
+  if (plate_number) extraParts.push(`پلاک ${plate_number}`);
+  if (unit) extraParts.push(`واحد ${unit}`);
+  const fullAddress = [...addressParts, ...extraParts].join("، ");
 
   return (
-    <Card variant="filled" hover className="p-5 h-full">
+    <Card variant="filled" hover className="p-5 h-full text-right" dir="rtl">
       
       <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--md-sys-color-outline-variant)]">
         <div className="p-2 rounded-lg bg-[color:var(--md-sys-color-primary-container)]">

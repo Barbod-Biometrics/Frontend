@@ -8,6 +8,7 @@ import DashboardTerminalBackground from "./DashboardTerminalBackground";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
 import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
+import { Sheet, SheetContent } from "./ui/sheet";
 import type { RootState } from "../store/store";
 import { selectIsAdmin } from "../store/loginSlice";
 
@@ -112,21 +113,34 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           onPanelSwitchAction={() => router.push("/admin")}
         />
 
-        <SidebarDashboard
-          collapsed={collapsed}
-          onToggleAction={(next) => {
-            if (isMobile) {
-              const open = !next;
+        {isMobile ? (
+          <Sheet
+            open={mobileOpen}
+            onOpenChange={(open) => {
               persistedSidebarMobileOpen = open;
               setMobileOpen(open);
-            } else {
+            }}
+          >
+            <SheetContent side="right" className="p-0">
+              <SidebarDashboard
+                collapsed={false}
+                businessProfiles={profiles}
+                isAdminView={isAdminUser}
+                variant="sheet"
+              />
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <SidebarDashboard
+            collapsed={collapsed}
+            onToggleAction={(next) => {
               persistedSidebarCollapsed = next;
               setCollapsedDesktop(next);
-            }
-          }}
-          businessProfiles={profiles}
-          isAdminView={isAdminUser}
-        />
+            }}
+            businessProfiles={profiles}
+            isAdminView={isAdminUser}
+          />
+        )}
 
         <div
           className={`transition-all duration-300 pt-16 min-h-screen ${

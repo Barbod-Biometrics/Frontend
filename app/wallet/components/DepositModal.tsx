@@ -9,6 +9,7 @@ import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Typography } from '../../../components/ui/Typography';
 import { Language } from '../../../types';
+import { normalizeNumericInput, toPersianDigits } from '../../../lib/numberFormat';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -178,17 +179,17 @@ export default function DepositModal({ isOpen, onClose, onDepositSuccess, profil
                 {translations.amountLabel[language]}
               </label>
               <input
-                type="number"
-                value={amount}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={toPersianDigits(amount)}
                 onChange={(e) => {
-                  setAmount(e.target.value);
+                  setAmount(normalizeNumericInput(e.target.value));
                   setError('');
                 }}
                 className="w-full px-5 py-4 text-lg rounded-lg border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-azure)]"
                 placeholder={translations.placeholder[language]}
                 required
-                min="1000"
-                step="1000"
                 disabled={apiLoading.deposit}
               />
             </div>

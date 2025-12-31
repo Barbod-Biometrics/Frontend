@@ -21,24 +21,12 @@ const CollapseIcon = ({ collapsed }: { collapsed: boolean }) => (
   <svg
     viewBox="0 0 24 24"
     className={clsx(
-      "h-7 w-7 origin-center transition-transform duration-300",
+      "h-6 w-6 origin-center transition-transform duration-300",
       collapsed ? "rotate-180" : "rotate-0",
     )}
-    fill="none"
+    fill="currentColor"
   >
-    <defs>
-      <linearGradient id="collapseArrowGradient" x1="0" x2="0" y1="0" y2="24" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#0f8bff" />
-        <stop offset="1" stopColor="#2152ff" />
-      </linearGradient>
-    </defs>
-    <path
-      d="M9 6L15 12L9 18"
-      stroke="url(#collapseArrowGradient)"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M8 5L18 12L8 19Z" />
   </svg>
 );
 
@@ -103,7 +91,7 @@ export function Header({
     <header
       dir="ltr"
       className={clsx(
-        "fixed top-0 right-0 left-0 h-15 z-40 flex items-center justify-between gap-4 border-b px-4 py-3",
+        "fixed top-0 right-0 left-0 h-16 z-40 flex items-center justify-between gap-4 border-b px-4 py-3",
         "bg-[color:var(--md-sys-color-surface)] border-[color:var(--md-sys-color-outline-variant)]",
       )}
     >
@@ -148,10 +136,10 @@ export function Header({
             title={isInAdminPanel ? "پنل کسب و کار" : "پنل ادمین"}
             aria-label={isInAdminPanel ? "OñU?O¦U+ O\"UØ U_U+U, UcO3O\"ƒ?O U^ UcOOñ" : "OñU?O¦U+ O\"UØ U_U+U, OO_U.UOU+"}
             className={clsx(
-              "flex h-10 w-10 items-center justify-center rounded-2xl border transition",
+              "group flex h-10 w-10 items-center justify-center rounded-2xl border text-[color:var(--md-sys-color-primary)] transition-transform duration-300",
               "border-[color:var(--md-sys-color-outline-variant)]",
               "bg-[color:var(--md-sys-color-surface-container-high)]",
-              "hover:border-[color:var(--md-sys-color-primary)]",
+              "hover:border-[color:var(--md-sys-color-primary)] hover:scale-[1.05] active:scale-95",
             )}
           >
             <AdminSwitchIcon isInAdmin={isInAdminPanel} />
@@ -164,10 +152,10 @@ export function Header({
         aria-label={collapsed ? "O\"OOý UcOñO_U+ U.U+U^" : "O\"O3O¦U+ U.U+U^"}
         onClick={onToggleAction}
         className={clsx(
-          "flex h-10 w-10 items-center justify-center rounded-2xl border transition",
+          "group flex h-10 w-10 items-center justify-center rounded-2xl border text-[color:var(--md-sys-color-primary)] transition-transform duration-300",
           "border-[color:var(--md-sys-color-outline-variant)]",
           "bg-[color:var(--md-sys-color-surface-container-high)]",
-          "hover:border-[color:var(--md-sys-color-primary)]",
+          "hover:border-[color:var(--md-sys-color-primary)] hover:scale-[1.05] active:scale-95",
         )}
       >
         <CollapseIcon collapsed={collapsed} />

@@ -164,7 +164,7 @@ const BadgeIcon = ({ className }: IconProps) => (
 const HomeIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
-    className={clsx("h-6 w-6", className)}
+    className={clsx("h-5 w-5", className)}
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -177,7 +177,7 @@ const HomeIcon = ({ className }: IconProps) => (
 const TransferIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
-    className={clsx("h-6 w-6", className)}
+    className={clsx("h-5 w-5", className)}
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -220,7 +220,7 @@ const BiometricIcon = ({ className }: IconProps) => (
 const SupportIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 24 24"
-    className={clsx("h-6 w-6", className)}
+    className={clsx("h-5 w-5", className)}
     fill="none"
     stroke="currentColor"
     strokeWidth="1.6"
@@ -231,14 +231,23 @@ const SupportIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boolean }) => (
+const ItemIconFrame = ({
+  children,
+  active,
+  className,
+}: {
+  children: ReactNode;
+  active?: boolean;
+  className?: string;
+}) => (
   <span
     className={clsx(
-      "flex h-10 w-10 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
+      "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
       "border-[color:var(--md-sys-color-outline-variant)]",
       active
         ? "bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)]"
         : "bg-[color:var(--md-sys-color-surface-container-lowest)] text-[color:var(--md-sys-color-on-surface-variant)]",
+      className,
     )}
   >
     {children}
@@ -250,21 +259,29 @@ export function SidebarDashboard({
   onToggleAction,
   businessProfiles: businessProfilesProp,
   isAdminView = false,
+  variant = "sidebar",
 }: {
   collapsed?: boolean;
   onToggleAction?: (next: boolean) => void;
   businessProfiles?: ProfileListItem[];
   isAdminView?: boolean;
+  variant?: "sidebar" | "sheet";
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
-  const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
+  const isSheet = variant === "sheet";
+  const isCollapsed = isSheet
+    ? false
+    : typeof collapsedProp === "boolean"
+      ? collapsedProp
+      : internalCollapsed;
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
    const currentProfile = useSelector((state: any) => state.selectedProfile?.currentProfile);
+  const collapsedIconClass = isCollapsed ? "mx-auto" : undefined;
   const profileLookup = useMemo(
     () => new Map((businessProfilesProp ?? []).map((profile) => [profile.id, profile])),
     [businessProfilesProp],
@@ -421,12 +438,6 @@ export function SidebarDashboard({
     };
   }, [isSwitcherOpen]);
 
-  useEffect(() => {
-    if (isCollapsed && isSwitcherOpen) {
-      setIsSwitcherOpen(false);
-    }
-  }, [isCollapsed, isSwitcherOpen]);
-
   const toggleGroup = (id: string) => {
     setOpenGroups((prev) => {
       const next = new Set(prev);
@@ -437,14 +448,18 @@ export function SidebarDashboard({
   };
 
   return (
-      <aside
+    <aside
       dir="rtl"
       className={clsx(
-        "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-[width,transform] duration-300 flex flex-col",
+        "border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] flex flex-col",
         "border-[color:var(--md-sys-color-outline-variant)]",
-        isCollapsed
-          ? "w-[min(85vw,320px)] overflow-hidden translate-x-full pointer-events-none sm:pointer-events-auto sm:translate-x-0 sm:w-[62px]"
-          : "w-[min(85vw,320px)] translate-x-0 overflow-visible sm:w-[200px]",
+        isSheet
+          ? "relative h-full w-full"
+          : "fixed right-0 top-16 z-30 h-[calc(100vh-4rem)] transition-[width,transform] duration-300",
+        !isSheet &&
+          (isCollapsed
+            ? "w-[min(85vw,320px)] translate-x-full pointer-events-none sm:pointer-events-auto sm:translate-x-0 sm:w-[62px] sm:overflow-visible"
+            : "w-[min(85vw,320px)] translate-x-0 overflow-visible sm:w-[200px]"),
       )}
     >
       <div className="relative flex flex-col h-full">
@@ -453,14 +468,13 @@ export function SidebarDashboard({
         <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
             className={clsx(
-              "relative flex items-center gap-3 py-7.5 justify-center transition-colors",
-              isCollapsed ? "px-4" : "pr-4 pl-16",
+              "relative flex items-center gap-3 py-7.5 justify-center transition-colors cursor-pointer",
+              isCollapsed ? "px-0" : "pr-4 pl-16",
               "border-[color:var(--md-sys-color-outline-variant)]",
               !isCollapsed &&
                 "cursor-pointer rounded-xl before:absolute before:inset-x-0 before:inset-y-7.5 before:rounded-xl before:bg-transparent before:pointer-events-none before:transition-colors before:content-[''] hover:before:bg-[color:var(--md-sys-color-surface-container-highest)]/60",
             )}
             onClick={() => {
-              if (isCollapsed) return;
               setIsSwitcherOpen((open) => !open);
             }}
           >
@@ -484,21 +498,25 @@ export function SidebarDashboard({
               </button>
             )}
 
-            <div className="relative z-10 flex items-center gap-3 min-w-0 flex-1 justify-start">
-              <ItemIconFrame active>{sections[0].headerIcon}</ItemIconFrame>
-              <div
-                className={clsx(
-                  "min-w-0 transition-all duration-200 text-right",
-                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
-                )}
-              >
-                <Typography
-                  variant="caption"
-                  className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
-                >
-                  {headerTitle}
-                </Typography>
-              </div>
+            <div
+              className={clsx(
+                "relative z-10 flex items-center min-w-0",
+                isCollapsed ? "w-full justify-center gap-0" : "flex-1 justify-start gap-3",
+              )}
+            >
+              <ItemIconFrame active className={collapsedIconClass}>
+                {sections[0].headerIcon}
+              </ItemIconFrame>
+              {!isCollapsed && (
+                <div className="min-w-0 text-right">
+                  <Typography
+                    variant="caption"
+                    className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]"
+                  >
+                    {headerTitle}
+                  </Typography>
+                </div>
+              )}
             </div>
           </div>
 
@@ -633,7 +651,8 @@ export function SidebarDashboard({
         {/* Items list scrollable with rounded scrollbar */}
         <div
           className={clsx(
-            "flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2 py-4", // 👈 no horizontal scroll ever
+            "flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden py-4", // 👈 no horizontal scroll ever
+            isCollapsed ? "px-0" : "px-2",
             "[&::-webkit-scrollbar]:w-3",
             "[&::-webkit-scrollbar-track]:bg-transparent",
             "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
@@ -660,17 +679,33 @@ export function SidebarDashboard({
                 className={clsx(sectionGap, "last:mb-0")}
               >
               {!isCollapsed && section.title && (
-                <Typography
-                  variant="caption"
-                  className={clsx(
-                    "mb-1 px-2 text-sm font-semibold",
-                    showSectionActive
-                      ? "text-[color:var(--md-sys-color-primary)]"
-                      : "text-[color:var(--md-sys-color-on-surface)]",
-                  )}
-                >
-                  {section.title}
-                </Typography>
+                section.id === "business" ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsSwitcherOpen((open) => !open)}
+                    className={clsx(
+                      "mb-1 w-full px-2 text-right text-sm font-semibold transition-colors",
+                      showSectionActive
+                        ? "text-[color:var(--md-sys-color-primary)]"
+                        : "text-[color:var(--md-sys-color-on-surface)]",
+                      "hover:text-[color:var(--md-sys-color-primary)]",
+                    )}
+                  >
+                    {section.title}
+                  </button>
+                ) : (
+                  <Typography
+                    variant="caption"
+                    className={clsx(
+                      "mb-1 px-2 text-sm font-semibold",
+                      showSectionActive
+                        ? "text-[color:var(--md-sys-color-primary)]"
+                        : "text-[color:var(--md-sys-color-on-surface)]",
+                    )}
+                  >
+                    {section.title}
+                  </Typography>
+                )
               )}
 
               <div className="space-y-1.5">
@@ -703,7 +738,8 @@ export function SidebarDashboard({
                           }
                         }}
                         className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors transition-shadow duration-200 justify-between gap-2",
+                          "group flex w-full min-w-0 items-center rounded-[10px] py-2.5 text-sm transition-colors transition-shadow duration-200 gap-2",
+                          isCollapsed ? "justify-center px-0" : "justify-between px-3",
                           isItemActiveAndEnabled
                             ? "text-[color:var(--md-sys-color-primary)]"
                             : "text-[color:var(--md-sys-color-on-surface)]",
@@ -713,18 +749,23 @@ export function SidebarDashboard({
                             "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                         )}
                       >
-                        <div className="flex items-center gap-2">
-                          <ItemIconFrame active={isItemActiveAndEnabled}>{item.icon}</ItemIconFrame>
-                          <div
-                            className={clsx(
-                              "min-w-0 truncate text-right font-medium transition-all duration-150",
-                              isCollapsed
-                                ? "opacity-0 w-0 pointer-events-none"
-                                : "opacity-100 w-auto",
-                            )}
+                        <div
+                          className={clsx(
+                            "flex items-center",
+                            isCollapsed ? "w-full justify-center gap-0" : "gap-2",
+                          )}
+                        >
+                          <ItemIconFrame
+                            active={isItemActiveAndEnabled}
+                            className={isCollapsed ? "mx-auto" : undefined}
                           >
-                            {item.label}
-                          </div>
+                            {item.icon}
+                          </ItemIconFrame>
+                          {!isCollapsed && (
+                            <div className="min-w-0 truncate text-right font-medium">
+                              {item.label}
+                            </div>
+                          )}
                         </div>
 
                         {hasChildren && !isCollapsed && (
@@ -803,31 +844,43 @@ export function SidebarDashboard({
           })}
         </div>
 
-        <div className="border-t border-[color:var(--md-sys-color-outline-variant)] px-2 py-3">
+        <div
+          className={clsx(
+            "border-t border-[color:var(--md-sys-color-outline-variant)] py-3",
+            isCollapsed ? "px-0" : "px-2",
+          )}
+        >
           <Button
             variant="ghost"
             onClick={handleLogout}
             aria-label="خروج"
             title={isCollapsed ? "خروج" : undefined}
             className={clsx(
-              "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors transition-shadow duration-200 justify-between gap-2",
+              "group flex w-full min-w-0 items-center rounded-[10px] py-2.5 text-sm transition-colors transition-shadow duration-200 gap-2",
+              isCollapsed ? "justify-center px-0" : "justify-between px-3",
               "text-[color:var(--md-sys-color-error)]",
-              "hover:shadow-[var(--elevation-1)]",
-              "hover:bg-[color:var(--md-sys-color-error)]/10",
+              !isCollapsed && "hover:shadow-[var(--elevation-1)]",
+              !isCollapsed && "hover:bg-[color:var(--md-sys-color-error)]/10",
+              isCollapsed && "hover:bg-transparent",
             )}
           >
-            <div className="flex items-center gap-2">
-              <ItemIconFrame>
-                <LogOut className="h-5 w-5 text-[color:var(--md-sys-color-error)]" />
-              </ItemIconFrame>
-              <div
+            <div
+              className={clsx(
+                "flex items-center",
+                isCollapsed ? "w-full justify-center gap-0" : "gap-2",
+              )}
+            >
+              <ItemIconFrame
                 className={clsx(
-                  "min-w-0 truncate text-right font-medium transition-all duration-150",
-                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                  "group-hover:border-[color:var(--md-sys-color-error)]/40 group-hover:bg-[color:var(--md-sys-color-error)]/10",
+                  collapsedIconClass,
                 )}
               >
-                خروج
-              </div>
+                <LogOut className="h-5 w-5 text-[color:var(--md-sys-color-error)]" />
+              </ItemIconFrame>
+              {!isCollapsed && (
+                <div className="min-w-0 truncate text-right font-medium">خروج</div>
+              )}
             </div>
           </Button>
         </div>

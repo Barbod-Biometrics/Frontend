@@ -6,6 +6,7 @@ import provincesAndCities from "../../data/iran-provinces-cities.json";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
 import { AccountKind, LocationPayload } from "../../types/businessProfile";
+import { normalizeNumericInput, toPersianDigits } from "../../lib/numberFormat";
 
 interface LocationInfoProps {
   onContinue?: (data: LocationForm) => void;
@@ -204,8 +205,10 @@ export function LocationInfo({
             <input
               dir="ltr"
               type="tel"
-              value={form.fixedPhone}
-              onChange={(event) => handleChange("fixedPhone", event.target.value)}
+              value={toPersianDigits(form.fixedPhone)}
+              onChange={(event) =>
+                handleChange("fixedPhone", normalizeNumericInput(event.target.value))
+              }
               placeholder="01312345678"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -224,11 +227,13 @@ export function LocationInfo({
               dir="ltr"
               inputMode="numeric"
               maxLength={10}
-              value={form.postalCode}
-              onChange={(event) => handleChange("postalCode", event.target.value)}
-            placeholder="0133456789"
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-          />
+              value={toPersianDigits(form.postalCode)}
+              onChange={(event) =>
+                handleChange("postalCode", normalizeNumericInput(event.target.value, 10))
+              }
+              placeholder="0133456789"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            />
           <Typography variant="caption" className="text-[color:var(--md-sys-color-on-surface-variant)]">
             کد پستی باید ۱۰ رقم و بدون خط تیره وارد شود.
           </Typography>
@@ -248,8 +253,10 @@ export function LocationInfo({
             <input
               dir="ltr"
               type="text"
-              value={form.plateNumber}
-              onChange={(event) => handleChange("plateNumber", event.target.value)}
+              value={toPersianDigits(form.plateNumber)}
+              onChange={(event) =>
+                handleChange("plateNumber", normalizeNumericInput(event.target.value))
+              }
               placeholder="12"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -267,8 +274,8 @@ export function LocationInfo({
             <input
               dir="ltr"
               inputMode="numeric"
-              value={form.unit}
-              onChange={(event) => handleChange("unit", event.target.value)}
+              value={toPersianDigits(form.unit)}
+              onChange={(event) => handleChange("unit", normalizeNumericInput(event.target.value))}
               placeholder="4"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />

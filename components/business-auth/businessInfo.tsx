@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
 import { AccountKind, BusinessInfoPayload } from "../../types/businessProfile";
+import { normalizeNumericInput, toPersianDigits } from "../../lib/numberFormat";
 
 interface BusinessInfoProps {
   accountType?: AccountKind;
@@ -18,13 +19,14 @@ type BusinessInfoForm = BusinessInfoPayload;
 const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
 
 const activityOptions: { value: string; label: string }[] = [
-  { value: "", label: "انتخاب حوزه فعالیت" },
+  { value: "", label: "انتخاب زمینه فعالیت" },
   { value: "online-store", label: "فروشگاه آنلاین" },
   { value: "services", label: "خدمات" },
   { value: "content-media", label: "محتوا / رسانه" },
   { value: "education", label: "آموزش" },
   { value: "other", label: "سایر" },
 ];
+
 
 export function BusinessInfo({
   accountType = "legal",
@@ -133,8 +135,10 @@ export function BusinessInfo({
             </label>
             <input
               type="text"
-              value={form.businessNationalId ?? ""}
-              onChange={(event) => handleChange("businessNationalId", event.target.value)}
+              value={toPersianDigits(form.businessNationalId ?? "")}
+              onChange={(event) =>
+                handleChange("businessNationalId", normalizeNumericInput(event.target.value))
+              }
               placeholder="10345678901"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />

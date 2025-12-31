@@ -112,7 +112,7 @@ export function ContactInfo() {
       <Card 
         variant="filled" 
         hover 
-        className="p-6 md:p-8 animate-in fade-in slide-in-from-bottom-5 duration-500"
+        className="mx-auto w-full max-w-2xl p-6 md:p-8 animate-in fade-in slide-in-from-bottom-5 duration-500"
       >
         <div className="space-y-8">
         

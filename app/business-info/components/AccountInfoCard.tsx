@@ -57,7 +57,7 @@ export function AccountInfoCard({
   const isBusiness = accountType === 'حقوقی';
 
   return (
-    <Card variant="filled" hover className="p-5 h-full">
+    <Card variant="filled" hover className="p-5 h-full text-right" dir="rtl">
      
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-[color:var(--md-sys-color-outline-variant)]">
         <div className="flex items-center gap-3">

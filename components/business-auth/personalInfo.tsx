@@ -9,6 +9,7 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
 import { AccountKind, PersonalInfoPayload } from "../../types/businessProfile";
+import { normalizeDateInput, normalizeNumericInput, toPersianDigits } from "../../lib/numberFormat";
 
 interface PersonalInfoProps {
   onContinue?: (data: PersonalInfoPayload) => void;
@@ -177,8 +178,10 @@ export function PersonalInfo({
           <input
             dir="ltr"
             type="text"
-            value={form.nationalId}
-            onChange={(e) => handleChange("nationalId", e.target.value)}
+            value={toPersianDigits(form.nationalId)}
+            onChange={(e) =>
+              handleChange("nationalId", normalizeNumericInput(e.target.value, 10))
+            }
             placeholder="0982342316"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
@@ -197,8 +200,8 @@ export function PersonalInfo({
             <input
               type="text"
               dir="ltr"
-              value={form.birthDate}
-              onChange={(e) => handleChange("birthDate", e.target.value)}
+              value={toPersianDigits(form.birthDate)}
+              onChange={(e) => handleChange("birthDate", normalizeDateInput(e.target.value))}
               inputMode="numeric"
               placeholder={BIRTHDATE_FORMAT}
               className="pl-14 pt-4 w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
@@ -225,8 +228,8 @@ export function PersonalInfo({
           </label>
           <input
             type="tel"
-            value={form.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
+            value={toPersianDigits(form.phone)}
+            onChange={(e) => handleChange("phone", normalizeNumericInput(e.target.value, 11))}
             placeholder="09904644661"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />

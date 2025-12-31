@@ -249,7 +249,15 @@ function BusinessAuthPage({
         ? window.localStorage.getItem(profileStorageKey)
         : null;
     const bootstrapId = forceNewProfile ? initialProfileId ?? null : initialProfileId ?? storedId;
-    if (bootstrapId && !profileId && statuses.bootstrap === "idle") {
+    if (!bootstrapId) return;
+
+    if (bootstrapId !== profileId && statuses.bootstrap !== "loading") {
+      dispatch(resetBusinessProfile());
+      dispatch(bootstrapBusinessProfile({ profileId: bootstrapId }));
+      return;
+    }
+
+    if (!profileId && statuses.bootstrap === "idle") {
       dispatch(bootstrapBusinessProfile({ profileId: bootstrapId }));
     }
   }, [dispatch, phoneNumber, profileId, statuses.bootstrap, initialProfileId, forceNewProfile]);
@@ -494,16 +502,14 @@ function BusinessAuthPage({
       <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
         {toast && (
           <div
-            className="pointer-events-none fixed left-1/2 top-6 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2"
+            className="pointer-events-none fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)]"
             role={toast.tone === "error" ? "alert" : "status"}
             aria-live={toast.tone === "error" ? "assertive" : "polite"}
           >
             <div
               className={
-                "rounded-xl border px-6 py-3 text-center text-sm font-semibold shadow-[var(--elevation-3)] backdrop-blur-sm " +
-                (toast.tone === "error"
-                  ? "border-red-200 bg-red-50 text-red-700"
-                  : "border-emerald-200 bg-emerald-50 text-emerald-700")
+                "w-fit max-w-[calc(100vw-2rem)] sm:max-w-[320px] rounded-lg px-5 py-3 text-center text-sm font-semibold text-white shadow-[var(--elevation-3)] break-words " +
+                (toast.tone === "error" ? "bg-red-600" : "bg-emerald-600")
               }
             >
               {toast.message}

@@ -106,7 +106,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
     >
       <Container className="relative z-10 flex min-h-[800px] flex-col items-center overflow-visible text-center">
         <div className="pointer-events-none absolute inset-0 -z-10 flex items-end justify-center overflow-hidden lg:items-center lg:overflow-visible">
-          <div className="h-[980px] w-[220%] max-w-none translate-y-0 opacity-85 sm:h-[1120px] sm:w-[210%] sm:-translate-y-12 lg:h-[1300px] lg:w-[220%] lg:-translate-y-32 xl:h-[1500px] xl:-translate-y-48">
+          <div className="h-[980px] w-[220%] max-w-none -translate-y-16 opacity-85 sm:h-[1120px] sm:w-[210%] sm:-translate-y-12 lg:h-[1300px] lg:w-[220%] lg:-translate-y-32 xl:h-[1500px] xl:-translate-y-48">
             <TopologicalFace theme={theme} />
           </div>
         </div>

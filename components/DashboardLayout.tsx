@@ -99,6 +99,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       });
     }
   };
+  const handleMobileOpenChange = (open: boolean) => {
+    persistedSidebarMobileOpen = open;
+    setMobileOpen(open);
+  };
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
@@ -116,14 +120,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {isMobile ? (
           <Sheet
             open={mobileOpen}
-            onOpenChange={(open) => {
-              persistedSidebarMobileOpen = open;
-              setMobileOpen(open);
-            }}
+            onOpenChange={handleMobileOpenChange}
           >
-            <SheetContent side="right" className="p-0">
+            <SheetContent side="right" className="p-0" showCloseButton={false}>
               <SidebarDashboard
                 collapsed={false}
+                onToggleAction={handleMobileOpenChange}
+                sheetOpen={mobileOpen}
                 businessProfiles={profiles}
                 isAdminView={isAdminUser}
                 variant="sheet"

@@ -52,8 +52,8 @@ const sheetVariants = cva(
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> &
-    VariantProps<typeof sheetVariants>
->(({ side = "right", className, children, ...props }, ref) => (
+    VariantProps<typeof sheetVariants> & { showCloseButton?: boolean }
+>(({ side = "right", className, children, showCloseButton = true, ...props }, ref) => (
   <SheetPortal>
     <SheetOverlay />
     <SheetPrimitive.Content
@@ -66,16 +66,18 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close
-        className={cn(
-          "absolute right-4 top-4 rounded-md border border-transparent p-1.5 text-[color:var(--md-sys-color-on-surface-variant)] transition",
-          "hover:border-[color:var(--md-sys-color-outline-variant)] hover:text-[color:var(--md-sys-color-on-surface)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
-        )}
-      >
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
+      {showCloseButton ? (
+        <SheetPrimitive.Close
+          className={cn(
+            "absolute right-4 top-4 rounded-md border border-transparent p-1.5 text-[color:var(--md-sys-color-on-surface-variant)] transition",
+            "hover:border-[color:var(--md-sys-color-outline-variant)] hover:text-[color:var(--md-sys-color-on-surface)]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/50",
+          )}
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </SheetPrimitive.Close>
+      ) : null}
     </SheetPrimitive.Content>
   </SheetPortal>
 ));

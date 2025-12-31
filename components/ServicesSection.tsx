@@ -311,7 +311,7 @@ export function ServicesSection() {
                 >
                   <AccordionTrigger
                     className={`px-5 py-4 text-base font-semibold no-underline hover:no-underline ${
-                      dir === "rtl" ? "flex-row-reverse text-right" : "text-left"
+                      dir === "rtl" ? "text-right" : "text-left"
                     }`}
                   >
                     <span
@@ -339,12 +339,7 @@ export function ServicesSection() {
                     >
                       {service.description}
                     </Typography>
-                    <div
-                      className={`mt-4 flex flex-wrap items-center gap-3 ${
-                        dir === "rtl" ? "justify-end" : ""
-                      }`}
-                      dir={dir}
-                    >
+                    <div className="mt-4 flex flex-wrap items-center gap-3" dir={dir}>
                       {!isComingSoonService && itemHref ? (
                         <Button
                           variant="secondary"

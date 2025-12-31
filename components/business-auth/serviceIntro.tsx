@@ -153,7 +153,6 @@ export function ServiceIntro({
                       onClick={(event) => {
                         event.stopPropagation();
                         setActiveId(service.id);
-                        onContinue?.(service.id);
                         handleServiceNavigate(service.id);
                       }}
                       className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--md-sys-color-on-surface)] transition hover:border-[color:var(--md-sys-color-primary)] hover:text-[color:var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-sys-color-primary)]/40"

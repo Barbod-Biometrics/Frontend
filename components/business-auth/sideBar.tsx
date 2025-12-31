@@ -32,7 +32,7 @@ const buildSteps = (accountType: AccountKind): Step[] => {
       items: [
         { id: "account-type", label: "نوع حساب", highlight: true },
         { id: "personal-info", label: personalLabel },
-        { id: "business-info", label: "اطلاعات کسب و کار" },
+        { id: "business-info", label: "اطلاعات کسب‌وکار" },
         { id: "location", label: "اطلاعات مکانی" },
       ],
     },

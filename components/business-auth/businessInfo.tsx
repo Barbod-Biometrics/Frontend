@@ -17,6 +17,18 @@ interface BusinessInfoProps {
 type BusinessInfoForm = BusinessInfoPayload;
 const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
 
+const INVALID_WEBSITE_ERROR = "آدرس وب‌سایت معتبر نیست";
+const NATIONAL_ID_LENGTH_ERROR = "شناسه ملی کسب‌وکار 11 رقمی است";
+
+const isValidWebsiteUrl = (value: string) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 const activityOptions: { value: string; label: string }[] = [
   { value: "", label: "انتخاب حوزه فعالیت" },
   { value: "online-store", label: "فروشگاه آنلاین" },
@@ -80,6 +92,14 @@ export function BusinessInfo({
         nextErrors[key] = REQUIRED_FIELD_ERROR;
       }
     });
+
+    if (trimmed.websiteUrl && !isValidWebsiteUrl(trimmed.websiteUrl)) {
+      nextErrors.websiteUrl = INVALID_WEBSITE_ERROR;
+    }
+
+    if (isLegal && trimmed.businessNationalId && !/^\d{11}$/.test(trimmed.businessNationalId)) {
+      nextErrors.businessNationalId = NATIONAL_ID_LENGTH_ERROR;
+    }
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);

@@ -566,7 +566,7 @@ export function SidebarDashboard({
                         )}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-col items-end text-right">
+                          <div className="min-w-0 flex-1 flex-col items-end text-right">
                             <span className="pr-0 text-base font-semibold leading-6 break-words whitespace-normal">
                               {profile.title}
                             </span>
@@ -574,7 +574,9 @@ export function SidebarDashboard({
                               {profile.subtitle}
                             </span>
                           </div>
-                          <BusinessStatusBadge status={profile.status} />
+                          <div className="shrink-0">
+                            <BusinessStatusBadge status={profile.status} />
+                          </div>
                         </div>
                       </button>
                       {canContinue && (

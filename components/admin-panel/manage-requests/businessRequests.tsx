@@ -169,7 +169,7 @@ const SelectPill = ({
 }) => (
   <label
     className={clsx(
-      "relative flex w-full flex-1 items-center gap-2 rounded-xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:border-[color:var(--md-sys-color-primary)] transition",
+      "relative flex w-full flex-1 min-w-0 max-w-full items-center gap-2 rounded-xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:border-[color:var(--md-sys-color-primary)] transition",
       minWidth,
     )}
   >
@@ -177,8 +177,8 @@ const SelectPill = ({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full appearance-none bg-[color:var(--md-sys-color-surface)] pr-6 text-right text-[color:var(--md-sys-color-on-surface)] outline-none"
-      style={{ colorScheme: "light" }}
+      className="w-full min-w-0 max-w-full appearance-none bg-[color:var(--md-sys-color-surface)] pr-6 text-right text-[color:var(--md-sys-color-on-surface)] outline-none"
+      style={{ colorScheme: "light", width: "100%" }}
     >
       <option
         value=""
@@ -196,7 +196,7 @@ const SelectPill = ({
           style={{
             backgroundColor: "var(--md-sys-color-surface)",
             color: "var(--md-sys-color-on-surface)",
-            minWidth: "100%",
+            maxWidth: "100%",
             paddingInline: "12px",
           }}
         >

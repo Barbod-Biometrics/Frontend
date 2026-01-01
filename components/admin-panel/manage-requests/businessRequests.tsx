@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Mail, Phone, Search, ChevronDown, Filter } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Search,
+  ChevronDown,
+  Filter,
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+} from "lucide-react";
 import { Button } from "../../ui/Button";
 import clsx from "clsx";
 import type { BusinessProfile } from "../../../types/businessProfile";
@@ -204,7 +212,7 @@ export default function BusinessRequests() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<BusinessStatus | "">("");
   const [sortBy, setSortBy] = useState<SortBy>("");
-  const [sortDir, setSortDir] = useState<SortOrder>("");
+  const [sortDir, setSortDir] = useState<SortOrder>("desc");
   const [pageSizeInput, setPageSizeInput] = useState("1");
   const [requests, setRequests] = useState<BusinessRequest[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -213,6 +221,10 @@ export default function BusinessRequests() {
   const [rejectToast, setRejectToast] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
+  const isSortAsc = sortDir === "asc";
+  const toggleSortDir = () => {
+    setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
   const currentPage = useMemo(() => {
     const parsed = Number(pageSizeInput);
     if (!Number.isFinite(parsed) || parsed <= 0) return 1;
@@ -402,16 +414,23 @@ export default function BusinessRequests() {
               ]}
               minWidth="min-w-[152px]"
             />
-            <SelectPill
-              placeholder="نحوه مرتب سازی"
-              value={sortDir}
-              onChange={(val) => setSortDir(val as SortOrder)}
-              options={[
-                { label: "صعودی", value: "asc" },
-                { label: "نزولی", value: "desc" },
-              ]}
-              minWidth="min-w-[134px]"
-            />
+            <button
+              type="button"
+              onClick={toggleSortDir}
+              className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] text-[#0f8bff] shadow-[var(--elevation-1)] transition hover:border-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-primary)]/10"
+              aria-label={
+                isSortAsc
+                  ? "\u0645\u0631\u062a\u0628 \u0633\u0627\u0632\u06cc \u0635\u0639\u0648\u062f\u06cc"
+                  : "\u0645\u0631\u062a\u0628 \u0633\u0627\u0632\u06cc \u0646\u0632\u0648\u0644\u06cc"
+              }
+              title={isSortAsc ? "\u0635\u0639\u0648\u062f\u06cc" : "\u0646\u0632\u0648\u0644\u06cc"}
+            >
+              {isSortAsc ? (
+                <ArrowUpNarrowWide className="h-5 w-5" aria-hidden />
+              ) : (
+                <ArrowDownWideNarrow className="h-5 w-5" aria-hidden />
+              )}
+            </button>
           </div>
         </div>
 

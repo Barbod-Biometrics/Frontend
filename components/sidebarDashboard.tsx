@@ -377,7 +377,7 @@ export function SidebarDashboard({
       {
         id: "support",
         title: "ارتباط با پشتیبانی",
-        items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon /> }],
+        items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon />, onClick: () => router.push('/user-support') }],
       },
     ],
     [router],

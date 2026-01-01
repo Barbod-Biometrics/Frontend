@@ -410,6 +410,7 @@ html.font-orbitron body * {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+ }
 
 /* Business auth date picker */
 .business-auth-date-picker.rmdp-wrapper {

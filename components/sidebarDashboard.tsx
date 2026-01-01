@@ -515,7 +515,7 @@ export function SidebarDashboard({
             >
               <div
                 className={clsx(
-                  "max-h-80 overflow-y-auto space-y-2 px-3 py-3",
+                  "max-h-80 overflow-y-auto space-y-2 px-3 py-3 dropdown-scrollbar",
                   "[&::-webkit-scrollbar]:w-3",
                   "[&::-webkit-scrollbar-track]:bg-transparent",
                   "[&::-webkit-scrollbar-thumb]:bg-[color:var(--md-sys-color-outline-variant)]",
@@ -570,7 +570,7 @@ export function SidebarDashboard({
                             <span className="pr-0 text-base font-semibold leading-6 break-words whitespace-normal">
                               {profile.title}
                             </span>
-                            <span className="block text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
+                            <span className="block text-right text-sm text-[#0f8bff]">
                               {profile.subtitle}
                             </span>
                           </div>

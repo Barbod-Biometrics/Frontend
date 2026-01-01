@@ -213,6 +213,17 @@ export default function BusinessRequests() {
   const [rejectToast, setRejectToast] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
+  const currentPage = useMemo(() => {
+    const parsed = Number(pageSizeInput);
+    if (!Number.isFinite(parsed) || parsed <= 0) return 1;
+    return Math.floor(parsed);
+  }, [pageSizeInput]);
+  const canGoPrev = currentPage > 1;
+  const canGoNext = currentPage < totalPages;
+  const handlePageChange = (next: number) => {
+    if (!Number.isFinite(next) || next <= 0) return;
+    setPageSizeInput(String(next));
+  };
   const closeDialog = () => {
     setDialogOpen(false);
     setSelectedProfile(null);
@@ -282,9 +293,9 @@ export default function BusinessRequests() {
     let cancelled = false;
 
     const fetchData = async () => {
-      const pageNumber = pageSizeInput.trim() ? Number(pageSizeInput) : 1;
+      const pageNumber = currentPage;
 
-      if (!Number.isFinite(pageNumber) || pageNumber <= 0) {
+      if (!Number.isFinite(Number(pageSizeInput)) || pageNumber <= 0) {
         setToast("صفحه مورد نظر وجود ندارد");
         setRequests([]);
         return;
@@ -325,7 +336,7 @@ export default function BusinessRequests() {
     return () => {
       cancelled = true;
     };
-  }, [searchTerm, statusFilter, sortBy, sortDir, pageSizeInput]);
+  }, [searchTerm, statusFilter, sortBy, sortDir, pageSizeInput, currentPage]);
 
   const filteredRequests = useMemo(() => requests, [requests]);
 
@@ -468,6 +479,30 @@ export default function BusinessRequests() {
             );
           })}
         </div>
+        <div className="flex justify-center">
+        <div className="flex flex-wrap items-center gap-3 rounded-full border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-2 shadow-[var(--elevation-1)]">
+          <Button
+            variant="ghost"
+            disabled={!canGoPrev}
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="min-w-[86px] text-[#0f8bff]"
+          >
+            {"\u0642\u0628\u0644\u06cc"}
+          </Button>
+          <span className="text-sm font-semibold text-[#0f8bff]">
+            {"\u0635\u0641\u062d\u0647"} {currentPage} {"\u0627\u0632"} {totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            disabled={!canGoNext}
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="min-w-[86px] text-[#0f8bff]"
+          >
+            {"\u0628\u0639\u062f\u06cc"}
+          </Button>
+        </div>
+        </div>
+
       </div>
 
       {toast && (

@@ -404,6 +404,12 @@ html.font-orbitron body * {
 .shape-full {
   border-radius: var(--radius-full);
 }
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 
 /* Business auth date picker */
 .business-auth-date-picker.rmdp-wrapper {

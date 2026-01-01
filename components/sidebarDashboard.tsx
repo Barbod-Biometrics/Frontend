@@ -388,8 +388,8 @@ export function SidebarDashboard({
       },
       {
         id: "support",
-        title: "",
-        items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon /> }],
+        title: "ارتباط با پشتیبانی",
+        items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon />, onClick: () => router.push('/user-support') }],
       },
     ],
     [router],

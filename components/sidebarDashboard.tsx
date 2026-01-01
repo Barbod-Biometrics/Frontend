@@ -566,8 +566,8 @@ export function SidebarDashboard({
                         )}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-col items-end text-right">
-                            <span className="pr-0 text-base font-semibold leading-6">
+                          <div className="min-w-0 flex-col items-end text-right">
+                            <span className="pr-0 text-base font-semibold leading-6 break-words whitespace-normal">
                               {profile.title}
                             </span>
                             <span className="block text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)]">

@@ -443,28 +443,26 @@ export default function BusinessRequests() {
                 className="rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-5 py-4 shadow-[var(--elevation-1)] transition hover:shadow-[var(--elevation-2)]"
               >
                 <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between md:gap-8 md:flex-nowrap">
-                  <div className="flex items-center gap-4 md:gap-6">
+                  <div className="flex w-full min-w-0 flex-1 items-center gap-4 md:w-auto md:gap-6">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[color:var(--md-sys-color-outline)] bg-white text-lg font-bold text-[color:var(--md-sys-color-primary)]">
                       {request.initials}
                     </div>
-                    <div className="flex flex-col gap-2 text-right">
-                      <div className="flex flex-wrap md:flex-nowrap items-center gap-7 md:gap-20 text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                        <p className="text-base font-bold text-[#0f8bff]">
-                          {request.name}
-                        </p>
-                        <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">
-                          نوع کسب‌وکار:{" "}
-                          <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
-                        </span>
-                        <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">
-                          تاریخ ایجاد حساب:{" "}
-                          <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.createdAt}</span>
-                        </span>
-                      </div>
+                    <div className="grid w-full min-w-0 grid-cols-1 items-center gap-2 text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)] md:grid-cols-[minmax(180px,2fr)_minmax(160px,1fr)_minmax(200px,1fr)] md:gap-6">
+                      <p className="min-w-0 break-words text-base font-bold text-[#0f8bff]">
+                        {request.name}
+                      </p>
+                      <span className="min-w-0 break-words text-[#0f8bff] font-semibold">
+                        نوع کسب‌وکار:{" "}
+                        <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
+                      </span>
+                      <span className="min-w-0 break-words text-[#0f8bff] font-semibold">
+                        تاریخ ایجاد حساب:{" "}
+                        <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.createdAt}</span>
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:gap-4 md:justify-end">
+                  <div className="flex w-full flex-col items-start gap-3 md:w-auto md:flex-row md:items-center md:gap-4 md:justify-end md:shrink-0">
                     <div
                       className={clsx(
                         "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold bg-transparent justify-start w-[150px]",

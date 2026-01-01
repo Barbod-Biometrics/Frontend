@@ -10,6 +10,7 @@ import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles
 import { Header } from "../app/test-admin-panel/header";
 import BusinessRequests from "./admin-panel/manage-requests/businessRequests";
 import ContactSalesRequests from "./admin-panel/manage-requests/contactSalesRequests";
+import SupportRequests from "./admin-panel/manage-requests/supportRequests";
 import { usePathname } from "next/navigation";
 import { ContactInfo } from "../app/user-contact/components/ContactInfo";
 import { Typography } from "./ui/Typography";
@@ -36,9 +37,9 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(
     () => persistedAdminSidebarMobileOpen,
   );
-  const [activeItem, setActiveItem] = useState<"manageBusinessRequests" | "manageContactUsRequests">(
-    "manageBusinessRequests",
-  );
+  const [activeItem, setActiveItem] = useState<
+    "manageBusinessRequests" | "manageContactUsRequests" | "manageSupportRequests"
+  >("manageBusinessRequests");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
   const normalizedPath = (pathname ?? "").replace(/\/$/, "");
@@ -151,6 +152,7 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
                 <>
                   {activeItem === "manageBusinessRequests" && <BusinessRequests />}
                   {activeItem === "manageContactUsRequests" && <ContactSalesRequests />}
+                  {activeItem === "manageSupportRequests" && <SupportRequests />}
                 </>
               ) : (
                 children

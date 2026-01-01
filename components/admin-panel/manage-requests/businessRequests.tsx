@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Mail, Phone, Search, ChevronDown, Filter } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Search,
+  ChevronDown,
+  Filter,
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+} from "lucide-react";
 import { Button } from "../../ui/Button";
 import clsx from "clsx";
 import type { BusinessProfile } from "../../../types/businessProfile";
@@ -161,7 +169,7 @@ const SelectPill = ({
 }) => (
   <label
     className={clsx(
-      "relative flex w-full flex-1 items-center gap-2 rounded-xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:border-[color:var(--md-sys-color-primary)] transition",
+      "relative flex w-full flex-1 min-w-0 max-w-full items-center gap-2 rounded-xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-2 text-sm font-semibold text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-1)] hover:border-[color:var(--md-sys-color-primary)] transition",
       minWidth,
     )}
   >
@@ -169,8 +177,8 @@ const SelectPill = ({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full appearance-none bg-[color:var(--md-sys-color-surface)] pr-6 text-right text-[color:var(--md-sys-color-on-surface)] outline-none"
-      style={{ colorScheme: "light" }}
+      className="w-full min-w-0 max-w-full appearance-none bg-[color:var(--md-sys-color-surface)] pr-6 text-right text-[color:var(--md-sys-color-on-surface)] outline-none"
+      style={{ colorScheme: "light", width: "100%" }}
     >
       <option
         value=""
@@ -188,7 +196,7 @@ const SelectPill = ({
           style={{
             backgroundColor: "var(--md-sys-color-surface)",
             color: "var(--md-sys-color-on-surface)",
-            minWidth: "100%",
+            maxWidth: "100%",
             paddingInline: "12px",
           }}
         >
@@ -204,7 +212,7 @@ export default function BusinessRequests() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<BusinessStatus | "">("");
   const [sortBy, setSortBy] = useState<SortBy>("");
-  const [sortDir, setSortDir] = useState<SortOrder>("");
+  const [sortDir, setSortDir] = useState<SortOrder>("desc");
   const [pageSizeInput, setPageSizeInput] = useState("1");
   const [requests, setRequests] = useState<BusinessRequest[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -213,6 +221,21 @@ export default function BusinessRequests() {
   const [rejectToast, setRejectToast] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<BusinessProfile | null>(null);
+  const isSortAsc = sortDir === "asc";
+  const toggleSortDir = () => {
+    setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
+  const currentPage = useMemo(() => {
+    const parsed = Number(pageSizeInput);
+    if (!Number.isFinite(parsed) || parsed <= 0) return 1;
+    return Math.floor(parsed);
+  }, [pageSizeInput]);
+  const canGoPrev = currentPage > 1;
+  const canGoNext = currentPage < totalPages;
+  const handlePageChange = (next: number) => {
+    if (!Number.isFinite(next) || next <= 0) return;
+    setPageSizeInput(String(next));
+  };
   const closeDialog = () => {
     setDialogOpen(false);
     setSelectedProfile(null);
@@ -282,9 +305,9 @@ export default function BusinessRequests() {
     let cancelled = false;
 
     const fetchData = async () => {
-      const pageNumber = pageSizeInput.trim() ? Number(pageSizeInput) : 1;
+      const pageNumber = currentPage;
 
-      if (!Number.isFinite(pageNumber) || pageNumber <= 0) {
+      if (!Number.isFinite(Number(pageSizeInput)) || pageNumber <= 0) {
         setToast("صفحه مورد نظر وجود ندارد");
         setRequests([]);
         return;
@@ -325,7 +348,7 @@ export default function BusinessRequests() {
     return () => {
       cancelled = true;
     };
-  }, [searchTerm, statusFilter, sortBy, sortDir, pageSizeInput]);
+  }, [searchTerm, statusFilter, sortBy, sortDir, pageSizeInput, currentPage]);
 
   const filteredRequests = useMemo(() => requests, [requests]);
 
@@ -391,16 +414,23 @@ export default function BusinessRequests() {
               ]}
               minWidth="min-w-[152px]"
             />
-            <SelectPill
-              placeholder="نحوه مرتب سازی"
-              value={sortDir}
-              onChange={(val) => setSortDir(val as SortOrder)}
-              options={[
-                { label: "صعودی", value: "asc" },
-                { label: "نزولی", value: "desc" },
-              ]}
-              minWidth="min-w-[134px]"
-            />
+            <button
+              type="button"
+              onClick={toggleSortDir}
+              className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] text-[#0f8bff] shadow-[var(--elevation-1)] transition hover:border-[color:var(--md-sys-color-primary)] hover:bg-[color:var(--md-sys-color-primary)]/10"
+              aria-label={
+                isSortAsc
+                  ? "\u0645\u0631\u062a\u0628 \u0633\u0627\u0632\u06cc \u0635\u0639\u0648\u062f\u06cc"
+                  : "\u0645\u0631\u062a\u0628 \u0633\u0627\u0632\u06cc \u0646\u0632\u0648\u0644\u06cc"
+              }
+              title={isSortAsc ? "\u0635\u0639\u0648\u062f\u06cc" : "\u0646\u0632\u0648\u0644\u06cc"}
+            >
+              {isSortAsc ? (
+                <ArrowUpNarrowWide className="h-5 w-5" aria-hidden />
+              ) : (
+                <ArrowDownWideNarrow className="h-5 w-5" aria-hidden />
+              )}
+            </button>
           </div>
         </div>
 
@@ -413,28 +443,26 @@ export default function BusinessRequests() {
                 className="rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-5 py-4 shadow-[var(--elevation-1)] transition hover:shadow-[var(--elevation-2)]"
               >
                 <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between md:gap-8 md:flex-nowrap">
-                  <div className="flex items-center gap-4 md:gap-6">
+                  <div className="flex w-full min-w-0 flex-1 items-center gap-4 md:w-auto md:gap-6">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[color:var(--md-sys-color-outline)] bg-white text-lg font-bold text-[color:var(--md-sys-color-primary)]">
                       {request.initials}
                     </div>
-                    <div className="flex flex-col gap-2 text-right">
-                      <div className="flex flex-wrap md:flex-nowrap items-center gap-7 md:gap-20 text-sm text-[color:var(--md-sys-color-on-surface-variant)]">
-                        <p className="text-base font-bold text-[#0f8bff]">
-                          {request.name}
-                        </p>
-                        <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">
-                          نوع کسب‌وکار:{" "}
-                          <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
-                        </span>
-                        <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">
-                          تاریخ ایجاد حساب:{" "}
-                          <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.createdAt}</span>
-                        </span>
-                      </div>
+                    <div className="grid w-full min-w-0 grid-cols-1 items-center gap-2 text-right text-sm text-[color:var(--md-sys-color-on-surface-variant)] md:grid-cols-[minmax(180px,2fr)_minmax(160px,1fr)_minmax(200px,1fr)] md:gap-6">
+                      <p className="min-w-0 break-words text-base font-bold text-[#0f8bff]">
+                        {request.name}
+                      </p>
+                      <span className="min-w-0 break-words text-[#0f8bff] font-semibold">
+                        نوع کسب‌وکار:{" "}
+                        <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
+                      </span>
+                      <span className="min-w-0 break-words text-[#0f8bff] font-semibold">
+                        تاریخ ایجاد حساب:{" "}
+                        <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.createdAt}</span>
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:gap-4 md:justify-end">
+                  <div className="flex w-full flex-col items-start gap-3 md:w-auto md:flex-row md:items-center md:gap-4 md:justify-end md:shrink-0">
                     <div
                       className={clsx(
                         "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold bg-transparent justify-start w-[150px]",
@@ -468,6 +496,30 @@ export default function BusinessRequests() {
             );
           })}
         </div>
+        <div className="flex justify-center">
+        <div className="flex flex-wrap items-center gap-3 rounded-full border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-2 shadow-[var(--elevation-1)]">
+          <Button
+            variant="ghost"
+            disabled={!canGoPrev}
+            onClick={() => handlePageChange(currentPage - 1)}
+            className="min-w-[86px] text-[#0f8bff]"
+          >
+            {"\u0642\u0628\u0644\u06cc"}
+          </Button>
+          <span className="text-sm font-semibold text-[#0f8bff]">
+            {"\u0635\u0641\u062d\u0647"} {currentPage} {"\u0627\u0632"} {totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            disabled={!canGoNext}
+            onClick={() => handlePageChange(currentPage + 1)}
+            className="min-w-[86px] text-[#0f8bff]"
+          >
+            {"\u0628\u0639\u062f\u06cc"}
+          </Button>
+        </div>
+        </div>
+
       </div>
 
       {toast && (

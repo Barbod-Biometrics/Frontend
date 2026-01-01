@@ -11,7 +11,7 @@ import { clearClientStorage } from "../../lib/auth-storage";
 import { clearAuthState } from "../../store/loginSlice";
 
 type AdminNavItem = {
-  id: "manageBusinessRequests" | "manageContactUsRequests";
+  id: "manageBusinessRequests" | "manageContactUsRequests" | "manageSupportRequests";
   label: string;
   icon: ReactElement;
 };
@@ -32,6 +32,11 @@ const navItems: AdminNavItem[] = [
     id: "manageContactUsRequests",
     label: "تماس با تیم فروش",
     icon: <PhoneCall className="h-5 w-5" strokeWidth={1.8} />,
+  },
+  {
+    id: "manageSupportRequests",
+    label: "تماس با پشتیبانی",
+    icon: <SupportIcon className="h-6 w-6" />,
   },
 ];
 
@@ -67,6 +72,22 @@ const AdminShieldIcon = ({ className }: { className?: string }) => (
     />
   </svg>
 );
+
+function SupportIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={clsx("h-5 w-5", className)}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
+      <path d="M7.5 10C7.5 6.96243 9.96243 4.5 13 4.5C16.0376 4.5 18.5 6.96243 18.5 10V13.5C18.5 15.9853 16.4853 18 14 18H11.5L9 19.5V15.5" />
+      <circle cx="8" cy="12" r="2.25" />
+      <path d="M15.5 9.75H11.75" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 export function AdminSidebar({ collapsed = false, activeItemId, onSelectItemAction }: AdminSidebarProps) {
   const [internalActive, setInternalActive] = useState<AdminNavItem["id"]>("manageBusinessRequests");

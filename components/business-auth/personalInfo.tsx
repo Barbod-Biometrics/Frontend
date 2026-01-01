@@ -20,6 +20,65 @@ interface PersonalInfoProps {
 
 const BIRTHDATE_FORMAT = "YYYY-MM-DD";
 const LATIN_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const MINIMUM_AGE = 18;
+const UNDERAGE_ERROR = "سن باید حداقل 18 سال باشد";
+const BIRTHDATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const BIRTHDATE_FORMAT_ERROR = "فرمت تاریخ تولد باید 1385-02-05 باشد";
+const NATIONAL_ID_LENGTH = 10;
+const NATIONAL_ID_ERROR = "کد ملی 10 رقمی است";
+const PHONE_LENGTH = 11;
+const PHONE_LENGTH_ERROR = "شماره موبایل 11 رقمی است";
+
+const isAtLeastAge = (birthDate: string, minAge: number) => {
+  try {
+    const parsed = new DateObject({
+      date: birthDate,
+      calendar: persian,
+      locale: persian_fa,
+      format: BIRTHDATE_FORMAT,
+    }).setDigits(LATIN_DIGITS);
+    if (!parsed.isValid) return false;
+    const birthDateValue = parsed.toDate();
+    const today = new Date();
+    const cutoff = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+    return birthDateValue <= cutoff;
+  } catch {
+    return false;
+  }
+};
+
+const normalizeDigits = (value: string) =>
+  value
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[^0-9]/g, "");
+
+const formatBirthDateInput = (value: string) => {
+  const digits = normalizeDigits(value).slice(0, 8);
+  const year = digits.slice(0, 4);
+  const month = digits.slice(4, 6);
+  const day = digits.slice(6, 8);
+  if (digits.length <= 4) return year;
+  if (digits.length <= 6) return `${year}-${month}`;
+  return `${year}-${month}-${day}`;
+};
+
+const stripDigits = (value: string) => value.replace(/[0-9۰-۹٠-٩]/g, "");
+
+const isValidBirthDateInput = (value: string) => {
+  if (!BIRTHDATE_FORMAT_REGEX.test(value)) return false;
+  try {
+    const parsed = new DateObject({
+      date: value,
+      calendar: persian,
+      locale: persian_fa,
+      format: BIRTHDATE_FORMAT,
+    }).setDigits(LATIN_DIGITS);
+    return parsed.isValid;
+  } catch {
+    return false;
+  }
+};
 
 type PersonalInfoForm = PersonalInfoPayload;
 const REQUIRED_FIELD_ERROR = "پر کردن این فیلد الزامی است";
@@ -92,9 +151,9 @@ export function PersonalInfo({
     const trimmed: PersonalInfoForm = {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
-      nationalId: form.nationalId.trim(),
+      nationalId: normalizeDigits(form.nationalId),
       birthDate: form.birthDate.trim(),
-      phone: form.phone.trim(),
+      phone: normalizeDigits(form.phone),
     };
 
     const nextErrors: Partial<Record<keyof PersonalInfoForm, string>> = {};
@@ -103,6 +162,38 @@ export function PersonalInfo({
         nextErrors[key] = REQUIRED_FIELD_ERROR;
       }
     });
+
+    if (
+      !nextErrors.nationalId &&
+      trimmed.nationalId &&
+      !new RegExp(`^\\d{${NATIONAL_ID_LENGTH}}$`).test(trimmed.nationalId)
+    ) {
+      nextErrors.nationalId = NATIONAL_ID_ERROR;
+    }
+
+    if (
+      !nextErrors.phone &&
+      trimmed.phone &&
+      !new RegExp(`^\\d{${PHONE_LENGTH}}$`).test(trimmed.phone)
+    ) {
+      nextErrors.phone = PHONE_LENGTH_ERROR;
+    }
+
+    if (
+      !nextErrors.birthDate &&
+      trimmed.birthDate &&
+      !isValidBirthDateInput(trimmed.birthDate)
+    ) {
+      nextErrors.birthDate = BIRTHDATE_FORMAT_ERROR;
+    }
+
+    if (
+      !nextErrors.birthDate &&
+      trimmed.birthDate &&
+      !isAtLeastAge(trimmed.birthDate, MINIMUM_AGE)
+    ) {
+      nextErrors.birthDate = UNDERAGE_ERROR;
+    }
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -140,7 +231,7 @@ export function PersonalInfo({
               dir="rtl"
               type="text"
               value={form.firstName}
-              onChange={(e) => handleChange("firstName", e.target.value)}
+              onChange={(e) => handleChange("firstName", stripDigits(e.target.value))}
               placeholder="امین"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -158,7 +249,7 @@ export function PersonalInfo({
             <input
               type="text"
               value={form.lastName}
-              onChange={(e) => handleChange("lastName", e.target.value)}
+              onChange={(e) => handleChange("lastName", stripDigits(e.target.value))}
               placeholder="خلج"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -177,8 +268,10 @@ export function PersonalInfo({
           <input
             dir="ltr"
             type="text"
+            inputMode="numeric"
+            maxLength={NATIONAL_ID_LENGTH}
             value={form.nationalId}
-            onChange={(e) => handleChange("nationalId", e.target.value)}
+            onChange={(e) => handleChange("nationalId", normalizeDigits(e.target.value))}
             placeholder="0982342316"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
           />
@@ -198,8 +291,9 @@ export function PersonalInfo({
               type="text"
               dir="ltr"
               value={form.birthDate}
-              onChange={(e) => handleChange("birthDate", e.target.value)}
+              onChange={(e) => handleChange("birthDate", formatBirthDateInput(e.target.value))}
               inputMode="numeric"
+              maxLength={10}
               placeholder={BIRTHDATE_FORMAT}
               className="pl-14 pt-4 w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-4 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -225,8 +319,10 @@ export function PersonalInfo({
           </label>
           <input
             type="tel"
+            inputMode="numeric"
+            maxLength={PHONE_LENGTH}
             value={form.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
+            onChange={(e) => handleChange("phone", normalizeDigits(e.target.value))}
             placeholder="09904644661"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -277,7 +373,7 @@ export function PersonalInfo({
 
             <div className="flex justify-center">
               <DatePickerCalendar
-                className="font-vazirmatn"
+                className="business-auth-date-picker font-vazirmatn"
                 value={parsedBirthDate || undefined}
                 onChange={handleBirthDateSelect}
                 calendar={persian}

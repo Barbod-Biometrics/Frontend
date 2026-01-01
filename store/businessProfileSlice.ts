@@ -159,6 +159,12 @@ const businessProfileSlice = createSlice({
   name: "businessProfile",
   initialState,
   reducers: {
+    resetBusinessProfile(state) {
+      state.profile = undefined;
+      state.statuses = { ...initialStatuses };
+      state.error = null;
+      state.currentStep = DEFAULT_STEP;
+    },
     resetStatuses(state) {
       state.statuses = { ...initialStatuses };
       state.error = null;
@@ -280,5 +286,6 @@ export const selectCompletedSections = (state: { businessProfile: BusinessProfil
 };
 export const selectServicesRequestedCount = () => 0;
 
-export const { resetStatuses, setProfileId, setCurrentStep } = businessProfileSlice.actions;
+export const { resetBusinessProfile, resetStatuses, setProfileId, setCurrentStep } =
+  businessProfileSlice.actions;
 export default businessProfileSlice.reducer;

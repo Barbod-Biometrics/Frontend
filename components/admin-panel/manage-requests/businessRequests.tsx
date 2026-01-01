@@ -346,7 +346,7 @@ export default function BusinessRequests() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <div className="flex flex-col gap-3 rounded-2xl border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface)] px-4 py-4 shadow-[var(--elevation-2)] md:flex-row md:items-center md:justify-start md:gap-2 md:flex-nowrap">
           <div className="flex w-full flex-1 items-center gap-2 md:gap-2 min-w-[260px] md:min-w-[280px]">
-            <h2 className="text-lg font-bold text-[#0f8bff] whitespace-nowrap">لیست کسب و کارها</h2>
+            <h2 className="text-lg font-bold text-[#0f8bff] whitespace-nowrap">لیست کسب‌وکارها</h2>
             <div className="flex w-full flex-1 items-center gap-2 rounded-full border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] px-3 py-1.5 text-sm text-[color:var(--md-sys-color-on-surface-variant)] shadow-[var(--elevation-1)] min-w-[150px] md:min-w-[170px]">
               <Search className="h-4 w-4 text-[color:var(--md-sys-color-primary)]" />
               <input
@@ -361,7 +361,7 @@ export default function BusinessRequests() {
 
           <div className="flex w-full flex-wrap items-center gap-2 md:flex-nowrap md:justify-start md:gap-2 md:flex-1">
             <SelectPill
-              placeholder="وضعیت کسب و کار"
+              placeholder="وضعیت کسب‌وکار"
               value={statusFilter}
               onChange={(val) => setStatusFilter(val as BusinessStatus | "")}
               options={[
@@ -423,7 +423,7 @@ export default function BusinessRequests() {
                           {request.name}
                         </p>
                         <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">
-                          نوع کسب و کار:{" "}
+                          نوع کسب‌وکار:{" "}
                           <span className="font-semibold text-[color:var(--md-sys-color-on-surface)]">{request.type}</span>
                         </span>
                         <span className="flex items-center gap-1 whitespace-nowrap text-[#0f8bff] font-semibold">

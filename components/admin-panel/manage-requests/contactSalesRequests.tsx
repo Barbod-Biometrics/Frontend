@@ -208,7 +208,7 @@ const ContactDetailsDialog = ({
           <FieldRow icon={<Calendar className="h-4 w-4" />} label="تاریخ تماس" value={formatContactDate(item.createdAt)} />
           <FieldRow icon={<Phone className="h-4 w-4" />} label="تلفن تماس" value={item.phone} />
           <FieldRow icon={<Mail className="h-4 w-4" />} label="پست الکترونیک" value={item.email} />
-          <FieldRow icon={<Building2 className="h-4 w-4" />} label="نام کسب و کار" value={item.businessName} />
+          <FieldRow icon={<Building2 className="h-4 w-4" />} label="نام کسب‌وکار" value={item.businessName} />
           <FieldRow
             icon={<MessageSquare className="h-4 w-4" />}
             label="توضیحات بیشتر (اختیاری)"
@@ -302,7 +302,7 @@ export default function ContactSalesRequests() {
               <Search className="h-4 w-4 text-[color:var(--md-sys-color-primary)]" />
               <input
                 type="text"
-                placeholder="جستجو در نام، تلفن، پست الکترونیک و نام کسب و کار"
+                placeholder="جستجو در نام، تلفن، پست الکترونیک و نام کسب‌وکار"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-transparent text-right outline-none placeholder:text-[color:var(--md-sys-color-on-surface-variant)] text-[color:var(--md-sys-color-on-surface)]"

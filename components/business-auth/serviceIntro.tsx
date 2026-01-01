@@ -55,9 +55,16 @@ interface ServiceIntroProps {
   isLoading?: boolean;
 }
 
-export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }: ServiceIntroProps) {
+export function ServiceIntro({
+  onBack,
+  onContinue,
+  initialServiceId,
+  isLoading,
+}: ServiceIntroProps) {
   const router = useRouter();
-  const [activeId, setActiveId] = useState<string>(initialServiceId ?? services[0]?.id ?? "");
+  const [activeId, setActiveId] = useState<string>(
+    initialServiceId ?? services[0]?.id ?? ""
+  );
 
   useEffect(() => {
     if (initialServiceId) {
@@ -84,14 +91,18 @@ export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }
       <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_15%_15%,rgba(37,99,235,0.08),transparent_32%),radial-gradient(circle_at_85%_20%,rgba(37,99,235,0.08),transparent_30%)]" />
 
       <div className="relative space-y-3 text-right">
-        <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
+        <Typography
+          variant="h5"
+          className="text-[color:var(--md-sys-color-on-surface)]"
+        >
           معرفی سرویس ها
         </Typography>
         <Typography
           variant="body-sm"
           className="text-[color:var(--md-sys-color-on-surface-variant)] leading-7"
         >
-          سرویس‌های امنیتی و هوشمند ما برای احراز هویت سریع، دقیق و مشتری‌پسند طراحی شده‌اند.
+          سرویس‌های امنیتی و هوشمند ما برای احراز هویت سریع، دقیق و مشتری‌پسند
+          طراحی شده‌اند.
         </Typography>
       </div>
 
@@ -108,7 +119,7 @@ export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }
                 "cursor-pointer",
                 isActive
                   ? "border-[color:var(--md-sys-color-primary)] shadow-[0_14px_32px_rgba(37,99,235,0.18)] ring-2 ring-[color:var(--md-sys-color-primary)]/10"
-                  : "border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-1)] hover:-translate-y-0.5 hover:border-[color:var(--md-sys-color-primary)]/60 hover:shadow-[0_12px_26px_rgba(37,99,235,0.12)]",
+                  : "border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--elevation-1)] hover:-translate-y-0.5 hover:border-[color:var(--md-sys-color-primary)]/60 hover:shadow-[0_12px_26px_rgba(37,99,235,0.12)]"
               )}
               aria-pressed={isActive}
             >
@@ -130,7 +141,7 @@ export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }
                         variant="body-lg"
                         className={clsx(
                           "text-[color:var(--md-sys-color-on-surface)] font-semibold",
-                          isActive && "text-[color:var(--md-sys-color-primary)]",
+                          isActive && "text-[color:var(--md-sys-color-primary)]"
                         )}
                       >
                         {service.title}
@@ -186,23 +197,44 @@ export function ServiceIntro({ onBack, onContinue, initialServiceId, isLoading }
 
 function FaceScanIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <rect x="3" y="3" width="5" height="5" rx="1.5" />
       <rect x="3" y="16" width="5" height="5" rx="1.5" />
       <rect x="16" y="3" width="5" height="5" rx="1.5" />
       <rect x="16" y="16" width="5" height="5" rx="1.5" />
       <circle cx="12" cy="11" r="3.2" />
-      <path d="M8.5 17.5c1.2-1 2.4-1.5 3.5-1.5s2.3.5 3.5 1.5" strokeLinecap="round" />
+      <path
+        d="M8.5 17.5c1.2-1 2.4-1.5 3.5-1.5s2.3.5 3.5 1.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 function LivenessIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <circle cx="12" cy="10" r="3" />
-      <path d="M7.5 19c1.5-1.8 3-2.7 4.5-2.7S15.9 17.2 17 19" strokeLinecap="round" />
-      <path d="M4 7.5c1.4-2.2 3.9-3.5 8-3.5s6.6 1.3 8 3.5" strokeLinecap="round" />
+      <path
+        d="M7.5 19c1.5-1.8 3-2.7 4.5-2.7S15.9 17.2 17 19"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4 7.5c1.4-2.2 3.9-3.5 8-3.5s6.6 1.3 8 3.5"
+        strokeLinecap="round"
+      />
       <path d="M4 12.5c.5 1 1.3 1.8 2.3 2.4" strokeLinecap="round" />
       <path d="M20 12.5c-.5 1-1.3 1.8-2.3 2.4" strokeLinecap="round" />
     </svg>
@@ -211,10 +243,19 @@ function LivenessIcon() {
 
 function OcrIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <rect x="4" y="4" width="16" height="16" rx="2" />
       <path d="M8 9.5h3.5m-3.5 3h3.5" strokeLinecap="round" />
-      <path d="M13.5 9.5H16c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5h-1" strokeLinecap="round" />
+      <path
+        d="M13.5 9.5H16c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5h-1"
+        strokeLinecap="round"
+      />
       <path d="M9 17h6" strokeLinecap="round" />
     </svg>
   );
@@ -227,7 +268,13 @@ function OcrBadge() {
       aria-label="OCR badge"
       className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[color:var(--md-sys-color-primary)]/12 text-[color:var(--md-sys-color-primary)] shadow-[0_8px_20px_rgba(37,99,235,0.16)]"
     >
-      <svg viewBox="0 0 24 32" className="h-8 w-7" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg
+        viewBox="0 0 24 32"
+        className="h-8 w-7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
         <rect x="2.5" y="2.5" width="19" height="27" rx="3" />
         <path d="M7 9.5h10M7 13h10M7" strokeLinecap="round" />
         <text

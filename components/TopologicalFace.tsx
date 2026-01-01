@@ -7,16 +7,35 @@ interface TopologicalFaceProps {
   theme?: Theme;
 }
 
+interface Point3D {
+  x: number;
+  y: number;
+  z: number;
+  baseX: number;
+  baseY: number;
+  baseZ: number;
+  pulse: number;
+}
+
 const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>(0);
+  const sizeRef = useRef({ width: 0, height: 0 });
 
   // Refs for animation state
   const rotationRef = useRef({ x: 0, y: 0 });
   const targetRotationRef = useRef({ x: 0, y: 0 });
-  const mouseRef = useRef({ x: 0, y: 0 });
   const scanYRef = useRef(-150);
+  const pointsRef = useRef<Point3D[]>([]);
+  const geometryRef = useRef({
+    radius: 280,
+    connectionDist: 45,
+    perspective: 800,
+    scanThreshold: 40,
+    scanResetOffset: 100,
+    scanSpeed: 1.5,
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,9 +46,11 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
     if (!ctx) return;
 
     // --- Configuration ---
-    const PARTICLE_COUNT = 800;
-    const RADIUS = 280;
-    const CONNECTION_DIST = 45;
+    const resolveParticleCount = (base: number) => {
+      if (base < 420) return 360;
+      if (base < 640) return 520;
+      return 700;
+    };
 
     const PALETTE = {
       [Theme.DARK]: {
@@ -46,55 +67,80 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
       }
     };
 
-    // --- Geometry: Fibonacci Sphere ---
-    interface Point3D {
-      x: number;
-      y: number;
-      z: number;
-      baseX: number;
-      baseY: number;
-      baseZ: number;
-      pulse: number;
-    }
+    const createPoints = (radius: number, count: number) => {
+      const total = Math.max(2, count);
+      const points: Point3D[] = [];
+      const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
 
-    const points: Point3D[] = [];
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+      for (let i = 0; i < total; i++) {
+        const y = 1 - (i / (total - 1)) * 2; // y goes from 1 to -1
+        const radiusAtY = Math.sqrt(1 - y * y); // radius at y
+        const theta = phi * i; // golden angle increment
 
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const y = 1 - (i / (PARTICLE_COUNT - 1)) * 2; // y goes from 1 to -1
-      const radiusAtY = Math.sqrt(1 - y * y); // radius at y
-      const theta = phi * i; // golden angle increment
+        const x = Math.cos(theta) * radiusAtY;
+        const z = Math.sin(theta) * radiusAtY;
 
-      const x = Math.cos(theta) * radiusAtY;
-      const z = Math.sin(theta) * radiusAtY;
+        points.push({
+          x: x * radius,
+          y: y * radius,
+          z: z * radius,
+          baseX: x * radius,
+          baseY: y * radius,
+          baseZ: z * radius,
+          pulse: Math.random() * Math.PI,
+        });
+      }
 
-      points.push({
-        x: x * RADIUS,
-        y: y * RADIUS,
-        z: z * RADIUS,
-        baseX: x * RADIUS,
-        baseY: y * RADIUS,
-        baseZ: z * RADIUS,
-        pulse: Math.random() * Math.PI
-      });
-    }
+      return points;
+    };
+
+    const updateGeometry = () => {
+      const base = Math.min(container.clientWidth, container.clientHeight);
+      const particleCount = resolveParticleCount(base);
+      const radius = Math.max(180, Math.min(360, base * 0.38));
+
+      geometryRef.current = {
+        radius,
+        connectionDist: radius * 0.16,
+        perspective: radius * 2.9,
+        scanThreshold: radius * 0.14,
+        scanResetOffset: radius * 0.45,
+        scanSpeed: Math.max(1.1, radius * 0.005),
+      };
+
+      pointsRef.current = createPoints(radius, particleCount);
+      scanYRef.current = -radius * 0.7;
+    };
 
     // --- Sizing ---
     const updateDimensions = () => {
       if (!container) return;
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = container.clientWidth * dpr;
-      canvas.height = container.clientHeight * dpr;
-      ctx.scale(dpr, dpr);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      sizeRef.current = { width, height };
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      updateGeometry();
     };
     updateDimensions();
 
     // --- Render Loop ---
     const render = (time: number) => {
       if (!container) return;
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      const { width, height } = sizeRef.current;
+      if (!width || !height) return;
       const colors = PALETTE[theme];
+      const {
+        radius,
+        connectionDist,
+        perspective,
+        scanThreshold,
+        scanResetOffset,
+        scanSpeed,
+      } = geometryRef.current;
+      const points = pointsRef.current;
 
       ctx.clearRect(0, 0, width, height);
       ctx.save();
@@ -112,8 +158,10 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
       const finalRotY = rotationRef.current.y + autoRotY;
 
       // Scan line animation
-      scanYRef.current += 1.5;
-      if (scanYRef.current > RADIUS + 100) scanYRef.current = -RADIUS - 100;
+      scanYRef.current += scanSpeed;
+      if (scanYRef.current > radius + scanResetOffset) {
+        scanYRef.current = -radius - scanResetOffset;
+      }
 
       // Project and draw
       const projectedPoints: { x: number; y: number; z: number; scale: number; alpha: number; scanned: boolean }[] = [];
@@ -128,21 +176,28 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
         z = p.baseY * Math.sin(finalRotX) + z * Math.cos(finalRotX);
 
         // Perspective
-        const scale = 800 / (800 - z);
+        const scale = perspective / (perspective - z);
         const px = x * scale;
         const py = y * scale;
 
         // Scan effect
         const distToScan = Math.abs(y - scanYRef.current);
-        const scanned = distToScan < 40;
+        const scanned = distToScan < scanThreshold;
 
-        projectedPoints.push({ x: px, y: py, z, scale, alpha: (z + RADIUS) / (2 * RADIUS), scanned });
+        projectedPoints.push({
+          x: px,
+          y: py,
+          z,
+          scale,
+          alpha: (z + radius) / (2 * radius),
+          scanned,
+        });
       });
 
       // Draw connections
       ctx.lineWidth = 1;
       projectedPoints.forEach((p1, i) => {
-        if (p1.z < -100) return; // Cull back faces slightly
+        if (p1.z < -radius * 0.35) return; // Cull back faces slightly
 
         for (let j = i + 1; j < projectedPoints.length; j++) {
           const p2 = projectedPoints[j];
@@ -150,12 +205,12 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
           const dy = p1.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < CONNECTION_DIST * p1.scale) {
+          if (dist < connectionDist * p1.scale) {
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
 
-            let alpha = (1 - dist / (CONNECTION_DIST * p1.scale)) * 0.3;
+            let alpha = (1 - dist / (connectionDist * p1.scale)) * 0.3;
             if (p1.scanned || p2.scanned) {
               ctx.strokeStyle = colors.SCAN;
               alpha = 0.6;
@@ -189,10 +244,10 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
       });
 
       ctx.restore();
-      animationRef.current = requestAnimationFrame(() => render(performance.now()));
+      animationRef.current = requestAnimationFrame(render);
     };
 
-    animationRef.current = requestAnimationFrame(() => render(performance.now()));
+    animationRef.current = requestAnimationFrame(render);
 
     // --- Interaction ---
     const handleMouseMove = (e: MouseEvent) => {
@@ -220,7 +275,7 @@ const TopologicalFace: React.FC<TopologicalFaceProps> = ({ theme = Theme.DARK })
   }, [theme]);
 
   return (
-    <div ref={containerRef} className="w-full h-full min-h-[600px] bg-transparent cursor-move overflow-visible">
+    <div ref={containerRef} className="w-full h-full min-h-[420px] sm:min-h-[520px] lg:min-h-[600px] bg-transparent cursor-move overflow-visible">
       <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );

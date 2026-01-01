@@ -201,8 +201,13 @@ export default function WalletPage() {
         if (profilesLoading) {
           return (
             <Container size="xl">
-              <Section spacing="md">
-                <div className="flex justify-center items-center h-64">
+              <Section spacing="none" className="py-4 sm:py-6">
+                <div className="flex flex-col items-center justify-center h-48 gap-4">
+                  <div
+                    className="h-10 w-10 rounded-full border-4 border-[color:var(--md-sys-color-primary)] border-t-transparent animate-spin"
+                    role="status"
+                    aria-label="Loading"
+                  />
                   <Typography variant="body-lg">
                     {translations.loadingProfiles[language]}
                   </Typography>
@@ -215,17 +220,17 @@ export default function WalletPage() {
     if (showNoProfileAlert && allProfiles.length === 0) {
       return (
         <Container size="xl">
-          <Section spacing="md">
-            <div className="mb-8 mt-14">
-              <div className="flex items-center gap-4 mb-5">
+          <Section spacing="none" className="py-4 sm:py-6">
+            <div className="mb-4 mt-4">
+              <div className="flex items-center gap-3 mb-4">
                 <Wallet className="w-8 h-8" />
-                <Typography variant="h2" component="h1" className="font-bold">
+                <Typography variant="h3" component="h1" className="font-bold">
                   {translations.pageTitle[language]}
                 </Typography>
               </div>
             </div>
             
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 mb-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-5 mb-4">
               <div className="flex items-start gap-4">
                 <AlertCircle className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
                 <div>
@@ -254,40 +259,40 @@ export default function WalletPage() {
           />
         )}
       <Container size="xl">
-        <Section spacing="md">
+        <Section spacing="none" className="py-4 sm:py-6 overflow-hidden">
           {/* Page Header */}
-          <div className="mb-8 mt-14">
-            <div className="flex items-center gap-4 mb-5">
+          <div className="mb-5 mt-4">
+            <div className="flex items-center gap-3 mb-4">
               <div className="relative">
-                <div className="absolute inset-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl blur-md opacity-30"></div>
+                <div className="absolute inset-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl blur-md opacity-30"></div>
                 
-                <div className="relative p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
-                  <div className="p-2 bg-white/10 backdrop-blur-sm rounded-lg">
-                    <Wallet className="w-6 h-6 text-white" />
+                <div className="relative p-2 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-lg">
+                  <div className="p-1.5 bg-white/10 backdrop-blur-sm rounded-lg">
+                    <Wallet className="w-5 h-5 text-white" />
                   </div>
                 </div>
               </div>
               
               <div>
-                <Typography variant="h2" component="h1" className="font-bold">
+                <Typography variant="h3" component="h1" className="font-bold">
                   {translations.pageTitle[language]}
                 </Typography>
               </div>
             </div>
-            <Typography variant="body-lg" tone="muted">
+            <Typography variant="body-md" tone="muted">
               {translations.pageDescription[language]}
             </Typography>
           </div>
 
           {profilesError && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-4">
               <Typography variant="body-md" className="text-red-600 dark:text-red-400">
                 {profilesError}
               </Typography>
             </div>
           )}
 
-          <div className="grid gap-6 lg:grid-cols-3 mb-8">
+          <div className="grid gap-4 lg:grid-cols-3 mb-5">
             <div className="lg:col-span-2">
               <BalanceCard 
                 onDepositClick={handleDepositClick} 
@@ -295,7 +300,7 @@ export default function WalletPage() {
               />
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               <StatsCards />
             </div>
           </div>

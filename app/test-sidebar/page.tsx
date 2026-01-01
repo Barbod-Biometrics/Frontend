@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SidebarDashboard } from "../../components/sidebarDashboard";
+import DashboardTerminalBackground from "../../components/DashboardTerminalBackground";
 import { Header } from "./header";
 import { fetchUserProfiles, type ProfileListItem } from "../../lib/api/userProfiles";
 
@@ -41,17 +42,21 @@ function PageContent() {
 
   return (
     <main className="relative min-h-screen w-full bg-[color:var(--bg-base)] text-[color:var(--text-primary)]">
-      <Header
-        collapsed={collapsed}
-        onToggleAction={() => setCollapsed((s) => !s)}
-      />
+      <DashboardTerminalBackground />
 
-      <SidebarDashboard
-        collapsed={collapsed}
-        onToggleAction={(next) => setCollapsed(next)}
-        businessProfiles={profiles}
-        isAdminView={isAdmin}
-      />
+      <div className="relative z-10">
+        <Header
+          collapsed={collapsed}
+          onToggleAction={() => setCollapsed((s) => !s)}
+        />
+
+        <SidebarDashboard
+          collapsed={collapsed}
+          onToggleAction={(next) => setCollapsed(next)}
+          businessProfiles={profiles}
+          isAdminView={isAdmin}
+        />
+      </div>
     </main>
   );
 }

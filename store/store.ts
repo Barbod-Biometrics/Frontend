@@ -8,6 +8,7 @@ import userReducer from './userContactSlice';
 import selectedProfileReducer from './selectedProfileSlice';
 import businessInfoReducer from './businessInfoSlice';
 import ticketsReducer from './ticketsUserSlice';
+import ticketsAdminReducer from './ticketsAdminSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     selectedProfile: selectedProfileReducer,
     businessInfo: businessInfoReducer,
     tickets: ticketsReducer,
+    ticketsAdmin: ticketsAdminReducer,
     
   },
 

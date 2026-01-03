@@ -1,4 +1,65 @@
+"use client";
+import { useState } from "react";
 import { ChartSection } from "../../../components/services-log/chart-section";
+import { ServiceLogsTable } from "../../../components/services-log/log-table-section";
+import type { LogEntry } from "../../../components/services-log/log-table-section";
+
+const sampleLogs: LogEntry[] = [
+  {
+    id: 1,
+    ip: "192.168.1.10",
+    status: "موفق",
+    date: "۱۴۰۳/۲/۵",
+    duration: "0.45",
+    accuracy: 0.92,
+    details: '{"request":"ok"}',
+  },
+  {
+    id: 2,
+    ip: "192.168.1.11",
+    status: "ناموفق",
+    date: "۱۴۰۳/۲/۶",
+    duration: "1.12",
+    accuracy: 0.55,
+    details: '{"error":"face not found"}',
+  },
+  {
+    id: 3,
+    ip: "10.0.0.5",
+    status: "موفق",
+    date: "۱۴۰۳/۲/۱۰",
+    duration: "0.78",
+    accuracy: 0.88,
+    details: '{"request":"ok"}',
+  },
+  {
+    id: 4,
+    ip: "10.0.0.8",
+    status: "موفق",
+    date: "۱۴۰۳/۲/۱۲",
+    duration: "0.33",
+    accuracy: 0.99,
+    details: '{"request":"ok"}',
+  },
+  {
+    id: 5,
+    ip: "172.16.0.1",
+    status: "ناموفق",
+    date: "۱۴۰۳/۲/۱۳",
+    duration: "2.05",
+    accuracy: 0.12,
+    details: '{"error":"timeout"}',
+  },
+  {
+    id: 6,
+    ip: "172.16.0.2",
+    status: "موفق",
+    date: "۱۴۰۳/۲/۱۵",
+    duration: "0.99",
+    accuracy: 0.74,
+    details: '{"request":"ok"}',
+  },
+];
 
 // Daily data
 const dailyData = [
@@ -28,19 +89,29 @@ const yearlyData = [
   { name: "1405", موفق: 52000, ناموفق: 9200 },
 ];
 
-const tableData = [
-  { service: "OCR", quantity: 200, sum: 200000 },
-  { service: "liveness detection", quantity: 50, sum: 25000 },
-  { service: "همه", quantity: 250, sum: 225000 },
-];
-
 export default function DashboardPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
+  const totalPages = Math.ceil(sampleLogs.length / pageSize);
+  const paginated = sampleLogs.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   return (
     <div className="space-y-8  p-6">
       <ChartSection
+        title="نمودار وضعیت کل درخواست های OCR"
         dailyData={dailyData}
         monthlyData={monthlyData}
         yearlyData={yearlyData}
+      />
+
+      <ServiceLogsTable
+        logs={paginated}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
       />
     </div>
   );

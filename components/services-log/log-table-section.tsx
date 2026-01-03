@@ -1,4 +1,3 @@
-// components/log-table-section.tsx
 "use client";
 
 import { useState, type ChangeEvent } from "react";
@@ -35,12 +34,12 @@ import {
 
 export type LogEntry = {
   id: number;
-  duration: string;
-  date: string;
+  duration: string; // e.g., "0.93s"
+  date: string; // e.g., "۱۴۰۳/۲/۲۴" (Persian)
   status: "موفق" | "ناموفق";
   ip: string;
-  accuracy: number;
-  details: string;
+  accuracy: number; // e.g., 0.93
+  details: string; // For modal
 };
 
 type SortConfig = {
@@ -51,8 +50,8 @@ type SortConfig = {
 type FilterConfig = {
   id?: string;
   status?: "موفق" | "ناموفق" | null;
-  dateFromStr?: string;
-  dateToStr?: string;
+  dateFromStr?: string; // e.g., "۱۴۰۳/۲/۵"
+  dateToStr?: string; // e.g., "۱۴۰۳/۲/۱۰"
   durationFrom?: number;
   durationTo?: number;
   accuracyFrom?: number;
@@ -79,6 +78,7 @@ export function ServiceLogsTable({
   const [filterConfig, setFilterConfig] = useState<FilterConfig>({});
   const [openDetailId, setOpenDetailId] = useState<number | null>(null);
 
+  // Toggle sort
   const requestSort = (key: keyof Omit<LogEntry, "details">) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -87,10 +87,14 @@ export function ServiceLogsTable({
     setSortConfig({ key, direction });
   };
 
+  // Apply filters
   const applyFilters = () => {
+    // No parsing needed — we compare Persian date strings directly
     console.log("Applying filters:", filterConfig);
+    // TODO: Call real API with filterConfig.dateFromStr/dateToStr
   };
 
+  // Reset filter
   const resetFilter = (column: string) => {
     setFilterConfig((prev) => {
       const newConfig = { ...prev };
@@ -106,24 +110,27 @@ export function ServiceLogsTable({
 
   const renderSortIcon = (key: keyof Omit<LogEntry, "details">) => {
     if (sortConfig.key !== key)
-      return <ArrowUpIcon className="h-4 w-4 opacity-50" />;
+      return <ArrowUpIcon className="h-5 w-5 opacity-50" />;
     return sortConfig.direction === "asc" ? (
-      <ArrowUpIcon className="h-4 w-4" />
+      <ArrowUpIcon className="h-5 w-5" />
     ) : (
-      <ArrowDownIcon className="h-4 w-4" />
+      <ArrowDownIcon className="h-5 w-5" />
     );
   };
 
+  // Filter & sort logic
   const filteredLogs = logs.filter((log) => {
     if (filterConfig.id && !String(log.id).includes(filterConfig.id))
       return false;
     if (filterConfig.status && log.status !== filterConfig.status) return false;
     if (filterConfig.dateFromStr || filterConfig.dateToStr) {
+      // Compare Persian date strings directly (lexicographic order works for YYYY/MM/DD)
       if (filterConfig.dateFromStr && log.date < filterConfig.dateFromStr)
         return false;
       if (filterConfig.dateToStr && log.date > filterConfig.dateToStr)
         return false;
     }
+    // Duration and accuracy filters unchanged
     if (
       filterConfig.durationFrom !== undefined ||
       filterConfig.durationTo !== undefined
@@ -162,14 +169,17 @@ export function ServiceLogsTable({
     if (!sortConfig.key) return 0;
     const aValue = a[sortConfig.key];
     const bValue = b[sortConfig.key];
+
     if (typeof aValue === "string" && typeof bValue === "string") {
       return sortConfig.direction === "asc"
         ? aValue.localeCompare(bValue)
         : bValue.localeCompare(aValue);
     }
+
     if (typeof aValue === "number" && typeof bValue === "number") {
       return sortConfig.direction === "asc" ? aValue - bValue : bValue - aValue;
     }
+
     return 0;
   });
 
@@ -179,20 +189,22 @@ export function ServiceLogsTable({
         لیست درخواست ها
       </h2>
 
+      {/*  Inner panel with table */}
       <div className="bg-[#1C2533] rounded-xl p-6 border-[0.8px] border-[#354152]">
+        {/*  Table */}
         <div className="overflow-x-auto bg-black rounded-[12px]">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-[#354152]">
                 {/* ID */}
                 <TableHead className="text-right font-medium text-gray-300 py-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       ID
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="p-0 h-auto"
+                        size="icon"
+                        className="p-0 h-5 w-5"
                         onClick={() => requestSort("id")}
                       >
                         {renderSortIcon("id")}
@@ -202,10 +214,10 @@ export function ServiceLogsTable({
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="p-0 h-auto"
+                          size="icon"
+                          className="p-0 h-5 w-5"
                         >
-                          <FilterIcon className="h-4 w-4" />
+                          <FilterIcon className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-64 p-4">
@@ -246,13 +258,13 @@ export function ServiceLogsTable({
 
                 {/* وضعیت */}
                 <TableHead className="text-right font-medium text-gray-300 py-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       وضعیت
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="p-0 h-auto"
+                        size="icon"
+                        className="p-0 h-5 w-5"
                         onClick={() => requestSort("status")}
                       >
                         {renderSortIcon("status")}
@@ -262,10 +274,10 @@ export function ServiceLogsTable({
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="p-0 h-auto"
+                          size="icon"
+                          className="p-0 h-5 w-5"
                         >
-                          <FilterIcon className="h-4 w-4" />
+                          <FilterIcon className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 p-2">
@@ -320,15 +332,15 @@ export function ServiceLogsTable({
                   </div>
                 </TableHead>
 
-                {/* تاریخ */}
-                <TableHead className="text-right font-medium text-gray-300 py-3">
-                  <div className="flex items-center justify-between gap-2">
+                {/* تاریخ — PERSIAN DATE INPUTS */}
+                <TableHead className="text-right font-normal text-[16px] text-gray-300 h-[25px] w-[16.66%]">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
-                      تاریخ
+                      <span className="text-[16px]">تاریخ</span>
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="p-0 h-auto"
+                        size="icon"
+                        className="p-0 h-5 w-5"
                         onClick={() => requestSort("date")}
                       >
                         {renderSortIcon("date")}
@@ -338,10 +350,10 @@ export function ServiceLogsTable({
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="p-0 h-auto"
+                          size="icon"
+                          className="p-0 h-5 w-5"
                         >
-                          <FilterIcon className="h-4 w-4" />
+                          <FilterIcon className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-80 p-4">
@@ -398,13 +410,13 @@ export function ServiceLogsTable({
 
                 {/* مدت */}
                 <TableHead className="text-right font-medium text-gray-300 py-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       مدت
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="p-0 h-auto"
+                        size="icon"
+                        className="p-0 h-5 w-5"
                         onClick={() => requestSort("duration")}
                       >
                         {renderSortIcon("duration")}
@@ -414,10 +426,10 @@ export function ServiceLogsTable({
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="p-0 h-auto"
+                          size="icon"
+                          className="p-0 h-5 w-5"
                         >
-                          <FilterIcon className="h-4 w-4" />
+                          <FilterIcon className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-80 p-4">
@@ -476,13 +488,13 @@ export function ServiceLogsTable({
 
                 {/* دقت */}
                 <TableHead className="text-right font-medium text-gray-300 py-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       دقت
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="p-0 h-auto"
+                        size="icon"
+                        className="p-0 h-5 w-5"
                         onClick={() => requestSort("accuracy")}
                       >
                         {renderSortIcon("accuracy")}
@@ -492,10 +504,10 @@ export function ServiceLogsTable({
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="sm"
-                          className="p-0 h-auto"
+                          size="icon"
+                          className="p-0 h-5 w-5"
                         >
-                          <FilterIcon className="h-4 w-4" />
+                          <FilterIcon className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-80 p-4">
@@ -575,8 +587,8 @@ export function ServiceLogsTable({
                     <span
                       className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                         log.status === "موفق"
-                          ? "bg-green-600 text-green-100"
-                          : "bg-red-600 text-red-100"
+                          ? "text-green-600"
+                          : "text-red-600"
                       }`}
                     >
                       {log.status}
@@ -602,7 +614,7 @@ export function ServiceLogsTable({
                           size="icon"
                           className="text-gray-400 hover:text-white"
                         >
-                          <MoreVertical className="h-4 w-4" />
+                          <MoreVertical className="h-5 w-5" />
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="bg-[#151C28] border border-[#354152] max-w-2xl">
@@ -641,7 +653,7 @@ export function ServiceLogsTable({
               return (
                 <Button
                   key={page}
-                  variant={page === currentPage ? "primary" : "secondary"}
+                  variant={page === currentPage ? "primary" : "outline"}
                   size="sm"
                   onClick={() => onPageChange(page)}
                   className={

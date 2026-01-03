@@ -19,12 +19,14 @@ export type ChartDataItem = {
 };
 
 export type ChartSectionProps = {
+  title: string;
   dailyData: ChartDataItem[];
   monthlyData: ChartDataItem[];
   yearlyData: ChartDataItem[];
 };
 
 export function ChartSection({
+  title,
   dailyData,
   monthlyData,
   yearlyData,
@@ -95,9 +97,7 @@ export function ChartSection({
 
   return (
     <div className="bg-[#151C28] rounded-xl p-6 shadow-lg border border-[#354152]">
-      <h2 className="text-xl font-bold mb-6 text-center text-white">
-        نمودار وضعیت کل درخواست های اخیر
-      </h2>
+      <h2 className="text-xl font-bold mb-6 text-center text-white">{title}</h2>
       <div className="bg-[#1C2533] rounded-xl p-6 border-[0.8px] border-[#354152]">
         {/* Time Filter */}
         <div className="flex justify-center mb-6">

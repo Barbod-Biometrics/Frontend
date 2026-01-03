@@ -15,7 +15,12 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const LOCKED_ROUTES = new Set(["/business-info", "/wallet"]);
+const LOCKED_ROUTES = new Set([
+  "/business-info",
+  "/wallet",
+  "/business-services/liveness",
+  "/business-services/ocr",
+]);
 const MOBILE_QUERY = "(max-width: 639px)";
 let persistedSidebarCollapsed = false;
 let persistedSidebarMobileOpen = false;

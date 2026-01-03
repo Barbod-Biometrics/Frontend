@@ -6,6 +6,7 @@ export type ProfileListItem = {
   name: string;
   type: string;
   verification_status?: string;
+  has_api_key?: boolean;
 };
 
 type BackendProfile = {
@@ -15,6 +16,9 @@ type BackendProfile = {
   type?: string;
   profile_type?: string;
   verification_status?: string;
+  has_api_key?: boolean;
+  api_key_created?: boolean;
+  api_key_exists?: boolean;
 };
 
 const mapType = (raw?: string) => (raw ?? "").toLowerCase();
@@ -23,11 +27,20 @@ const toListItem = (profile: BackendProfile): ProfileListItem | null => {
   const id = profile.id ?? "";
   if (!id) return null;
   const name = profile.name ?? profile.profile_name ?? "";
+  const hasApiKey =
+    typeof profile.has_api_key === "boolean"
+      ? profile.has_api_key
+      : typeof profile.api_key_created === "boolean"
+        ? profile.api_key_created
+        : typeof profile.api_key_exists === "boolean"
+          ? profile.api_key_exists
+          : undefined;
   return {
     id,
     name,
     type: mapType(profile.profile_type ?? profile.type),
     verification_status: profile.verification_status,
+    has_api_key: hasApiKey,
   };
 };
 

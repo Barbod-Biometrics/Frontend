@@ -65,7 +65,7 @@ export function ApiKeyModal({ isOpen, onClose, onConfirm, apiKey, serviceTitle }
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <code
               dir="ltr"
-              className="break-all rounded-xl bg-[color:var(--md-sys-color-surface-container-high)] px-3 py-2 text-sm text-[color:var(--md-sys-color-on-surface)]"
+              className="block w-full overflow-x-auto whitespace-nowrap rounded-xl bg-[color:var(--md-sys-color-surface-container-high)] px-3 py-2 text-sm text-[color:var(--md-sys-color-on-surface)]"
             >
               {apiKey}
             </code>

@@ -61,6 +61,19 @@ const selectedProfileSlice = createSlice({
     clearCurrentProfile(state) {
       state.currentProfile = null;
     },
+    setProfileApiKeyStatus(
+      state,
+      action: PayloadAction<{ profileId: string; hasApiKey: boolean }>,
+    ) {
+      const { profileId, hasApiKey } = action.payload;
+      if (state.currentProfile?.id === profileId) {
+        state.currentProfile.has_api_key = hasApiKey;
+      }
+      const target = state.allProfiles.find((profile) => profile.id === profileId);
+      if (target) {
+        target.has_api_key = hasApiKey;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -110,7 +123,8 @@ const selectedProfileSlice = createSlice({
 export const { 
   setCurrentProfile, 
   selectProfileById, 
-  clearCurrentProfile 
+  clearCurrentProfile,
+  setProfileApiKeyStatus,
 } = selectedProfileSlice.actions;
 
 export default selectedProfileSlice.reducer;

@@ -9,11 +9,12 @@ import { Typography } from "../ui/Typography";
 type ApiKeyModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onConfirm?: () => void;
   apiKey: string;
   serviceTitle: string;
 };
 
-export function ApiKeyModal({ isOpen, onClose, apiKey, serviceTitle }: ApiKeyModalProps) {
+export function ApiKeyModal({ isOpen, onClose, onConfirm, apiKey, serviceTitle }: ApiKeyModalProps) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -81,7 +82,12 @@ export function ApiKeyModal({ isOpen, onClose, apiKey, serviceTitle }: ApiKeyMod
         </div>
 
         <div className="flex justify-end">
-          <Button variant="primary" onClick={onClose} className="min-w-[120px]">
+          <Button variant="primary"
+            onClick={() => {
+              onConfirm?.();
+              onClose();
+            }}
+            className="min-w-[120px]">
             متوجه شدم
           </Button>
         </div>

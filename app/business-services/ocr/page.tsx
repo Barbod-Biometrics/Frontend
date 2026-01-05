@@ -4,8 +4,11 @@ import { useEffect, useRef } from "react";
 import { KeyRound } from "lucide-react";
 import { DashboardLayout } from "../../../components/DashboardLayout";
 import { OcrApiKeyPage } from "../../../components/api-key-gen/OcrApiKeyPage";
+import { ApiKeyRegenerationPanel } from "../../../components/api-key-gen/ApiKeyRegenerationPanel";
 import { Typography } from "../../../components/ui/Typography";
 import { useSelectedProfile } from "../../../lib/useSelectedProfile";
+
+const OCR_SERVICE_TITLE = "OCR مدارک";
 
 function LoadingState() {
   return (
@@ -67,6 +70,7 @@ function ApiKeyActiveState() {
 export default function BusinessOcrServicePage() {
   const { currentProfile, loading, loadProfiles } = useSelectedProfile();
   const hasLoaded = useRef(false);
+  const hasApiKey = Boolean(currentProfile?.has_api_key ?? currentProfile?.has_apikey);
 
   useEffect(() => {
     if (hasLoaded.current) return;
@@ -80,8 +84,8 @@ export default function BusinessOcrServicePage() {
     content = <LoadingState />;
   } else if (!currentProfile) {
     content = <NoProfileState />;
-  } else if (currentProfile.has_api_key) {
-    content = <ApiKeyActiveState />;
+  } else if (hasApiKey) {
+    content = <ApiKeyRegenerationPanel title={OCR_SERVICE_TITLE} />;
   }
 
   return <DashboardLayout>{content}</DashboardLayout>;

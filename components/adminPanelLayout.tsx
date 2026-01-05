@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import clsx from "clsx";
 import { X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { AdminSidebar } from "./admin-panel/sideBar";
 import { SidebarDashboard } from "./sidebarDashboard";
 import DashboardTerminalBackground from "./DashboardTerminalBackground";
-import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
 import { Header } from "../app/test-admin-panel/header";
 import BusinessRequests from "./admin-panel/manage-requests/businessRequests";
 import ContactSalesRequests from "./admin-panel/manage-requests/contactSalesRequests";
@@ -14,6 +14,8 @@ import SupportRequests from "./admin-panel/manage-requests/supportRequests";
 import { usePathname } from "next/navigation";
 import { ContactInfo } from "../app/user-contact/components/ContactInfo";
 import { Typography } from "./ui/Typography";
+import type { RootState } from "../store/store";
+import { loadUserProfiles } from "../store/selectedProfileSlice";
 
 type PanelView = "admin" | "business";
 
@@ -29,6 +31,8 @@ type AdminPanelLayoutProps = {
 
 export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
   const pathname = usePathname();
+  const dispatch = useDispatch();
+  const profiles = useSelector((state: RootState) => state.selectedProfile.allProfiles);
   const [panelView, setPanelView] = useState<PanelView>("admin");
   const [isMobile, setIsMobile] = useState(false);
   const [collapsedDesktop, setCollapsedDesktop] = useState(
@@ -41,7 +45,6 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
     "manageBusinessRequests" | "manageContactUsRequests" | "manageSupportRequests"
   >("manageBusinessRequests");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
   const normalizedPath = (pathname ?? "").replace(/\/$/, "");
   const showDefaultAdminView = normalizedPath === "/admin";
 
@@ -59,24 +62,9 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
   }, []);
 
   useEffect(() => {
-    if (panelView !== "business" || profiles.length) return;
-    let mounted = true;
-
-    const load = async () => {
-      try {
-        const result = await fetchUserProfiles();
-        if (mounted) setProfiles(result);
-      } catch (error) {
-        console.error("Failed to load profiles", error);
-      }
-    };
-
-    load();
-
-    return () => {
-      mounted = false;
-    };
-  }, [panelView, profiles.length]);
+    if (panelView !== "business") return;
+    dispatch(loadUserProfiles());
+  }, [dispatch, panelView]);
 
   useEffect(() => {
     if (panelView !== "business" && isSettingsOpen) {

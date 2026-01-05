@@ -1,34 +1,34 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { KeyRound, ShieldCheck } from "lucide-react";
+import { KeyRound } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../ui/Button";
 import { Typography } from "../ui/Typography";
 import { ApiKeyModal } from "./ApiKeyModal";
 import { Notification } from "../Notification";
-import { generateApiKey } from "../../lib/api/apiKey";
+import { regenerateApiKey } from "../../lib/api/apiKey";
 import type { RootState } from "../../store/store";
 import { loadUserProfiles, setProfileApiKeyStatus } from "../../store/selectedProfileSlice";
 
-type ApiKeyGenerationPageProps = {
+type ApiKeyRegenerationPanelProps = {
   title: string;
-  description: string;
 };
+
+const REGEN_DESCRIPTION = "در صورت فراموشی کلید API، می‌توانید آن را دوباره تولید کنید.";
 
 const resolveErrorMessage = (error: unknown) => {
   if (typeof error === "string" && error.trim()) return error;
   if (error instanceof Error && error.message) return error.message;
-  return "خطا در اتصال به سرور. لطفاً دوباره تلاش کنید.";
+  return "خطا در دریافت کلید جدید. دوباره تلاش کنید.";
 };
 
-export function ApiKeyGenerationPage({ title, description }: ApiKeyGenerationPageProps) {
+export function ApiKeyRegenerationPanel({ title }: ApiKeyRegenerationPanelProps) {
   const dispatch = useDispatch();
   const currentProfile = useSelector((state: RootState) => state.selectedProfile.currentProfile);
-  const hasApiKey = Boolean(currentProfile?.has_api_key ?? currentProfile?.has_apikey);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [generatedKey, setGeneratedKey] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
@@ -38,26 +38,22 @@ export function ApiKeyGenerationPage({ title, description }: ApiKeyGenerationPag
     setNotification({ message, type });
   };
 
-  const handleGenerate = async () => {
-    if (isGenerating) return;
+  const handleRegenerate = async () => {
+    if (isRegenerating) return;
     if (!currentProfile?.id) {
-      showNotification("ابتدا یک پروفایل را انتخاب کنید.", "error");
-      return;
-    }
-    if (hasApiKey) {
-      showNotification("???? API ????? ????? ??? ???.", "error");
+      showNotification("پروفایل فعالی انتخاب نشده است.", "error");
       return;
     }
 
     try {
-      setIsGenerating(true);
-      const result = await generateApiKey(currentProfile.id);
+      setIsRegenerating(true);
+      const result = await regenerateApiKey(currentProfile.id);
       setGeneratedKey(result.apiKey);
       setIsModalOpen(true);
     } catch (error) {
       showNotification(resolveErrorMessage(error), "error");
     } finally {
-      setIsGenerating(false);
+      setIsRegenerating(false);
     }
   };
 
@@ -65,7 +61,7 @@ export function ApiKeyGenerationPage({ title, description }: ApiKeyGenerationPag
     if (!currentProfile?.id) return;
     dispatch(setProfileApiKeyStatus({ profileId: currentProfile.id, hasApiKey: true }));
     dispatch(loadUserProfiles());
-    showNotification("کلید API با موفقیت فعال شد.", "success");
+    showNotification("کلید API با موفقیت دوباره تولید شد.", "success");
   };
 
   return (
@@ -92,53 +88,26 @@ export function ApiKeyGenerationPage({ title, description }: ApiKeyGenerationPag
                     variant="h5"
                     className="text-[color:var(--md-sys-color-on-surface)]"
                   >
-                    راه‌اندازی سرویس {title}
+                    تولید مجدد کلید API {title}
                   </Typography>
                   <Typography
                     variant="body-sm"
                     className="text-[color:var(--md-sys-color-on-surface-variant)]"
                   >
-                    برای شروع کار، ابتدا کلید API بسازید.
+                    {REGEN_DESCRIPTION}
                   </Typography>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--md-sys-color-primary)]/30 bg-[color:var(--md-sys-color-primary)]/10 px-3 py-1 text-xs font-semibold text-[color:var(--md-sys-color-primary)]">
-                <ShieldCheck className="h-4 w-4" />
-                مناسب برای شروع توسعه
-              </span>
             </div>
 
-            <div className="rounded-[22px] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)]/60 p-4">
-              <Typography
-                variant="body-md"
-                className="text-[color:var(--md-sys-color-on-surface)] leading-8"
-              >
-                {description}
-              </Typography>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-1 text-right">
-                <Typography
-                  variant="caption"
-                  className="text-[color:var(--md-sys-color-on-surface-variant)]"
-                >
-                  کلید API فقط یک بار نمایش داده می‌شود.
-                </Typography>
-                <Typography
-                  variant="caption"
-                  className="text-[color:var(--md-sys-color-on-surface-variant)]"
-                >
-                  پس از ذخیره، خدمات شما آماده استفاده است.
-                </Typography>
-              </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
               <Button
                 variant="gradient"
                 className="min-w-[180px]"
-                onClick={handleGenerate}
-                disabled={isGenerating}
+                onClick={handleRegenerate}
+                disabled={isRegenerating}
               >
-                {isGenerating ? "در حال ساخت..." : "ساخت کلید API"}
+                {isRegenerating ? "در حال تولید..." : "تولید مجدد کلید API"}
               </Button>
             </div>
           </div>

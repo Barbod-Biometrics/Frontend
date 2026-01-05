@@ -314,6 +314,8 @@ export function SidebarDashboard({
       hasApiKey:
         typeof currentProfile.has_api_key === "boolean"
           ? currentProfile.has_api_key
+          : typeof currentProfile.has_apikey === "boolean"
+            ? currentProfile.has_apikey
           : activeBusiness?.hasApiKey,
     };
   }, [activeBusiness, currentProfile]);

@@ -7,6 +7,7 @@ export type ProfileListItem = {
   type: string;
   verification_status?: string;
   has_api_key?: boolean;
+  has_apikey?: boolean;
 };
 
 type BackendProfile = {
@@ -16,31 +17,50 @@ type BackendProfile = {
   type?: string;
   profile_type?: string;
   verification_status?: string;
-  has_api_key?: boolean;
-  api_key_created?: boolean;
-  api_key_exists?: boolean;
+  has_api_key?: boolean | number | string;
+  has_apikey?: boolean | number | string;
+  api_key_created?: boolean | number | string;
+  api_key_exists?: boolean | number | string;
 };
 
 const mapType = (raw?: string) => (raw ?? "").toLowerCase();
+
+const normalizeBoolean = (value: unknown): boolean | undefined => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true" || normalized === "1") return true;
+    if (normalized === "false" || normalized === "0") return false;
+  }
+  return undefined;
+};
+
+const resolveHasApiKey = (...values: unknown[]): boolean | undefined => {
+  for (const value of values) {
+    const normalized = normalizeBoolean(value);
+    if (typeof normalized === "boolean") return normalized;
+  }
+  return undefined;
+};
 
 const toListItem = (profile: BackendProfile): ProfileListItem | null => {
   const id = profile.id ?? "";
   if (!id) return null;
   const name = profile.name ?? profile.profile_name ?? "";
-  const hasApiKey =
-    typeof profile.has_api_key === "boolean"
-      ? profile.has_api_key
-      : typeof profile.api_key_created === "boolean"
-        ? profile.api_key_created
-        : typeof profile.api_key_exists === "boolean"
-          ? profile.api_key_exists
-          : undefined;
+  const hasApiKey = resolveHasApiKey(
+    profile.has_apikey,
+    profile.has_api_key,
+    profile.api_key_created,
+    profile.api_key_exists,
+  );
   return {
     id,
     name,
     type: mapType(profile.profile_type ?? profile.type),
     verification_status: profile.verification_status,
     has_api_key: hasApiKey,
+    has_apikey: hasApiKey,
   };
 };
 

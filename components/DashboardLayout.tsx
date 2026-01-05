@@ -3,13 +3,13 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DashboardTerminalBackground from "./DashboardTerminalBackground";
 import { SidebarDashboard } from "../components/sidebarDashboard";
 import { Header } from "../app/test-sidebar/header";
-import { fetchUserProfiles, type ProfileListItem } from "../lib/api/userProfiles";
 import type { RootState } from "../store/store";
 import { selectIsAdmin } from "../store/loginSlice";
+import { loadUserProfiles } from "../store/selectedProfileSlice";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -39,9 +39,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const isAdmin = useSelector((state: RootState) => selectIsAdmin(state));
   const isAdminUser = Boolean(isAdmin);
+  const dispatch = useDispatch();
   const currentProfile = useSelector(
     (state: RootState) => state.selectedProfile.currentProfile
   );
+  const profiles = useSelector((state: RootState) => state.selectedProfile.allProfiles);
   const [isMobile, setIsMobile] = useState(false);
   const [collapsedDesktop, setCollapsedDesktop] = useState(
     () => persistedSidebarCollapsed
@@ -49,23 +51,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(
     () => persistedSidebarMobileOpen
   );
-  const [profiles, setProfiles] = useState<ProfileListItem[]>([]);
-
   useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      try {
-        const result = await fetchUserProfiles();
-        if (mounted) setProfiles(result);
-      } catch (error) {
-        console.error("Failed to load profiles", error);
-      }
-    };
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    dispatch(loadUserProfiles());
+  }, [dispatch]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

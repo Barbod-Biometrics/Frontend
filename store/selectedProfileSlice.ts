@@ -68,10 +68,12 @@ const selectedProfileSlice = createSlice({
       const { profileId, hasApiKey } = action.payload;
       if (state.currentProfile?.id === profileId) {
         state.currentProfile.has_api_key = hasApiKey;
+        state.currentProfile.has_apikey = hasApiKey;
       }
       const target = state.allProfiles.find((profile) => profile.id === profileId);
       if (target) {
         target.has_api_key = hasApiKey;
+        target.has_apikey = hasApiKey;
       }
     },
   },
@@ -84,8 +86,14 @@ const selectedProfileSlice = createSlice({
       .addCase(loadUserProfiles.fulfilled, (state, action) => {
         state.loading = false;
         state.allProfiles = action.payload;
-        
-       
+        const currentId = state.currentProfile?.id;
+        if (currentId) {
+          const refreshed = action.payload.find((profile) => profile.id === currentId);
+          if (refreshed) {
+            state.currentProfile = refreshed;
+          }
+        }
+
         if (action.payload.length > 0 && !state.currentProfile) {
           const savedId = typeof window !== 'undefined' 
             ? localStorage.getItem('selected_profile_id') 

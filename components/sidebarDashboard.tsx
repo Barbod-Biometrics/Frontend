@@ -63,6 +63,7 @@ type BusinessProfileSummary = {
   title: string;
   subtitle: string;
   status: BusinessStatus;
+  hasApiKey?: boolean;
 };
 
 const businessStatusStyles: Record<
@@ -276,6 +277,7 @@ export function SidebarDashboard({
         title: item.name,
         subtitle: mapTypeLabel(item.type),
         status: normalizeBusinessStatus(item.verification_status),
+        hasApiKey: item.has_api_key,
       }));
     }
     return [];
@@ -309,8 +311,15 @@ export function SidebarDashboard({
       title: currentProfile.name ?? activeBusiness?.title ?? "",
       subtitle: currentProfile.type ? mapTypeLabel(currentProfile.type) : activeBusiness?.subtitle ?? "",
       status: resolvedStatus,
+      hasApiKey:
+        typeof currentProfile.has_api_key === "boolean"
+          ? currentProfile.has_api_key
+          : typeof currentProfile.has_apikey === "boolean"
+            ? currentProfile.has_apikey
+          : activeBusiness?.hasApiKey,
     };
   }, [activeBusiness, currentProfile]);
+  const hasApiKey = Boolean(resolvedProfile?.hasApiKey);
   const isApprovedProfile = resolvedProfile?.status === "approved";
   const headerTitle =
     isApprovedProfile && resolvedProfile?.title ? resolvedProfile.title : "کسب‌وکار";
@@ -342,15 +351,17 @@ export function SidebarDashboard({
       setActiveItemId("transactions");
       return;
     }
-    if (normalizedPath.startsWith("/services/face-recognition")) {
-      setActiveItemId("face");
-      return;
-    }
-    if (normalizedPath.startsWith("/services/liveness")) {
+    if (
+      normalizedPath.startsWith("/business-services/liveness") ||
+      normalizedPath.startsWith("/services/liveness")
+    ) {
       setActiveItemId("liveness");
       return;
     }
-    if (normalizedPath.startsWith("/services/ocr")) {
+    if (
+      normalizedPath.startsWith("/business-services/ocr") ||
+      normalizedPath.startsWith("/services/ocr")
+    ) {
       setActiveItemId("ocr");
     }
   }, [pathname]);
@@ -381,9 +392,8 @@ export function SidebarDashboard({
         id: "services",
         title: "",
         items: [
-          { id: "face", label: "احراز هویت چهره", icon: <ScanFace className="h-5 w-5" /> },
-          { id: "liveness", label: "تشخیص زنده‌بودن", icon: <Fingerprint className="h-5 w-5" /> },
-          { id: "ocr", label: "OCR مدارک", icon: <FileText className="h-5 w-5" /> },
+          { id: "liveness", label: "تشخیص زنده‌بودن", icon: <ScanFace className="h-5 w-5" />, onClick: () => router.push("/business-services/liveness") },
+          { id: "ocr", label: "OCR مدارک", icon: <FileText className="h-5 w-5" />, onClick: () => router.push("/business-services/ocr") },
         ],
       },
       {
@@ -728,6 +738,18 @@ export function SidebarDashboard({
                             {item.label}
                           </div>
                         </div>
+
+                        {section.id === "services" && (
+                          <span
+                            className={clsx(
+                              "h-3.5 w-3.5 rounded-full border",
+                              hasApiKey
+                                ? "border-emerald-400 bg-emerald-500"
+                                : "border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-highest)]",
+                            )}
+                            title={hasApiKey ? "\u06a9\u0644\u06cc\u062f API \u0641\u0639\u0627\u0644 \u0627\u0633\u062a" : "\u06a9\u0644\u06cc\u062f API \u0641\u0639\u0627\u0644 \u0646\u06cc\u0633\u062a"}
+                          />
+                        )}
 
                         {hasChildren && !isCollapsed && (
                           <ChevronDown

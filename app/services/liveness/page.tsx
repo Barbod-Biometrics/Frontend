@@ -78,7 +78,7 @@ export default function LivenessPage() {
                     size="lg"
                     variant="secondary"
                     className="rounded-full px-10"
-                    onClick={() => router.push("/liveness-check")}
+                    onClick={() => router.push("/test-services")}
                   >
                     تست سرویس
                   </Button>
@@ -283,7 +283,7 @@ export default function LivenessPage() {
               <Button
                 variant="monochrome"
                 className="rounded-full px-8 shadow-[var(--elevation-2)]"
-                onClick={() => router.push("/liveness-check")}
+                onClick={() => router.push("/test-services")}
               >
                 تست سرویس
               </Button>

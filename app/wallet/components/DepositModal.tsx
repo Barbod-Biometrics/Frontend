@@ -179,9 +179,10 @@ export default function DepositModal({ isOpen, onClose, onDepositSuccess, profil
                 {translations.amountLabel[language]}
               </label>
               <input
+                dir="ltr"
                 type="text"
                 inputMode="numeric"
-                pattern="[0-9]*"
+                pattern="[0-9۰-۹٠-٩]*"
                 value={toPersianDigits(amount)}
                 onChange={(e) => {
                   setAmount(normalizeNumericInput(e.target.value));

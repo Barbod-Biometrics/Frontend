@@ -6,6 +6,12 @@
       "DOM.Iterable",
       "ESNext"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

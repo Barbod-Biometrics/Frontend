@@ -231,6 +231,7 @@ export function PersonalInfo({
             value={toPersianDigits(form.phone)}
             onChange={(e) => handleChange("phone", normalizeNumericInput(e.target.value, 11))}
             placeholder="09904644661"
+            dir="ltr"
             className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
           {errors.phone && (

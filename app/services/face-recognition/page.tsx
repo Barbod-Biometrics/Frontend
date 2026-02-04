@@ -137,7 +137,7 @@ export default function FaceRecognitionPage() {
                     size="lg"
                     variant="secondary"
                     className="rounded-full px-10"
-                    onClick={() => router.push("/liveness-check")}
+                    onClick={() => router.push("/test-services")}
                     iconTrailing={<ArrowLeft className="h-4 w-4" />}
                   >
                     تست سرویس
@@ -270,7 +270,7 @@ export default function FaceRecognitionPage() {
                           size="lg"
                           variant="secondary"
                           className="rounded-full px-8"
-                          onClick={() => router.push("/liveness-check")}
+                          onClick={() => router.push("/test-services")}
                           iconTrailing={<ArrowLeft className="h-4 w-4" />}
                         >
                           {highlight.ctaLabel}

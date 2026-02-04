@@ -156,7 +156,7 @@ export function Hero({ language, theme, dir }: HeroProps) {
                 variant="secondary"
                 size="lg"
                 className="h-14 min-w-[180px] rounded-full px-12 text-lg transition-all lg:h-16 lg:px-16"
-                onClick={() => router.push("/liveness-check")}
+                onClick={() => router.push("/demo")}
               >
                 {copy.secondaryCta}
               </Button>

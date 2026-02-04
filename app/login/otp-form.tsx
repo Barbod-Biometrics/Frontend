@@ -192,7 +192,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
               }}
               type="text"
               inputMode="numeric"
-              pattern="[0-9]*"
+              pattern="[0-9۰-۹٠-٩]*"
               maxLength={1}
               value={toPersianDigits(digit)}
               onChange={(e) => {

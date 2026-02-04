@@ -91,8 +91,8 @@ function BusinessInfoContent() {
   const accountTypeLabel = isBusinessAccount ? 'حقوقی' : 'حقیقی';
 
   return (
-    <Section spacing="none" className="py-4 sm:py-6">
-      <Container size="xl">
+    <Section spacing="none" className="py-4 sm:py-6" dir="rtl">
+      <Container size="xl" className="text-right">
         <div className="mb-4 mt-3">
           <Typography variant="h3" className="text-[color:var(--text-primary)] mb-2">
             اطلاعات کسب‌وکار
@@ -101,7 +101,7 @@ function BusinessInfoContent() {
             مشاهده و مدیریت اطلاعات پروفایل انتخاب شده
           </Typography>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch text-right">
           <AccountInfoCard
             accountName={accountInfo.name}
             accountType={accountTypeLabel}

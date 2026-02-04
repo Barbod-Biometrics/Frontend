@@ -80,7 +80,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
           icon: ScanFace,
         },
         primaryCta: { label: "Request service", href: "/contact-sales" },
-        secondaryCta: { label: "Test service", href: "/test-admin-panel", variant: "secondary" },
+        secondaryCta: { label: "Test service", href: "/test-services", variant: "secondary" },
       },
       features: [
         {
@@ -126,7 +126,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
             "In the final step, extracted data is checked in real time against trusted sources to confirm user identity and return the result instantly.",
           visual: { from: "#2563eb", to: "#1e3a8a", accent: "#0ea5e9", icon: ShieldCheck },
           align: "left",
-          cta: { label: "Test service", href: "/test-admin-panel", variant: "secondary" },
+          cta: { label: "Test service", href: "/test-services", variant: "secondary" },
         },
       ],
       bottomCta: {
@@ -149,7 +149,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
           icon: ScanFace,
         },
         primaryCta: { label: "درخواست سرویس", href: "/contact-sales" },
-        secondaryCta: { label: "تست سرویس", href: "/test-admin-panel", variant: "secondary" },
+        secondaryCta: { label: "تست سرویس", href: "/test-services", variant: "secondary" },
       },
       features: [
         {
@@ -197,7 +197,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
             "در مرحله نهایی، داده‌های استخراج‌شده به‌صورت برخط با پایگاه‌های رسمی تطبیق داده می‌شود تا صحت هویت کاربر تایید شده و نتیجه به‌صورت لحظه‌ای ارائه گردد.",
           visual: { from: "#2563eb", to: "#1e3a8a", accent: "#0ea5e9", icon: ShieldCheck },
           align: "left",
-          cta: { label: "تست سرویس", href: "/test-admin-panel", variant: "secondary" },
+          cta: { label: "تست سرویس", href: "/test-services", variant: "secondary" },
         },
       ],
       bottomCta: {
@@ -217,7 +217,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
           "Detect spoofing attempts with deep-learning liveness checks. The service analyzes facial depth and motion to reduce fraudulent actions, and fits seamlessly into login flows and identity verification journeys.",
         visual: { from: "#1d4ed8", to: "#8b5cf6", accent: "#a855f7", icon: Fingerprint },
         primaryCta: { label: "Request service", href: "/contact-sales" },
-        secondaryCta: { label: "Test service", href: "/test-admin-panel", variant: "secondary" },
+        secondaryCta: { label: "Test service", href: "/test-services", variant: "secondary" },
       },
       features: [
         {
@@ -264,7 +264,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
             "In the final step, live results are validated against trusted sources so the decision can be returned instantly.",
           visual: { from: "#2563eb", to: "#0ea5e9", accent: "#38bdf8", icon: CheckCircle2 },
           align: "left",
-          cta: { label: "Test service", href: "/test-admin-panel", variant: "secondary" },
+          cta: { label: "Test service", href: "/test-services", variant: "secondary" },
         },
       ],
       bottomCta: {
@@ -282,7 +282,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
           "این سرویس با استفاده از الگوریتم‌های عمیق پردازش تصویر و هوش مصنوعی زنده بودن چهره کاربر را تشخیص داده و با شناسایی میزان عمق و حالت‌های صورت، احتمال جعل و عملیات غیر مجاز را کاهش می‌دهد. این سرویس در انواع سیستم‌های ورود و فرآیندهای احراز هویت قابل استفاده است.",
         visual: { from: "#1d4ed8", to: "#8b5cf6", accent: "#a855f7", icon: Fingerprint },
         primaryCta: { label: "درخواست سرویس", href: "/contact-sales" },
-        secondaryCta: { label: "تست سرویس", href: "/test-admin-panel", variant: "secondary" },
+        secondaryCta: { label: "تست سرویس", href: "/test-services", variant: "secondary" },
       },
       features: [
         {
@@ -330,7 +330,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
             "در مرحله نهایی، داده‌های استخراج‌شده به‌صورت برخط با پایگاه‌های رسمی تطبیق داده می‌شود تا صحت هویت کاربر تایید شده و نتیجه به‌صورت لحظه‌ای ارائه گردد.",
           visual: { from: "#2563eb", to: "#0ea5e9", accent: "#38bdf8", icon: CheckCircle2 },
           align: "left",
-          cta: { label: "تست سرویس", href: "/test-admin-panel", variant: "secondary" },
+          cta: { label: "تست سرویس", href: "/test-services", variant: "secondary" },
         },
       ],
       bottomCta: {
@@ -350,7 +350,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
           "Extract national ID card data automatically with computer vision, then verify it against official sources to return instant decisions.",
         visual: { from: "#0ea5e9", to: "#60a5fa", accent: "#38bdf8", icon: FileText },
         primaryCta: { label: "Request service", href: "/contact-sales" },
-        secondaryCta: { label: "Test service", href: "/test-admin-panel", variant: "secondary" },
+        secondaryCta: { label: "Test service", href: "/test-services", variant: "secondary" },
       },
       features: [
         {
@@ -395,7 +395,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
             "In the final step the extracted data is queried against official sources to validate identity and deliver instant results.",
           visual: { from: "#2563eb", to: "#0ea5e9", accent: "#38bdf8", icon: CheckCircle2 },
           align: "left",
-          cta: { label: "Test service", href: "/test-admin-panel", variant: "secondary" },
+          cta: { label: "Test service", href: "/test-services", variant: "secondary" },
         },
       ],
       bottomCta: {
@@ -413,7 +413,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
           "این سرویس با استفاده از هوش مصنوعی و پردازش تصویر، اطلاعات کارت ملی را به‌صورت خودکار استخراج و به داده‌های دیجیتال تبدیل می‌کند. سپس با استعلام از مراجع رسمی، صحت اطلاعات بررسی شده و نتیجه به‌صورت آنی ارائه می‌شود.",
         visual: { from: "#0ea5e9", to: "#60a5fa", accent: "#38bdf8", icon: FileText },
         primaryCta: { label: "درخواست سرویس", href: "/contact-sales" },
-        secondaryCta: { label: "تست سرویس", href: "/test-admin-panel", variant: "secondary" },
+        secondaryCta: { label: "تست سرویس", href: "/test-services", variant: "secondary" },
       },
       features: [
         {
@@ -459,7 +459,7 @@ export const servicesContent: Record<string, ServicePageContentByLanguage> = {
             "در مرحله آخر اطلاعات استخراج‌شده به‌صورت برخط با مراجع رسمی استعلام می‌شود تا داده‌ها تایید شده و نتیجه به‌صورت لحظه‌ای ارائه شود.",
           visual: { from: "#2563eb", to: "#0ea5e9", accent: "#38bdf8", icon: CheckCircle2 },
           align: "left",
-          cta: { label: "تست سرویس", href: "/test-admin-panel", variant: "secondary" },
+          cta: { label: "تست سرویس", href: "/test-services", variant: "secondary" },
         },
       ],
       bottomCta: {

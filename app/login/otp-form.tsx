@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { RootState, AppDispatch } from "../../store/store";
@@ -17,6 +17,7 @@ import {
   verifyOtpThunk,
 } from "../../store/loginSlice";
 import { saveAuth } from "../../lib/auth-storage";
+import { normalizeNumericInput, toPersianDigits } from "../../lib/numberFormat";
 
 export default function OTPForm({ masked }: { masked?: string }) {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,6 +26,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
   const isFa = language === Language.FA;
   const [digits, setDigits] = useState(Array(6).fill(""));
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+  const lastSubmittedRef = useRef("");
   const [localError, setLocalError] = useState<string | null>(null);
   const { authError, isSubmitting } = useSelector(
     (state: RootState) => state.login
@@ -36,6 +38,19 @@ export default function OTPForm({ masked }: { masked?: string }) {
   const displayPhone = masked ?? maskedPhone ?? "";
   const code = digits.join("");
   const canSubmit = code.length === 6;
+  const authErrorMessage = useMemo(() => {
+    if (!authError) return null;
+    if (!isFa) return authError;
+    const map: Record<string, string> = {
+      "Unable to send the code right now. Please try again.":
+        "امکان ارسال کد وجود ندارد. لطفا دوباره تلاش کنید.",
+      "Missing phone number. Please start again.":
+        "شماره موبایل یافت نشد. لطفا دوباره شروع کنید.",
+      "Verification failed. Please try again.":
+        "تایید کد ناموفق بود. لطفا دوباره تلاش کنید.",
+    };
+    return map[authError] ?? authError;
+  }, [authError, isFa]);
 
   useEffect(() => {
     inputsRef.current[0]?.focus();
@@ -74,6 +89,17 @@ export default function OTPForm({ masked }: { masked?: string }) {
       // handled by authError
     }
   };
+
+  useEffect(() => {
+    if (code.length < 6) {
+      lastSubmittedRef.current = "";
+      return;
+    }
+    if (!isSubmitting && code !== lastSubmittedRef.current) {
+      lastSubmittedRef.current = code;
+      handleSubmit();
+    }
+  }, [code, isSubmitting]);
 
   return (
     <Container
@@ -155,7 +181,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
       {/* Input section with enhanced styling - Force LTR for consistent left-to-right progression */}
       <div className="flex w-full max-w-md flex-col items-center justify-center gap-5 sm:gap-6 mt-4">
         <div
-          className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap"
+          className="flex items-center justify-center gap-2 sm:gap-3 flex-nowrap"
           dir="ltr"
         >
           {digits.map((digit, idx) => (
@@ -166,11 +192,11 @@ export default function OTPForm({ masked }: { masked?: string }) {
               }}
               type="text"
               inputMode="numeric"
-              pattern="[0-9]*"
+              pattern="[0-9۰-۹٠-٩]*"
               maxLength={1}
-              value={digit}
+              value={toPersianDigits(digit)}
               onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, "").slice(-1);
+                const val = normalizeNumericInput(e.target.value, 1);
                 const next = [...digits];
                 next[idx] = val;
                 setDigits(next);
@@ -179,17 +205,21 @@ export default function OTPForm({ masked }: { masked?: string }) {
                 }
               }}
               onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSubmit();
+                  return;
+                }
                 if (e.key === "Backspace" && !digits[idx]) {
                   inputsRef.current[idx - 1]?.focus();
                 }
               }}
               onPaste={(e) => {
                 e.preventDefault();
-                const pasted = e.clipboardData
-                  .getData("text")
-                  .replace(/\D/g, "")
-                  .slice(0, 6)
-                  .split("");
+                const pasted = normalizeNumericInput(
+                  e.clipboardData.getData("text"),
+                  6,
+                ).split("");
                 const next = [...digits];
                 for (let i = 0; i < 6; i++) {
                   next[i] = pasted[i] ?? next[i];
@@ -198,7 +228,7 @@ export default function OTPForm({ masked }: { masked?: string }) {
                 const lastFilled = Math.min(pasted.length, 5);
                 inputsRef.current[lastFilled]?.focus();
               }}
-              className={`h-16 w-12 sm:h-20 sm:w-14 bg-transparent border-0 border-b-2 text-center text-2xl sm:text-3xl font-medium transition-all duration-300 outline-none ${
+              className={`h-14 w-10 sm:h-20 sm:w-14 bg-transparent border-0 border-b-2 text-center text-2xl sm:text-3xl font-medium transition-all duration-300 outline-none ${
                 isLight
                   ? `${
                       digit
@@ -234,13 +264,13 @@ export default function OTPForm({ masked }: { masked?: string }) {
         </Button>
 
         <div className="flex flex-col items-center gap-2">
-          {(localError || authError) && (
+          {(localError || authErrorMessage) && (
             <p
               className={`text-sm text-center ${
                 isLight ? "text-red-600" : "text-red-400"
               } ${isFa ? "font-vazirmatn" : ""}`}
             >
-              {localError || authError}
+              {localError || authErrorMessage}
             </p>
           )}
 

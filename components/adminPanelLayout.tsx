@@ -32,7 +32,9 @@ type AdminPanelLayoutProps = {
 export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const profiles = useSelector((state: RootState) => state.selectedProfile.allProfiles);
+  const profiles = useSelector(
+    (state: RootState) => state.selectedProfile.allProfiles,
+  );
   const [panelView, setPanelView] = useState<PanelView>("admin");
   const [isMobile, setIsMobile] = useState(false);
   const [collapsedDesktop, setCollapsedDesktop] = useState(
@@ -42,7 +44,9 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
     () => persistedAdminSidebarMobileOpen,
   );
   const [activeItem, setActiveItem] = useState<
-    "manageBusinessRequests" | "manageContactUsRequests" | "manageSupportRequests"
+    | "manageBusinessRequests"
+    | "manageContactUsRequests"
+    | "manageSupportRequests"
   >("manageBusinessRequests");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const normalizedPath = (pathname ?? "").replace(/\/$/, "");
@@ -51,7 +55,9 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
   useEffect(() => {
     try {
       const preferredView =
-        typeof window !== "undefined" ? window.localStorage.getItem(ADMIN_PANEL_RETURN_KEY) : null;
+        typeof window !== "undefined"
+          ? window.localStorage.getItem(ADMIN_PANEL_RETURN_KEY)
+          : null;
       if (preferredView === ADMIN_PANEL_BUSINESS_VIEW) {
         setPanelView("business");
         window.localStorage.removeItem(ADMIN_PANEL_RETURN_KEY);
@@ -72,7 +78,10 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
     }
   }, [panelView, isSettingsOpen]);
 
-  const headerIsInAdminPanel = useMemo(() => panelView === "admin", [panelView]);
+  const headerIsInAdminPanel = useMemo(
+    () => panelView === "admin",
+    [panelView],
+  );
   const collapsed = isMobile ? !mobileOpen : collapsedDesktop;
   const handleToggle = () => {
     if (isMobile) {
@@ -115,9 +124,13 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
           onToggleAction={handleToggle}
           isAdmin
           isInAdminPanel={headerIsInAdminPanel}
-          onAvatarClickAction={panelView === "business" ? () => setIsSettingsOpen(true) : undefined}
+          onAvatarClickAction={
+            panelView === "business" ? () => setIsSettingsOpen(true) : undefined
+          }
           onPanelSwitchAction={() =>
-            setPanelView((current) => (current === "admin" ? "business" : "admin"))
+            setPanelView((current) =>
+              current === "admin" ? "business" : "admin",
+            )
           }
         />
 
@@ -138,9 +151,15 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
             >
               {showDefaultAdminView ? (
                 <>
-                  {activeItem === "manageBusinessRequests" && <BusinessRequests />}
-                  {activeItem === "manageContactUsRequests" && <ContactSalesRequests />}
-                  {activeItem === "manageSupportRequests" && <SupportRequests />}
+                  {activeItem === "manageBusinessRequests" && (
+                    <BusinessRequests />
+                  )}
+                  {activeItem === "manageContactUsRequests" && (
+                    <ContactSalesRequests />
+                  )}
+                  {activeItem === "manageSupportRequests" && (
+                    <SupportRequests />
+                  )}
                 </>
               ) : (
                 children
@@ -178,7 +197,10 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
               onClick={(event) => event.stopPropagation()}
             >
               <div className="mb-6 flex items-center justify-between">
-                <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)]">
+                <Typography
+                  variant="h5"
+                  className="text-[color:var(--md-sys-color-on-surface)]"
+                >
                   Account settings
                 </Typography>
                 <button

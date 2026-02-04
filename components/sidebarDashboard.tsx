@@ -22,8 +22,11 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import type { ProfileListItem } from "../lib/api/userProfiles";
-import { useDispatch, useSelector } from "react-redux"; 
-import { selectProfileById, setCurrentProfile } from "../store/selectedProfileSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectProfileById,
+  setCurrentProfile,
+} from "../store/selectedProfileSlice";
 import { resetWalletForProfileChange } from "../store/walletSlice";
 import { clearClientStorage } from "../lib/auth-storage";
 import { clearAuthState } from "../store/loginSlice";
@@ -112,8 +115,13 @@ function BusinessStatusBadge({ status }: { status: BusinessStatus }) {
 
 const normalizeBusinessStatus = (value?: string): BusinessStatus => {
   const normalized = (value ?? "").toLowerCase();
-  if (normalized.includes("progress") || normalized.includes("draft")) return "in-progress";
-  if (normalized.includes("pending") || normalized.includes("wait") || normalized.includes("review"))
+  if (normalized.includes("progress") || normalized.includes("draft"))
+    return "in-progress";
+  if (
+    normalized.includes("pending") ||
+    normalized.includes("wait") ||
+    normalized.includes("review")
+  )
     return "pending";
   if (
     normalized.includes("approved") ||
@@ -127,18 +135,31 @@ const normalizeBusinessStatus = (value?: string): BusinessStatus => {
 
 const mapTypeLabel = (value?: string) => {
   const t = (value ?? "").toLowerCase();
-  if (t.includes("real") || t.includes("personal") || t.includes("haghighi")) return "حساب حقیقی";
-  if (t.includes("legal") || t.includes("business") || t.includes("hoghooghi")) return "حساب حقوقی";
+  if (t.includes("real") || t.includes("personal") || t.includes("haghighi"))
+    return "حساب حقیقی";
+  if (t.includes("legal") || t.includes("business") || t.includes("hoghooghi"))
+    return "حساب حقوقی";
   return value ?? "";
 };
 
 const BadgeIcon = ({ className }: IconProps) => (
   <svg
     viewBox="0 0 32 32"
-    className={clsx("h-10 w-10 text-[color:var(--md-sys-color-primary)]", className)}
+    className={clsx(
+      "h-10 w-10 text-[color:var(--md-sys-color-primary)]",
+      className,
+    )}
     fill="none"
   >
-    <rect x="4" y="4" width="24" height="24" rx="8" fill="currentColor" opacity="0.12" />
+    <rect
+      x="4"
+      y="4"
+      width="24"
+      height="24"
+      rx="8"
+      fill="currentColor"
+      opacity="0.12"
+    />
     <rect
       x="9.5"
       y="10.5"
@@ -232,7 +253,13 @@ const SupportIcon = ({ className }: IconProps) => (
   </svg>
 );
 
-const ItemIconFrame = ({ children, active }: { children: ReactNode; active?: boolean }) => (
+const ItemIconFrame = ({
+  children,
+  active,
+}: {
+  children: ReactNode;
+  active?: boolean;
+}) => (
   <span
     className={clsx(
       "flex h-10 w-10 items-center justify-center rounded-2xl border shadow-[var(--elevation-1)] transition-all duration-200",
@@ -261,13 +288,21 @@ export function SidebarDashboard({
   const pathname = usePathname();
   const dispatch = useDispatch();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
-  const isCollapsed = typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(["requests"]));
+  const isCollapsed =
+    typeof collapsedProp === "boolean" ? collapsedProp : internalCollapsed;
+  const [openGroups, setOpenGroups] = useState<Set<string>>(
+    new Set(["requests"]),
+  );
   const [activeItemId, setActiveItemId] = useState<string>("requests-business");
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
-   const currentProfile = useSelector((state: any) => state.selectedProfile?.currentProfile);
+  const currentProfile = useSelector(
+    (state: any) => state.selectedProfile?.currentProfile,
+  );
   const profileLookup = useMemo(
-    () => new Map((businessProfilesProp ?? []).map((profile) => [profile.id, profile])),
+    () =>
+      new Map(
+        (businessProfilesProp ?? []).map((profile) => [profile.id, profile]),
+      ),
     [businessProfilesProp],
   );
   const businessProfiles = useMemo<BusinessProfileSummary[]>(() => {
@@ -298,39 +333,43 @@ export function SidebarDashboard({
     }
   };
   const activeBusiness = useMemo(
-    () => businessProfiles.find((profile) => profile.id === activeBusinessId) ?? null,
+    () =>
+      businessProfiles.find((profile) => profile.id === activeBusinessId) ??
+      null,
     [activeBusinessId, businessProfiles],
   );
   const resolvedProfile = useMemo(() => {
     if (!currentProfile?.id) return activeBusiness;
     const resolvedStatus = currentProfile.verification_status
       ? normalizeBusinessStatus(currentProfile.verification_status)
-      : activeBusiness?.status ?? "pending";
+      : (activeBusiness?.status ?? "pending");
     return {
       id: currentProfile.id,
       title: currentProfile.name ?? activeBusiness?.title ?? "",
-      subtitle: currentProfile.type ? mapTypeLabel(currentProfile.type) : activeBusiness?.subtitle ?? "",
+      subtitle: currentProfile.type
+        ? mapTypeLabel(currentProfile.type)
+        : (activeBusiness?.subtitle ?? ""),
       status: resolvedStatus,
       hasApiKey:
         typeof currentProfile.has_api_key === "boolean"
           ? currentProfile.has_api_key
           : typeof currentProfile.has_apikey === "boolean"
             ? currentProfile.has_apikey
-          : activeBusiness?.hasApiKey,
+            : activeBusiness?.hasApiKey,
     };
   }, [activeBusiness, currentProfile]);
   const hasApiKey = Boolean(resolvedProfile?.hasApiKey);
   const isApprovedProfile = resolvedProfile?.status === "approved";
   const headerTitle =
-    isApprovedProfile && resolvedProfile?.title ? resolvedProfile.title : "کسب‌وکار";
-   useEffect(() => {
+    isApprovedProfile && resolvedProfile?.title
+      ? resolvedProfile.title
+      : "کسب‌وکار";
+  useEffect(() => {
     if (!businessProfiles.length) return;
-    
-    
+
     if (currentProfile?.id) {
       setActiveBusinessId(currentProfile.id);
     } else {
-      
       setActiveBusinessId(businessProfiles[0]?.id ?? null);
     }
   }, [businessProfiles, currentProfile]);
@@ -378,13 +417,13 @@ export function SidebarDashboard({
             id: "business-info",
             label: "اطلاعات کسب‌وکار",
             icon: <HomeIcon />,
-             onClick: () => router.push('/business-info')
+            onClick: () => router.push("/business-info"),
           },
           {
             id: "transactions",
             label: "کیف‌پول",
             icon: <TransferIcon />,
-             onClick: () => router.push('/wallet')
+            onClick: () => router.push("/wallet"),
           },
         ],
       },
@@ -392,19 +431,35 @@ export function SidebarDashboard({
         id: "services",
         title: "",
         items: [
-          { id: "liveness", label: "تشخیص زنده‌بودن", icon: <ScanFace className="h-5 w-5" />, onClick: () => router.push("/business-services/liveness") },
-          { id: "ocr", label: "OCR مدارک", icon: <FileText className="h-5 w-5" />, onClick: () => router.push("/business-services/ocr") },
+          {
+            id: "liveness",
+            label: "تشخیص زنده‌بودن",
+            icon: <ScanFace className="h-5 w-5" />,
+            onClick: () => router.push("/business-services/liveness"),
+          },
+          {
+            id: "ocr",
+            label: "OCR مدارک",
+            icon: <FileText className="h-5 w-5" />,
+            onClick: () => router.push("/business-services/ocr"),
+          },
         ],
       },
       {
         id: "support",
         title: "ارتباط با پشتیبانی",
-        items: [{ id: "support", label: "پشتیبانی", icon: <SupportIcon />, onClick: () => router.push('/user-support') }],
+        items: [
+          {
+            id: "support",
+            label: "پشتیبانی",
+            icon: <SupportIcon />,
+            onClick: () => router.push("/user-support"),
+          },
+        ],
       },
     ],
     [router],
   );
-
 
   useEffect(() => {
     if (!isSwitcherOpen) return;
@@ -447,7 +502,7 @@ export function SidebarDashboard({
   };
 
   return (
-      <aside
+    <aside
       dir="rtl"
       className={clsx(
         "fixed right-0 top-14 bottom-0 z-30 border bg-[color:var(--md-sys-color-surface-container)] shadow-[var(--elevation-2)] transition-[width,transform] duration-300 flex flex-col",
@@ -458,7 +513,6 @@ export function SidebarDashboard({
       )}
     >
       <div className="relative flex flex-col h-full">
-        
         {/* Header row */}
         <div className="relative flex flex-col flex-shrink-0" ref={switcherRef}>
           <div
@@ -499,7 +553,9 @@ export function SidebarDashboard({
               <div
                 className={clsx(
                   "min-w-0 transition-all duration-200 text-right",
-                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                  isCollapsed
+                    ? "opacity-0 w-0 pointer-events-none"
+                    : "opacity-100 w-auto",
                 )}
               >
                 <Typography
@@ -602,7 +658,9 @@ export function SidebarDashboard({
                               );
                             }
                             setIsSwitcherOpen(false);
-                            router.push(`/business-auth?id=${encodeURIComponent(profile.id)}`);
+                            router.push(
+                              `/business-auth?id=${encodeURIComponent(profile.id)}`,
+                            );
                           }}
                           className={clsx(
                             "absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-xl border text-[color:var(--md-sys-color-on-surface-variant)] transition",
@@ -627,7 +685,10 @@ export function SidebarDashboard({
                     setIsSwitcherOpen(false);
                     try {
                       if (isAdminView && typeof window !== "undefined") {
-                        window.localStorage.setItem(ADMIN_PANEL_RETURN_KEY, ADMIN_PANEL_BUSINESS_VIEW);
+                        window.localStorage.setItem(
+                          ADMIN_PANEL_RETURN_KEY,
+                          ADMIN_PANEL_BUSINESS_VIEW,
+                        );
                       }
                     } catch {}
                     router.push("/business-auth?new=1");
@@ -658,170 +719,183 @@ export function SidebarDashboard({
             const hasTitle = Boolean(section.title);
             const nextHasTitle = Boolean(sections[index + 1]?.title);
             const isSectionLocked =
-              !isApprovedProfile && (section.id === "business" || section.id === "services");
+              !isApprovedProfile &&
+              (section.id === "business" || section.id === "services");
             const isSectionActive = section.items.some(
               (item) =>
                 item.id === activeItemId ||
-                (item.children?.some((child) => child.id === activeItemId) ?? false),
+                (item.children?.some((child) => child.id === activeItemId) ??
+                  false),
             );
             const showSectionActive = isSectionActive && !isSectionLocked;
             const sectionGap = "mb-1.5";
             return (
-              <div
-                key={section.id}
-                className={clsx(sectionGap, "last:mb-0")}
-              >
-              {!isCollapsed && section.title && (
-                <Typography
-                  variant="caption"
-                  className={clsx(
-                    "mb-1 px-2 text-sm font-semibold",
-                    showSectionActive
-                      ? "text-[color:var(--md-sys-color-primary)]"
-                      : "text-[color:var(--md-sys-color-on-surface)]",
-                  )}
-                >
-                  {section.title}
-                </Typography>
-              )}
+              <div key={section.id} className={clsx(sectionGap, "last:mb-0")}>
+                {!isCollapsed && section.title && (
+                  <Typography
+                    variant="caption"
+                    className={clsx(
+                      "mb-1 px-2 text-sm font-semibold",
+                      showSectionActive
+                        ? "text-[color:var(--md-sys-color-primary)]"
+                        : "text-[color:var(--md-sys-color-on-surface)]",
+                    )}
+                  >
+                    {section.title}
+                  </Typography>
+                )}
 
-              <div className="space-y-1.5">
-                {section.items.map((item) => {
-                  const hasChildren = !!item.children?.length;
-                  const isItemDisabled = isSectionLocked;
-                  const isGroupOpen = hasChildren ? openGroups.has(item.id) : false;
-                  const isItemActive =
-                    activeItemId === item.id ||
-                    (hasChildren && item.children!.some((sub) => sub.id === activeItemId));
-                  const isItemActiveAndEnabled = isItemActive && !isItemDisabled;
+                <div className="space-y-1.5">
+                  {section.items.map((item) => {
+                    const hasChildren = !!item.children?.length;
+                    const isItemDisabled = isSectionLocked;
+                    const isGroupOpen = hasChildren
+                      ? openGroups.has(item.id)
+                      : false;
+                    const isItemActive =
+                      activeItemId === item.id ||
+                      (hasChildren &&
+                        item.children!.some((sub) => sub.id === activeItemId));
+                    const isItemActiveAndEnabled =
+                      isItemActive && !isItemDisabled;
 
-                  return (
-                    <div key={item.id} title={isCollapsed ? item.label : undefined}>
-                      {/* Main item row */}
-                      <Button
-                        variant="ghost"
-                        disabled={isItemDisabled}
+                    return (
+                      <div
+                        key={item.id}
                         title={isCollapsed ? item.label : undefined}
-                        onClick={() => {
-                         if (isItemDisabled) return;
-                         if (item.onClick) {
-                            setActiveItemId(item.id);
-                            item.onClick();
-                          } else if (hasChildren) {
-                            toggleGroup(item.id);
-                            setActiveItemId(item.id);
-                          } else {
-                            setActiveItemId(item.id);
-                          }
-                        }}
-                        className={clsx(
-                          "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors transition-shadow duration-200 justify-between gap-2",
-                          isItemActiveAndEnabled
-                            ? "text-[color:var(--md-sys-color-primary)]"
-                            : "text-[color:var(--md-sys-color-on-surface)]",
-                          isItemDisabled && "cursor-not-allowed opacity-50",
-                          !isItemDisabled && "hover:shadow-[var(--elevation-1)]",
-                          !isItemDisabled &&
-                            "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
-                        )}
                       >
-                        <div className="flex items-center gap-2">
-                          <ItemIconFrame active={isItemActiveAndEnabled}>{item.icon}</ItemIconFrame>
-                          <div
-                            className={clsx(
-                              "min-w-0 truncate text-right font-medium transition-all duration-150",
-                              isCollapsed
-                                ? "opacity-0 w-0 pointer-events-none"
-                                : "opacity-100 w-auto",
-                            )}
-                          >
-                            {item.label}
-                          </div>
-                        </div>
-
-                        {section.id === "services" && (
-                          <span
-                            className={clsx(
-                              "h-3.5 w-3.5 rounded-full border",
-                              hasApiKey
-                                ? "border-emerald-400 bg-emerald-500"
-                                : "border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-highest)]",
-                            )}
-                            title={hasApiKey ? "\u06a9\u0644\u06cc\u062f API \u0641\u0639\u0627\u0644 \u0627\u0633\u062a" : "\u06a9\u0644\u06cc\u062f API \u0641\u0639\u0627\u0644 \u0646\u06cc\u0633\u062a"}
-                          />
-                        )}
-
-                        {hasChildren && !isCollapsed && (
-                          <ChevronDown
-                            className={clsx(
-                              "h-4 w-4 text-[color:var(--md-sys-color-on-surface-variant)] transition-transform duration-200",
-                              isGroupOpen && "rotate-180",
-                            )}
-                          />
-                        )}
-                      </Button>
-
-                      {/* Sub-items */}
-                      {hasChildren && !isCollapsed && (
-                        <div
+                        {/* Main item row */}
+                        <Button
+                          variant="ghost"
+                          disabled={isItemDisabled}
+                          title={isCollapsed ? item.label : undefined}
+                          onClick={() => {
+                            if (isItemDisabled) return;
+                            if (item.onClick) {
+                              setActiveItemId(item.id);
+                              item.onClick();
+                            } else if (hasChildren) {
+                              toggleGroup(item.id);
+                              setActiveItemId(item.id);
+                            } else {
+                              setActiveItemId(item.id);
+                            }
+                          }}
                           className={clsx(
-                            "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
-                            isGroupOpen
-                              ? "grid-rows-[1fr] opacity-100"
-                              : "grid-rows-[0fr] opacity-0",
+                            "group flex w-full items-center rounded-[10px] px-3 py-2.5 text-sm transition-colors transition-shadow duration-200 justify-between gap-2",
+                            isItemActiveAndEnabled
+                              ? "text-[color:var(--md-sys-color-primary)]"
+                              : "text-[color:var(--md-sys-color-on-surface)]",
+                            isItemDisabled && "cursor-not-allowed opacity-50",
+                            !isItemDisabled &&
+                              "hover:shadow-[var(--elevation-1)]",
+                            !isItemDisabled &&
+                              "hover:bg-[color:var(--md-sys-color-surface-container-highest)]/70",
                           )}
                         >
-                          <div className="min-h-0 overflow-hidden pr-4">
-                            {item.children!.map((child) => {
-                              const isChildActive = activeItemId === child.id;
-                              return (
-                                <Button
-                                  key={child.id}
-                                  variant="ghost"
-                                  onClick={() => setActiveItemId(child.id)}
-                                  className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-sm"
-                                >
-                                  <span
-                                    className={clsx(
-                                      "flex h-4 w-4 items-center justify-center rounded-full border",
-                                      isChildActive
-                                        ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/20"
-                                        : "border-[color:var(--md-sys-color-outline-variant)]",
-                                    )}
+                          <div className="flex items-center gap-2">
+                            <ItemIconFrame active={isItemActiveAndEnabled}>
+                              {item.icon}
+                            </ItemIconFrame>
+                            <div
+                              className={clsx(
+                                "min-w-0 truncate text-right font-medium transition-all duration-150",
+                                isCollapsed
+                                  ? "opacity-0 w-0 pointer-events-none"
+                                  : "opacity-100 w-auto",
+                              )}
+                            >
+                              {item.label}
+                            </div>
+                          </div>
+
+                          {section.id === "services" && (
+                            <span
+                              className={clsx(
+                                "h-3.5 w-3.5 rounded-full border",
+                                hasApiKey
+                                  ? "border-emerald-400 bg-emerald-500"
+                                  : "border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-highest)]",
+                              )}
+                              title={
+                                hasApiKey
+                                  ? "\u06a9\u0644\u06cc\u062f API \u0641\u0639\u0627\u0644 \u0627\u0633\u062a"
+                                  : "\u06a9\u0644\u06cc\u062f API \u0641\u0639\u0627\u0644 \u0646\u06cc\u0633\u062a"
+                              }
+                            />
+                          )}
+
+                          {hasChildren && !isCollapsed && (
+                            <ChevronDown
+                              className={clsx(
+                                "h-4 w-4 text-[color:var(--md-sys-color-on-surface-variant)] transition-transform duration-200",
+                                isGroupOpen && "rotate-180",
+                              )}
+                            />
+                          )}
+                        </Button>
+
+                        {/* Sub-items */}
+                        {hasChildren && !isCollapsed && (
+                          <div
+                            className={clsx(
+                              "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
+                              isGroupOpen
+                                ? "grid-rows-[1fr] opacity-100"
+                                : "grid-rows-[0fr] opacity-0",
+                            )}
+                          >
+                            <div className="min-h-0 overflow-hidden pr-4">
+                              {item.children!.map((child) => {
+                                const isChildActive = activeItemId === child.id;
+                                return (
+                                  <Button
+                                    key={child.id}
+                                    variant="ghost"
+                                    onClick={() => setActiveItemId(child.id)}
+                                    className="flex w-full items-center gap-2 py-1.5 pr-3 text-right text-sm"
                                   >
                                     <span
                                       className={clsx(
-                                        "h-1.5 w-1.5 rounded-full",
+                                        "flex h-4 w-4 items-center justify-center rounded-full border",
                                         isChildActive
-                                          ? "bg-[color:var(--md-sys-color-primary)]"
-                                          : child.muted
-                                            ? "bg-[color:var(--md-sys-color-on-surface-variant)]/70"
-                                            : "bg-[color:var(--md-sys-color-outline-variant)]",
+                                          ? "border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-primary)]/20"
+                                          : "border-[color:var(--md-sys-color-outline-variant)]",
                                       )}
-                                    />
-                                  </span>
-                                  <span
-                                    className={clsx(
-                                      "transition-colors",
-                                      isChildActive &&
-                                        "font-semibold text-[color:var(--md-sys-color-primary)]",
-                                      child.muted &&
-                                        !isChildActive &&
-                                        "text-[color:var(--md-sys-color-on-surface-variant)]/80",
-                                    )}
-                                  >
-                                    {child.label}
-                                  </span>
-                                </Button>
-                              );
-                            })}
+                                    >
+                                      <span
+                                        className={clsx(
+                                          "h-1.5 w-1.5 rounded-full",
+                                          isChildActive
+                                            ? "bg-[color:var(--md-sys-color-primary)]"
+                                            : child.muted
+                                              ? "bg-[color:var(--md-sys-color-on-surface-variant)]/70"
+                                              : "bg-[color:var(--md-sys-color-outline-variant)]",
+                                        )}
+                                      />
+                                    </span>
+                                    <span
+                                      className={clsx(
+                                        "transition-colors",
+                                        isChildActive &&
+                                          "font-semibold text-[color:var(--md-sys-color-primary)]",
+                                        child.muted &&
+                                          !isChildActive &&
+                                          "text-[color:var(--md-sys-color-on-surface-variant)]/80",
+                                      )}
+                                    >
+                                      {child.label}
+                                    </span>
+                                  </Button>
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
@@ -847,7 +921,9 @@ export function SidebarDashboard({
               <div
                 className={clsx(
                   "min-w-0 truncate text-right font-medium transition-all duration-150",
-                  isCollapsed ? "opacity-0 w-0 pointer-events-none" : "opacity-100 w-auto",
+                  isCollapsed
+                    ? "opacity-0 w-0 pointer-events-none"
+                    : "opacity-100 w-auto",
                 )}
               >
                 خروج
@@ -859,6 +935,3 @@ export function SidebarDashboard({
     </aside>
   );
 }
-
-
-

@@ -6,6 +6,7 @@ import { Input } from '../../../components/Input';
 import { Button } from '../../../components/ui/Button';
 import { validatePhone } from './validation';
 import { CONTACT_LABELS } from './constants';
+import { normalizeNumericInput, toPersianDigits } from '../../../lib/numberFormat';
 
 interface EditPhoneModalProps {
   isOpen: boolean;
@@ -59,9 +60,9 @@ export function EditPhoneModal({
         <Input
           label={CONTACT_LABELS.phone}
           type="tel"
-          value={phone}
+          value={toPersianDigits(phone)}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setPhone(e.target.value);
+            setPhone(normalizeNumericInput(e.target.value, 11));
             setError('');
           }}
           error={error}
@@ -70,6 +71,7 @@ export function EditPhoneModal({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
           }
+          iconPosition="right"
           placeholder="09123456789"
           className="h-12 text-base"
           dir="ltr" 

@@ -12,11 +12,18 @@ import { Container } from "./ui/Container";
 import { Typography } from "./ui/Typography";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 
 type ServiceId = "face" | "liveness" | "ocr" | "voice";
 
-function hexToRgb(hexColor: string): { r: number; g: number; b: number } | null {
+function hexToRgb(
+  hexColor: string,
+): { r: number; g: number; b: number } | null {
   const normalized = hexColor.replace("#", "").trim();
   if (normalized.length !== 6) return null;
 
@@ -54,7 +61,10 @@ function ComingSoonBadge({
         boxShadow: glow,
       }}
     >
-      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent }} />
+      <span
+        className="h-2 w-2 rounded-full"
+        style={{ backgroundColor: accent }}
+      />
       <span className="leading-none">{label}</span>
     </span>
   );
@@ -233,7 +243,7 @@ export function ServicesSection() {
     if (!isVisible) return;
 
     const activeButton = container.querySelector<HTMLButtonElement>(
-      `[data-service-id="${activeId}"]`
+      `[data-service-id="${activeId}"]`,
     );
     activeButton?.scrollIntoView({
       behavior: "smooth",
@@ -311,7 +321,7 @@ export function ServicesSection() {
                 >
                   <AccordionTrigger
                     className={`px-5 py-4 text-base font-semibold no-underline hover:no-underline ${
-                      dir === "rtl" ? "flex-row-reverse text-right" : "text-left"
+                      dir === "rtl" ? "text-right" : "text-left"
                     }`}
                   >
                     <span
@@ -324,9 +334,12 @@ export function ServicesSection() {
                         style={{ color: iconColor(service, isActive) }}
                       >
                         {React.isValidElement(service.icon)
-                          ? React.cloneElement(service.icon as React.ReactElement<any>, {
-                              className: "w-6 h-6",
-                            })
+                          ? React.cloneElement(
+                              service.icon as React.ReactElement<any>,
+                              {
+                                className: "w-6 h-6",
+                              },
+                            )
                           : service.icon}
                       </span>
                       <span>{service.title}</span>
@@ -340,9 +353,7 @@ export function ServicesSection() {
                       {service.description}
                     </Typography>
                     <div
-                      className={`mt-4 flex flex-wrap items-center gap-3 ${
-                        dir === "rtl" ? "justify-end" : ""
-                      }`}
+                      className="mt-4 flex flex-wrap items-center gap-3"
                       dir={dir}
                     >
                       {!isComingSoonService && itemHref ? (
@@ -395,9 +406,10 @@ export function ServicesSection() {
                 onClick={() => handleTabClick(service.id)}
                 data-service-id={service.id}
                 className={`relative group min-w-[240px] sm:min-w-[220px] shrink-0 lg:shrink snap-center lg:flex-1 h-auto px-8 py-6 whitespace-normal rounded-[var(--radius-xl)] text-base font-medium transition-all duration-300 overflow-hidden text-left justify-start hover:bg-transparent
-                  ${isActive
-                    ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
-                    : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
+                  ${
+                    isActive
+                      ? "bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] shadow-[var(--elevation-2)] scale-[1.03] z-10"
+                      : "bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-sys-color-surface-container)]"
                   }`}
               >
                 <div
@@ -414,7 +426,7 @@ export function ServicesSection() {
                     {React.isValidElement(service.icon)
                       ? React.cloneElement(
                           service.icon as React.ReactElement<any>,
-                          { className: "w-7 h-7" }
+                          { className: "w-7 h-7" },
                         )
                       : service.icon}
                   </span>
@@ -476,7 +488,10 @@ export function ServicesSection() {
                       {currentService.description}
                     </Typography>
 
-                    <div className="flex flex-wrap items-center gap-3" dir={dir}>
+                    <div
+                      className="flex flex-wrap items-center gap-3"
+                      dir={dir}
+                    >
                       {!isComingSoonService && learnMoreHref ? (
                         <Button
                           variant="secondary"
@@ -543,7 +558,10 @@ export function ServicesSection() {
                             strokeWidth="2"
                             initial={{ pathLength: 0 }}
                             animate={{ pathLength: 1 }}
-                            transition={{ duration: 1.4, ease: [0.4, 0, 0.2, 1] }}
+                            transition={{
+                              duration: 1.4,
+                              ease: [0.4, 0, 0.2, 1],
+                            }}
                           />
 
                           {/* Corner brackets */}
@@ -713,7 +731,11 @@ export function ServicesSection() {
                                 rx="6"
                                 fill="rgba(255,255,255,0.6)"
                                 animate={{
-                                  scaleY: [1, 1.35 + Math.sin(i * 0.4) * 0.25, 1],
+                                  scaleY: [
+                                    1,
+                                    1.35 + Math.sin(i * 0.4) * 0.25,
+                                    1,
+                                  ],
                                 }}
                                 transition={{
                                   duration: 1.2,

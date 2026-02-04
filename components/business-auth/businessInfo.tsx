@@ -58,7 +58,9 @@ export function BusinessInfo({
     websiteUrl: "",
     businessNationalId: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof BusinessInfoForm, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof BusinessInfoForm, string>>
+  >({});
 
   useEffect(() => {
     if (initialData) {
@@ -91,7 +93,11 @@ export function BusinessInfo({
     };
 
     const nextErrors: Partial<Record<keyof BusinessInfoForm, string>> = {};
-    const requiredKeys: Array<keyof BusinessInfoForm> = ["brandName", "fieldOfWork", "websiteUrl"];
+    const requiredKeys: Array<keyof BusinessInfoForm> = [
+      "brandName",
+      "fieldOfWork",
+      "websiteUrl",
+    ];
     if (isLegal) requiredKeys.push("businessNationalId");
     requiredKeys.forEach((key) => {
       if (!trimmed[key]) {
@@ -103,7 +109,11 @@ export function BusinessInfo({
       nextErrors.websiteUrl = INVALID_WEBSITE_ERROR;
     }
 
-    if (isLegal && trimmed.businessNationalId && !/^\d{11}$/.test(trimmed.businessNationalId)) {
+    if (
+      isLegal &&
+      trimmed.businessNationalId &&
+      !/^\d{11}$/.test(trimmed.businessNationalId)
+    ) {
       nextErrors.businessNationalId = NATIONAL_ID_LENGTH_ERROR;
     }
 
@@ -122,7 +132,10 @@ export function BusinessInfo({
       className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
     >
       <div className="space-y-2 text-right">
-        <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
+        <Typography
+          variant="h5"
+          className="text-[color:var(--md-sys-color-on-surface)] font-black"
+        >
           اطلاعات کسب‌ و کار
         </Typography>
         <Typography
@@ -163,7 +176,10 @@ export function BusinessInfo({
               maxLength={11}
               value={form.businessNationalId ?? ""}
               onChange={(event) =>
-                handleChange("businessNationalId", normalizeDigits(event.target.value))
+                handleChange(
+                  "businessNationalId",
+                  normalizeDigits(event.target.value),
+                )
               }
               placeholder="10345678901"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
@@ -183,11 +199,17 @@ export function BusinessInfo({
           <div className="relative">
             <select
               value={form.fieldOfWork}
-              onChange={(event) => handleChange("fieldOfWork", event.target.value)}
+              onChange={(event) =>
+                handleChange("fieldOfWork", event.target.value)
+              }
               className="w-full appearance-none rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] outline-none ring-2 ring-transparent transition focus:ring-[color:var(--md-sys-color-primary)]/30"
             >
               {activityOptions.map((option) => (
-                <option key={option.value} value={option.value} className="text-right">
+                <option
+                  key={option.value}
+                  value={option.value}
+                  className="text-right"
+                >
                   {option.label}
                 </option>
               ))}
@@ -218,7 +240,9 @@ export function BusinessInfo({
               dir="ltr"
               type="url"
               value={form.websiteUrl}
-              onChange={(event) => handleChange("websiteUrl", event.target.value)}
+              onChange={(event) =>
+                handleChange("websiteUrl", event.target.value)
+              }
               placeholder="https://barbod.ir"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-primary)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />

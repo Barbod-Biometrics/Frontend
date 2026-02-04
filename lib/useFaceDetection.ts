@@ -156,57 +156,63 @@ export function useFaceDetection(): UseFaceDetectionReturn {
 
         const video = videoRef.current;
 
-        // Ensure video is ready
-        if (video.readyState >= 2) {
-            try {
-                const startTimeMs = performance.now();
-                const results = faceLandmarkerRef.current.detectForVideo(
-                    video,
-                    startTimeMs
-                );
-
-                if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-                    setFaceDetected(true);
-                    const landmarks = results.faceLandmarks[0];
-
-                    // Blink detection using Eye Aspect Ratio
-                    // Left eye indices: 33, 160, 158, 133, 153, 144
-                    // Right eye indices: 362, 385, 387, 263, 373, 380
-                    const leftEAR = calculateEyeAspectRatio(landmarks, [33, 160, 158, 133, 153, 144]);
-                    const rightEAR = calculateEyeAspectRatio(landmarks, [362, 385, 387, 263, 373, 380]);
-                    const avgEAR = (leftEAR + rightEAR) / 2;
-
-                    // Detect blink: EAR drops below threshold then rises back
-                    if (blinkCooldownRef.current <= 0) {
-                        if (previousEARRef.current > blinkThreshold && avgEAR < blinkThreshold) {
-                            setLivenessEvents(prev => ({ ...prev, blinkDetected: true }));
-                            blinkCooldownRef.current = 30; // Cooldown for ~0.5 seconds
-                        }
-                    } else {
-                        blinkCooldownRef.current--;
-                    }
-                    previousEARRef.current = avgEAR;
-
-                    // Head pose estimation
-                    const pose = estimateHeadPose(landmarks);
-
-                    // Determine head turn direction based on yaw
-                    let headTurnDetected: "left" | "right" | "center" = "center";
-                    if (pose.yaw > 3) {
-                        headTurnDetected = "right";
-                    } else if (pose.yaw < -3) {
-                        headTurnDetected = "left";
-                    }
-
-                    setLivenessEvents(prev => ({ ...prev, headTurnDetected }));
-                    previousYawRef.current = pose.yaw;
-
-                } else {
-                    setFaceDetected(false);
-                }
-            } catch (err) {
-                console.error("Detection error:", err);
+        try {
+            if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+                animationFrameRef.current = requestAnimationFrame(detectFaces);
+                return;
             }
+
+            const startTimeMs = performance.now();
+            const results = faceLandmarkerRef.current.detectForVideo(
+                video,
+                startTimeMs
+            );
+
+            if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+                setFaceDetected(true);
+                const landmarks = results.faceLandmarks[0];
+
+                // Blink detection using Eye Aspect Ratio
+                // Left eye indices: 33, 160, 158, 133, 153, 144
+                // Right eye indices: 362, 385, 387, 263, 373, 380
+                const leftEAR = calculateEyeAspectRatio(landmarks, [33, 160, 158, 133, 153, 144]);
+                const rightEAR = calculateEyeAspectRatio(landmarks, [362, 385, 387, 263, 373, 380]);
+                const avgEAR = (leftEAR + rightEAR) / 2;
+
+                // Detect blink: EAR drops below threshold then rises back
+                if (blinkCooldownRef.current <= 0) {
+                    if (previousEARRef.current > blinkThreshold && avgEAR < blinkThreshold) {
+                        setLivenessEvents(prev => ({ ...prev, blinkDetected: true }));
+                        blinkCooldownRef.current = 30; // Cooldown for ~0.5 seconds
+                    }
+                } else {
+                    blinkCooldownRef.current--;
+                }
+                previousEARRef.current = avgEAR;
+
+                // Head pose estimation
+                const pose = estimateHeadPose(landmarks);
+
+                // Determine head turn direction based on yaw
+                let headTurnDetected: "left" | "right" | "center" = "center";
+                if (pose.yaw > 3) {
+                    headTurnDetected = "right";
+                } else if (pose.yaw < -3) {
+                    headTurnDetected = "left";
+                }
+
+                setLivenessEvents(prev => ({ ...prev, headTurnDetected }));
+                previousYawRef.current = pose.yaw;
+
+            } else {
+                setFaceDetected(false);
+            }
+        } catch (err) {
+            console.error("Detection error:", err);
+            setError(err instanceof Error ? err.message : "Face detection failed.");
+            isRunningRef.current = false;
+            setFaceDetected(false);
+            return;
         }
 
         // Continue the detection loop

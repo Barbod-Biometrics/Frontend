@@ -10,6 +10,7 @@ import { Container } from "../../components/ui/Container";
 import { useLanguage } from "../../lib/useLanguage";
 import { Language } from "../../types";
 import { requestOtpThunk } from "../../store/loginSlice";
+import { normalizeNumericInput, toPersianDigits } from "../../lib/numberFormat";
 
 interface LabeledInputProps {
   value: string;
@@ -20,6 +21,7 @@ interface LabeledInputProps {
   isFa: boolean;
   error?: string;
   isLight: boolean;
+  onEnter?: () => void;
 }
 
 function LabeledInput({
@@ -31,6 +33,7 @@ function LabeledInput({
   isFa,
   error,
   isLight,
+  onEnter,
 }: LabeledInputProps) {
   return (
     <div className="space-y-2 w-full">
@@ -44,15 +47,20 @@ function LabeledInput({
       <div className="relative">
         <input
           type="tel"
-          value={value}
+          value={toPersianDigits(value)}
           onChange={(e) => {
             // Only allow digits and limit to 11 characters (09XXXXXXXXX)
-            const val = e.target.value.replace(/\D/g, "").slice(0, 11);
+            const val = normalizeNumericInput(e.target.value, 11);
             onChange(val);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onEnter?.();
+            }
           }}
           placeholder={placeholder}
           dir="ltr"
-          className={`h-12 sm:h-14 w-full rounded-md sm:rounded-xl px-4 text-base sm:text-lg transition-all duration-300 ${
+          className={`h-12 sm:h-14 w-full rounded-xl px-4 text-base sm:text-lg transition-all duration-300 ${
             error
               ? "border-2 border-red-500 focus:ring-red-500/30"
               : isLight
@@ -92,7 +100,7 @@ function SubmitButton({ label, isFa, onClick, disabled }: SubmitButtonProps) {
       size="lg"
       onClick={onClick}
       disabled={disabled}
-      className="w-full h-12 sm:h-14 rounded-md sm:rounded-xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full h-12 sm:h-14 rounded-xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <span className={`font-bold ${isFa ? "font-vazirmatn" : ""}`}>
         {label}
@@ -256,6 +264,7 @@ function LoginForm({ onSubmit }: LoginFormProps) {
         isFa={isFa}
         error={error}
         isLight={isLight}
+        onEnter={handleSubmit}
       />
 
       <SubmitButton

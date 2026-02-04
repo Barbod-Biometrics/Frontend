@@ -41,15 +41,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const isAdminUser = Boolean(isAdmin);
   const dispatch = useDispatch();
   const currentProfile = useSelector(
-    (state: RootState) => state.selectedProfile.currentProfile
+    (state: RootState) => state.selectedProfile.currentProfile,
   );
-  const profiles = useSelector((state: RootState) => state.selectedProfile.allProfiles);
+  const profiles = useSelector(
+    (state: RootState) => state.selectedProfile.allProfiles,
+  );
   const [isMobile, setIsMobile] = useState(false);
   const [collapsedDesktop, setCollapsedDesktop] = useState(
-    () => persistedSidebarCollapsed
+    () => persistedSidebarCollapsed,
   );
   const [mobileOpen, setMobileOpen] = useState(
-    () => persistedSidebarMobileOpen
+    () => persistedSidebarMobileOpen,
   );
   useEffect(() => {
     dispatch(loadUserProfiles());

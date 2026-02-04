@@ -1,6 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState, type FocusEvent } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FocusEvent,
+} from "react";
 import { ChevronDown } from "lucide-react";
 import provincesAndCities from "../../data/iran-provinces-cities.json";
 import { Button } from "../ui/Button";
@@ -45,7 +52,9 @@ export function LocationInfo({
     plateNumber: "",
     unit: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof LocationForm, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof LocationForm, string>>
+  >({});
   const [isProvinceOpen, setIsProvinceOpen] = useState(false);
   const [isCityOpen, setIsCityOpen] = useState(false);
   const [provinceQuery, setProvinceQuery] = useState("");
@@ -80,7 +89,9 @@ export function LocationInfo({
     }
   }, [form.province]);
 
-  const cityOptions = form.province ? provinceCityMap[form.province] ?? [] : [];
+  const cityOptions = form.province
+    ? (provinceCityMap[form.province] ?? [])
+    : [];
   const filteredProvinces = useMemo(() => {
     const query = provinceQuery.trim();
     if (!query) return provinceOptions;
@@ -182,7 +193,10 @@ export function LocationInfo({
       className="font-vazirmatn w-full max-w-4xl rounded-[28px] border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] px-6 py-8 shadow-[var(--elevation-2)] sm:px-10 sm:py-10"
     >
       <div className="space-y-2 text-right">
-        <Typography variant="h5" className="text-[color:var(--md-sys-color-on-surface)] font-black">
+        <Typography
+          variant="h5"
+          className="text-[color:var(--md-sys-color-on-surface)] font-black"
+        >
           اطلاعات مکانی
         </Typography>
         <Typography
@@ -199,7 +213,11 @@ export function LocationInfo({
             <label className="text-sm font-semibold text-[color:var(--md-sys-color-on-surface)]">
               استان
             </label>
-            <div className="relative" ref={provinceRef} onBlur={handleProvinceBlur}>
+            <div
+              className="relative"
+              ref={provinceRef}
+              onBlur={handleProvinceBlur}
+            >
               <button
                 type="button"
                 aria-haspopup="listbox"
@@ -304,7 +322,10 @@ export function LocationInfo({
                       : "text-[color:var(--md-sys-color-on-surface-variant)]"
                   }
                 >
-                  {form.city || (form.province ? "انتخاب شهر" : "ابتدا استان را انتخاب کنید")}
+                  {form.city ||
+                    (form.province
+                      ? "انتخاب شهر"
+                      : "ابتدا استان را انتخاب کنید")}
                 </span>
               </button>
               <ChevronDown
@@ -403,7 +424,9 @@ export function LocationInfo({
               dir="ltr"
               type="tel"
               value={form.fixedPhone}
-              onChange={(event) => handleChange("fixedPhone", normalizeDigits(event.target.value))}
+              onChange={(event) =>
+                handleChange("fixedPhone", normalizeDigits(event.target.value))
+              }
               placeholder="01312345678"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -423,19 +446,24 @@ export function LocationInfo({
               inputMode="numeric"
               maxLength={10}
               value={form.postalCode}
-              onChange={(event) => handleChange("postalCode", normalizeDigits(event.target.value))}
-            placeholder="0133456789"
-            className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
-          />
-          <Typography variant="caption" className="text-[color:var(--md-sys-color-on-surface-variant)]">
-            کد پستی باید ۱۰ رقم و بدون خط تیره وارد شود.
-          </Typography>
-          {errors.postalCode && (
-            <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
-              {errors.postalCode}
-            </p>
-          )}
-        </div>
+              onChange={(event) =>
+                handleChange("postalCode", normalizeDigits(event.target.value))
+              }
+              placeholder="0133456789"
+              className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
+            />
+            <Typography
+              variant="caption"
+              className="text-[color:var(--md-sys-color-on-surface-variant)]"
+            >
+              کد پستی باید ۱۰ رقم و بدون خط تیره وارد شود.
+            </Typography>
+            {errors.postalCode && (
+              <p className="text-right text-sm text-[color:var(--md-sys-color-error)]">
+                {errors.postalCode}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
@@ -447,7 +475,9 @@ export function LocationInfo({
               dir="ltr"
               type="text"
               value={form.plateNumber}
-              onChange={(event) => handleChange("plateNumber", normalizeDigits(event.target.value))}
+              onChange={(event) =>
+                handleChange("plateNumber", normalizeDigits(event.target.value))
+              }
               placeholder="12"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />
@@ -466,7 +496,9 @@ export function LocationInfo({
               dir="ltr"
               inputMode="numeric"
               value={form.unit}
-              onChange={(event) => handleChange("unit", normalizeDigits(event.target.value))}
+              onChange={(event) =>
+                handleChange("unit", normalizeDigits(event.target.value))
+              }
               placeholder="4"
               className="w-full rounded-2xl border border-[color:var(--md-sys-color-outline)] bg-[color:var(--md-sys-color-surface)] pr-5 pl-5 py-3 text-[color:var(--md-sys-color-on-surface)] placeholder:text-[color:var(--md-sys-color-on-surface-variant)] outline-none ring-2 ring-transparent transition focus:border-[color:var(--md-sys-color-primary)] focus:ring-[color:var(--md-sys-color-primary)]/30"
             />

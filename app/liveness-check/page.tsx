@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Camera, CheckCircle2 } from "lucide-react";
@@ -31,17 +31,25 @@ export default function LivenessCheckPage() {
     const [challengeCompleted, setChallengeCompleted] = useState(false);
     const challengeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+    const handleBack = useCallback(() => {
+        if (typeof window !== "undefined" && window.history.length > 1) {
+            router.back();
+        } else {
+            router.push("/");
+        }
+    }, [router]);
+
     // Handle escape key
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
-                router.push("/");
+                handleBack();
             }
         };
 
         window.addEventListener("keydown", handleEscape);
         return () => window.removeEventListener("keydown", handleEscape);
-    }, [router]);
+    }, [handleBack]);
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -129,7 +137,7 @@ export default function LivenessCheckPage() {
             <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => router.push("/")}
+                onClick={handleBack}
                 className="fixed top-4 left-4 z-10 h-auto w-auto p-2 rounded-full bg-[color:var(--md-sys-color-surface-container-high)] hover:bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)]"
                 aria-label="بازگشت"
             >

@@ -25,7 +25,7 @@ export function PersonalInfoCard({
   const title = isBusinessAccount ? 'اطلاعات نماینده' : 'اطلاعات شخصی';
 
   return (
-    <Card variant="filled" hover className="p-5 h-full">
+    <Card variant="filled" hover className="p-5 h-full text-right" dir="rtl">
      
       <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[color:var(--md-sys-color-outline-variant)]">
         <div className="p-2 rounded-lg bg-[color:var(--md-sys-color-primary-container)]">

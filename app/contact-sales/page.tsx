@@ -99,9 +99,9 @@ const copy: Record<
     optionalTag: "(اختیاری)",
     submit: "درخواست تماس",
     submitLoading: "Submitting...",
-    captchaLabel: "Security check",
-    captchaHelper: "Verify that you are human.",
-    response: "میانگین پاسخ‌گویی کمتر از ۱ ساعت",
+    captchaLabel: "بررسی امنیتی",
+    captchaHelper: "لطفاً تأیید کنید انسان هستید.",
+    response: "",
     highlight: "امنیت در سطح سازمانی",
     note: "اطلاعات شما فقط برای هماهنگی جلسه استفاده می‌شود.",
     messages: {
@@ -134,6 +134,24 @@ declare global {
 }
 
 const RECAPTCHA_SCRIPT_ID = "recaptcha-v2-script";
+const DEFAULT_RECAPTCHA_SITE_KEY = "6LftZzgsAAAAAJCibzAS3IeBypdOKJvHOBva5oWa";
+
+const waitForRecaptchaReady = (timeoutMs = 5000, intervalMs = 200) =>
+  new Promise<void>((resolve, reject) => {
+    const start = Date.now();
+    const check = () => {
+      if (window.grecaptcha) {
+        resolve();
+        return;
+      }
+      if (Date.now() - start >= timeoutMs) {
+        reject(new Error("reCAPTCHA did not initialize in time."));
+        return;
+      }
+      window.setTimeout(check, intervalMs);
+    };
+    check();
+  });
 
 const loadRecaptchaScript = (): Promise<void> => {
   if (typeof window === "undefined") {
@@ -207,10 +225,11 @@ export default function SalesContactPage() {
   const { language, dir } = useLanguage();
   const isFa = language === Language.FA;
   const c = copy[language];
-  const phonePlaceholder = isFa ? "9xx xxx xxxx +98" : "+98 9xx xxx xxxx";
+  const phonePlaceholder = "+98 9xx xxx xxxx";
   const SlaIcon = dir === "rtl" ? ArrowUpLeft : ArrowUpRight;
   const sendIconClass = dir === "rtl" ? "h-4 w-4 -scale-x-100" : "h-4 w-4";
-  const envRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+  const envRecaptchaSiteKey =
+    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? DEFAULT_RECAPTCHA_SITE_KEY;
   const [recaptchaSiteKey, setRecaptchaSiteKey] = useState(envRecaptchaSiteKey);
   const [siteKeyStatus, setSiteKeyStatus] = useState<"loading" | "ready" | "error">(
     envRecaptchaSiteKey ? "ready" : "loading"
@@ -228,6 +247,7 @@ export default function SalesContactPage() {
   const [captchaError, setCaptchaError] = useState<string | null>(null);
   const recaptchaRef = useRef<HTMLDivElement>(null);
   const recaptchaWidgetId = useRef<number | null>(null);
+  const autoRetryRef = useRef(0);
   const isSubmitting = submitStatus === "submitting";
   const phoneValue = isFa ? toPersianDigits(formValues.phone) : formValues.phone;
   const isDev = process.env.NODE_ENV !== "production";
@@ -293,11 +313,15 @@ export default function SalesContactPage() {
     setCaptchaError(null);
 
     loadRecaptchaScript()
+      .then(() => waitForRecaptchaReady())
       .then(() => {
         if (!isActive) return;
-        if (!window.grecaptcha || !recaptchaRef.current) return;
+        if (!window.grecaptcha || !recaptchaRef.current) {
+          throw new Error("reCAPTCHA is unavailable.");
+        }
         if (recaptchaWidgetId.current !== null) {
           setCaptchaStatus("ready");
+          autoRetryRef.current = 0;
           return;
         }
 
@@ -315,11 +339,20 @@ export default function SalesContactPage() {
           },
         });
         setCaptchaStatus("ready");
+        autoRetryRef.current = 0;
       })
       .catch(() => {
-        if (isActive) {
-          setCaptchaStatus("error");
+        if (!isActive) return;
+        if (autoRetryRef.current < 1) {
+          autoRetryRef.current += 1;
+          window.setTimeout(() => {
+            if (isActive) {
+              setCaptchaLoadAttempt((prev) => prev + 1);
+            }
+          }, 400);
+          return;
         }
+        setCaptchaStatus("error");
       });
 
     return () => {
@@ -409,10 +442,12 @@ export default function SalesContactPage() {
             </div>
 
             <div className="flex flex-wrap gap-3 text-sm text-[color:var(--text-secondary)]">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[color:var(--surface-card)] px-3 py-1.5">
-                <BadgeCheck className="h-4 w-4 text-[color:var(--brand-cyan)]" />
-                {c.response}
-              </span>
+              {c.response ? (
+                <span className="inline-flex items-center gap-2 rounded-full bg-[color:var(--surface-card)] px-3 py-1.5">
+                  <BadgeCheck className="h-4 w-4 text-[color:var(--brand-cyan)]" />
+                  {c.response}
+                </span>
+              ) : null}
               <span className="inline-flex items-center gap-2 rounded-full bg-[color:var(--surface-card)] px-3 py-1.5">
                 <Shield className="h-4 w-4 text-[color:var(--brand-cyan)]" />
                 {c.highlight}
@@ -507,7 +542,13 @@ export default function SalesContactPage() {
                     {c.captchaLabel}
                   </label>
                   <p className="text-xs text-[color:var(--text-secondary)]">{c.captchaHelper}</p>
-                  <div ref={recaptchaRef} dir="ltr" className="min-h-[78px]" />
+                  <div
+                    className={
+                      isFa ? "flex w-full justify-end" : "flex w-full justify-start"
+                    }
+                  >
+                    <div ref={recaptchaRef} dir="ltr" className="min-h-[78px]" />
+                  </div>
                   {isCaptchaUnavailable ? (
                     <p className="text-xs font-semibold text-rose-500">
                       {captchaUnavailableMessage}
@@ -539,10 +580,14 @@ export default function SalesContactPage() {
                   </div>
                 ) : null}
                 <div className="flex flex-wrap items-center justify-between gap-3">
+                {c.response ? (
                   <div className="flex items-center gap-2 text-xs font-semibold text-[color:var(--text-secondary)]">
                     <MessageSquare className="h-4 w-4 text-[color:var(--brand-cyan)]" />
                     {c.response}
                   </div>
+                ) : (
+                  <span />
+                )}
                   <Button
                     size="lg"
                     type="submit"

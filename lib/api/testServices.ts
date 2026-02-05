@@ -1,5 +1,6 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.barbodbiometrics.ir/api/v1";
+import { getApiBaseUrl } from "../api-base-url";
+
+const API_BASE_URL = getApiBaseUrl();
 
 export type OcrResponse = {
   success?: boolean;

@@ -1,8 +1,8 @@
 import { clearAuth, getAccessToken, getRefreshToken, saveAuth } from "./auth-storage";
 import { emitAuthEvent } from "./auth-events";
+import { getApiBaseUrl } from "./api-base-url";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.barbodbiometrics.ir/api/v1";
+const API_BASE_URL = getApiBaseUrl();
 const AUTH_REFRESH_PATH =
   process.env.NEXT_PUBLIC_AUTH_REFRESH_PATH ?? "/auth/refresh";
 
